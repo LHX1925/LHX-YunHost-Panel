@@ -1,0 +1,434 @@
+{include file="default/user/header" title="修改资料" /}
+<main id="main-container">
+    <div class="content">
+        <style>
+            .info-page {
+                max-width: 1100px;
+                margin: 0 auto;
+            }
+
+            .info-hero {
+                background: #fff;
+                border: 1px solid var(--border);
+                border-radius: 20px;
+                padding: 32px 36px;
+                margin-bottom: 20px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04);
+            }
+
+            /* 液态玻璃主题下卡片使用玻璃效果 */
+            body.glass-enabled .info-hero,
+            body.glass-enabled .profile-card,
+            body.glass-enabled .form-card,
+            body.glass-enabled .notice-card {
+                background: var(--glass-bg);
+                backdrop-filter: blur(var(--glass-blur));
+                -webkit-backdrop-filter: blur(var(--glass-blur));
+                border-color: var(--glass-border);
+                box-shadow: var(--glass-shadow-sm), var(--glass-shadow-inset);
+            }
+
+            body.glass-enabled.glass-bg-image .info-hero,
+            body.glass-enabled.glass-bg-image .profile-card,
+            body.glass-enabled.glass-bg-image .form-card,
+            body.glass-enabled.glass-bg-image .notice-card {
+                background: rgba(255, 255, 255, var(--glass-opacity)) !important;
+                border-color: rgba(255, 255, 255, 0.35) !important;
+                box-shadow: var(--glass-shadow), var(--glass-shadow-inset) !important;
+            }
+
+            body.glass-enabled .form-control {
+                background: rgba(255, 255, 255, var(--glass-opacity-light));
+                backdrop-filter: blur(var(--glass-blur-light));
+                -webkit-backdrop-filter: blur(var(--glass-blur-light));
+                border: 1.5px solid rgba(255, 255, 255, 0.4);
+                color: #1E293B;
+            }
+
+            body.glass-enabled .form-control:focus {
+                background: rgba(255, 255, 255, var(--glass-opacity-btn));
+                border-color: var(--glass-primary);
+                box-shadow: 0 0 0 4px var(--glass-primary-glow);
+            }
+
+            body.glass-enabled .form-control:read-only {
+                background: rgba(248, 250, 252, 0.7);
+                color: var(--text-secondary);
+            }
+
+            body.glass-enabled .btn-cancel {
+                background: rgba(226, 232, 240, 0.8);
+                color: var(--text);
+            }
+
+            body.glass-enabled .btn-cancel:hover {
+                background: rgba(203, 213, 225, 0.9);
+            }
+
+            .info-hero h1 {
+                font-size: 28px;
+                font-weight: 800;
+                color: var(--text);
+                margin: 0 0 6px;
+            }
+
+            .info-hero p {
+                font-size: 15px;
+                color: var(--text-secondary);
+                margin: 0;
+            }
+
+            .info-layout {
+                display: grid;
+                grid-template-columns: 260px 1fr 240px;
+                gap: 20px;
+                align-items: start;
+            }
+
+            /* Left profile card */
+            .profile-card {
+                background: #fff;
+                border: 1px solid var(--border);
+                border-radius: 20px;
+                padding: 32px 24px;
+                text-align: center;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .profile-card img {
+                width: 110px;
+                height: 110px;
+                border-radius: 50%;
+                object-fit: cover;
+                margin-bottom: 20px;
+                border: 3px solid var(--primary-bg);
+            }
+
+            .profile-card .username {
+                font-size: 16px;
+                font-weight: 700;
+                color: var(--text);
+                margin-bottom: 6px;
+            }
+
+            .profile-card .userid {
+                font-size: 13px;
+                color: var(--text-muted);
+                margin-bottom: 24px;
+            }
+
+            .btn-cancel {
+                width: 100%;
+                padding: 12px;
+                background: #E2E8F0;
+                border: none;
+                border-radius: 999px;
+                color: var(--text);
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .btn-cancel:hover {
+                background: #CBD5E1;
+            }
+
+            /* Middle form card */
+            .form-card {
+                background: #fff;
+                border: 1px solid var(--border);
+                border-radius: 20px;
+                padding: 28px 32px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04);
+            }
+
+            .form-card h3 {
+                font-size: 17px;
+                font-weight: 800;
+                color: var(--text);
+                margin: 0 0 24px;
+            }
+
+            .form-row-modern {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                margin-bottom: 16px;
+            }
+
+            .form-row-modern label {
+                width: 90px;
+                flex-shrink: 0;
+                font-size: 14px;
+                font-weight: 500;
+                color: var(--text);
+                margin: 0;
+            }
+
+            .form-row-modern .form-control {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .form-control {
+                border: 1.5px solid var(--border);
+                border-radius: 10px;
+                padding: 11px 14px;
+                font-size: 14px;
+                color: var(--text);
+                outline: none;
+                transition: all 0.2s;
+                background: #fff;
+                width: 100%;
+            }
+
+            .form-control:focus {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+            }
+
+            .form-control:read-only {
+                background: #F8FAFC;
+                color: var(--text-secondary);
+            }
+
+            .btn-save {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 12px 36px;
+                background: var(--primary);
+                border: none;
+                border-radius: 999px;
+                color: #fff;
+                font-size: 15px;
+                font-weight: 700;
+                cursor: pointer;
+                transition: all 0.2s;
+                margin-top: 8px;
+            }
+
+            .btn-save:hover {
+                background: var(--primary-dark);
+                box-shadow: 0 6px 20px rgba(37,99,235,0.3);
+            }
+
+            /* Right notice card */
+            .notice-card {
+                background: #fff;
+                border: 1px solid var(--border);
+                border-radius: 20px;
+                padding: 22px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04);
+            }
+
+            .notice-card h4 {
+                font-size: 15px;
+                font-weight: 800;
+                color: var(--text);
+                margin: 0 0 12px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .notice-card h4 i {
+                color: var(--text-muted);
+                font-size: 12px;
+            }
+
+            .notice-card p {
+                font-size: 13px;
+                color: var(--text-secondary);
+                line-height: 1.7;
+                margin: 0;
+            }
+
+            @media (max-width: 991px) {
+                .info-layout {
+                    grid-template-columns: 1fr;
+                }
+
+                .profile-card {
+                    flex-direction: row;
+                    text-align: left;
+                    gap: 20px;
+                    align-items: center;
+                }
+
+                .profile-card img {
+                    margin-bottom: 0;
+                }
+
+                .profile-card .info {
+                    flex: 1;
+                }
+
+                .btn-cancel {
+                    width: auto;
+                    padding: 12px 32px;
+                }
+            }
+
+            @media (max-width: 767px) {
+                .form-row-modern {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 8px;
+                }
+
+                .form-row-modern label {
+                    width: 100%;
+                }
+
+                .profile-card {
+                    flex-direction: column;
+                    text-align: center;
+                }
+
+                .profile-card .info {
+                    width: 100%;
+                }
+
+                .btn-cancel {
+                    width: 100%;
+                }
+            }
+        </style>
+
+        <div class="info-page">
+            <div class="info-hero">
+                <h1>修改资料</h1>
+                <p>编辑账户基本信息与联系方式</p>
+            </div>
+
+            <div class="info-layout">
+                <div class="profile-card">
+                    <img src="https://q1.qlogo.cn/g?b=qq&nk={$user.qq}&s=100" alt="avatar">
+                    <div class="info">
+                        <div class="username">用户名：{$user.name}</div>
+                        <div class="userid">运营名称：{$user.id}</div>
+                    </div>
+                    <button type="button" class="btn-cancel" onclick="history.back()">取消</button>
+                </div>
+
+                <div class="form-card">
+                    <h3>用户名</h3>
+                    <form id="infoForm">
+                        <div class="form-row-modern">
+                            <label>用户名</label>
+                            <input type="text" class="form-control" value="{$user.user}" readonly>
+                        </div>
+
+                        <div class="form-row-modern">
+                            <label>昵称</label>
+                            <input type="text" name="name" class="form-control" value="{$user.name}" placeholder="请输入昵称">
+                        </div>
+
+                        <div class="form-row-modern">
+                            <label>联系邮箱</label>
+                            <input type="text" class="form-control" value="{$user.mail|default=''}" readonly>
+                        </div>
+
+                        <div class="form-row-modern">
+                            <label>QQ号码</label>
+                            <input type="text" name="qq" class="form-control" value="{$user.qq}" placeholder="请输入QQ号码">
+                        </div>
+
+                        <div class="form-row-modern">
+                            <label>联系地址</label>
+                            <input type="text" name="address" class="form-control" value="{$user.address}" placeholder="请输入联系地址">
+                        </div>
+
+                        <div class="form-row-modern">
+                            <label>安全密码</label>
+                            <input type="password" class="form-control" value="********" readonly>
+                        </div>
+
+                        {if isset($web.oauth_enabled) && $web.oauth_enabled == '1'}
+                        <div class="form-row-modern">
+                            <label>QQ绑定</label>
+                            {if isset($user.oauth_qq) && $user.oauth_qq}
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="text-success" style="font-size:14px;"><i class="fab fa-qq"></i> 已绑定</span>
+                                <button type="button" class="btn btn-sm" style="background:#fee2e2;color:#dc2626;border-radius:999px;padding:6px 16px;font-size:13px;font-weight:500;border:none;cursor:pointer;" onclick="unbindOAuth('qq')">解除绑定</button>
+                            </div>
+                            {else}
+                            <a href="__ROOT__/oauth/userBind/qq" class="btn btn-sm" style="background:#e0e7ff;color:#4f46e5;border-radius:999px;padding:6px 16px;font-size:13px;font-weight:500;text-decoration:none;display:inline-flex;align-items:center;gap:4px;"><i class="fab fa-qq"></i> 绑定QQ</a>
+                            {/if}
+                        </div>
+                        {/if}
+
+                        <div style="text-align:center;">
+                            <button type="submit" class="btn-save">保存修改</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="notice-card">
+                    <h4>安全提醒 <i class="fas fa-chevron-down"></i></h4>
+                    <p>修改资料后请重新登录以确保账户安全。请妥善保管您的账号密码，不要将密码告知他人。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{include file="default/user/footer" /}
+<script>
+    function unbindOAuth(type) {
+        layer.confirm('确定要解除' + (type == 'qq' ? 'QQ' : '') + '绑定吗？', {
+            title: '解除绑定',
+            icon: 3,
+            shade: 0.5
+        }, function(index) {
+            layer.close(index);
+            var load = layer.load(1, {time: false});
+            $.ajax({
+                type: 'POST',
+                url: '__ROOT__/oauth/unbind/' + type,
+                dataType: 'json',
+                success: function(data) {
+                    layer.close(load);
+                    if (data.code == 1) {
+                        showToast(data.msg, 'success', 2000);
+                        setTimeout(function() { location.reload(); }, 1500);
+                    } else {
+                        showToast(data.msg, 'danger', 2500);
+                    }
+                },
+                error: function() {
+                    layer.close(load);
+                    showToast('网络错误，请稍后重试', 'danger', 2500);
+                }
+            });
+        });
+    }
+
+    $("#infoForm").submit(function (){
+        var load = layer.load(1,{time:false});
+        var name = $("input[name='name']").val();
+        var qq = $("input[name='qq']").val();
+        var address = $("input[name='address']").val();
+        if(name.length < 1 || qq.length < 1){
+            layer.close(load);
+            showToast('昵称和QQ不可为空','danger',2500);
+            return false;
+        }
+        $.ajax({
+            type:'POST',
+            url:'',
+            data:{ name:name, qq:qq, address:address },
+            dataType:'json',
+            success:function (data){
+                layer.close(load);
+                if(data.code == 1){ showToast(data.msg,'success',2500); }
+                else{ showToast(data.msg,'danger',2500); }
+            }
+        });
+        return false;
+    });
+</script>

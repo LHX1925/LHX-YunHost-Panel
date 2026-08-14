@@ -1,0 +1,81 @@
+{include file="default/header" title="编辑会员等级" /}
+<main class="lyear-layout-content">
+  <div class="container-fluid glass-animate-in">
+    <div class="row">
+      <div class="col-lg-8">
+        <div class="card admin-card">
+          <header class="card-header">
+            <div class="card-title">编辑会员等级 - Lv.{$level.level} {$level.name}</div>
+          </header>
+          <div class="card-body">
+            <form id="edit-form" class="admin-form">
+              <input type="hidden" name="csrf_token" value="{:csrf_token()}">
+              <div class="row">
+                <div class="col-md-4 mb-3">
+                  <label class="form-label">等级名称</label>
+                  <input type="text" name="name" class="form-control" required value="{$level.name}">
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label class="form-label">升级所需累计充值（元）</label>
+                  <input type="text" name="min_recharge" class="form-control" required value="{$level.min_recharge}">
+                  <span class="admin-field-hint">用户累计充值达到此金额自动升级</span>
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label class="form-label">状态</label>
+                  <select name="status" class="form-select">
+                    <option value="1" {if $level.status==1}selected{/if}>启用</option>
+                    <option value="0" {if $level.status==0}selected{/if}>禁用</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4 mb-3">
+                  <label class="form-label">购买折扣比例</label>
+                  <input type="text" name="discount" class="form-control" required value="{$level.discount}" placeholder="0.95=95折">
+                  <span class="admin-field-hint">例如：0.95表示95折，1.00表示原价</span>
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label class="form-label">续费折扣比例</label>
+                  <input type="text" name="renew_discount" class="form-control" required value="{$level.renew_discount}" placeholder="0.95=95折">
+                  <span class="admin-field-hint">例如：0.90表示9折续费</span>
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label class="form-label">当前图标</label>
+                  <div>
+                    {if !empty($level.icon)}
+                    <img src="__ROOT__/static/img/vip/{$level.icon}" alt="{$level.name}" style="width:40px;height:40px;">
+                    <span class="ms-2 text-muted">{$level.icon}</span>
+                    {else}
+                    <span class="text-muted">未设置图标</span>
+                    {/if}
+                  </div>
+                </div>
+              </div>
+              <button type="submit" class="btn-admin btn-admin-primary">
+                <span class="mdi mdi-content-save"></span> 保存修改
+              </button>
+              <a href="{:url('admin/index/membershipLevels')}" class="btn-admin">返回列表</a>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{include file="default/footer" /}
+
+<script>
+$(function(){
+  $('#edit-form').on('submit', function(e){
+    e.preventDefault();
+    var btn = $(this).find('button[type=submit]').prop('disabled', true);
+    $.post('', $(this).serialize(), function(res){
+      if (res.code == '1') {
+        layer.msg(res.msg, {icon:1}, function(){ location.href = '{:url("admin/index/membershipLevels")}'; });
+      } else {
+        layer.msg(res.msg, {icon:2}); btn.prop('disabled', false);
+      }
+    }, 'json').fail(function(){ layer.msg('请求失败', {icon:2}); btn.prop('disabled', false); });
+  });
+});
+</script>

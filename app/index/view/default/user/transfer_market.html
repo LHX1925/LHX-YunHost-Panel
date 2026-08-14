@@ -1,0 +1,666 @@
+{include file="default/user/header" title="转让市场" /}
+<main id="main-container">
+    <div class="content">
+        {if $isBanned}
+        <div class="alert alert-warning" style="border-radius:10px;border-left:4px solid #F59E0B;background:#FFFBEB;color:#92400E;padding:14px 18px;margin-bottom:20px;font-size:14px;">
+            <strong><i class="fas fa-exclamation-triangle"></i> 您的账号已被封禁</strong><br>
+            封禁至：<strong>{$banEndTime|date="Y-m-d H:i:s",###}</strong><br>
+            封禁原因：{$banReason ?: '管理员未填写原因'}
+        </div>
+        {/if}
+
+        <style>
+            .transfer-page { max-width: 1100px; margin: 0 auto; }
+            .transfer-hero { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 24px; flex-wrap: wrap; }
+            .transfer-hero h1 { font-size: 26px; font-weight: 800; color: var(--glass-text); margin: 0 0 6px; }
+            .transfer-hero p { font-size: 14px; color: var(--glass-text-secondary); margin: 0; }
+            .transfer-tabs { display: flex; gap: 4px; margin-bottom: 20px; background: var(--glass-bg); border-radius: 12px; padding: 4px; border: 1px solid var(--glass-border); }
+            .transfer-tab { padding: 8px 20px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--glass-text-secondary); transition: all var(--transition); border: none; background: transparent; }
+            .transfer-tab.active { background: var(--glass-primary); color: #fff; box-shadow: 0 2px 8px var(--glass-primary-glow); }
+            .transfer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; }
+            .transfer-card {
+                background: var(--glass-bg);
+                backdrop-filter: blur(var(--glass-blur));
+                -webkit-backdrop-filter: blur(var(--glass-blur));
+                border: 1px solid var(--glass-border);
+                border-radius: var(--glass-radius-lg);
+                padding: 22px;
+                box-shadow: var(--glass-shadow-sm), var(--glass-shadow-inset);
+                transition: all var(--transition);
+                display: flex;
+                flex-direction: column;
+                gap: 14px;
+                position: relative;
+            }
+            .transfer-card:hover {
+                box-shadow: 0 4px 12px rgba(0,0,0,0.06), 0 16px 40px rgba(0,0,0,0.06);
+                transform: translateY(-2px);
+            }
+            .transfer-card.my-transfer {
+                border-color: rgba(59,130,246,0.2);
+                background: linear-gradient(135deg, var(--glass-bg) 0%, rgba(59,130,246,0.03) 100%);
+            }
+            .transfer-card-header {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 12px;
+            }
+            .transfer-card-header .product-name {
+                font-size: 16px;
+                font-weight: 700;
+                color: var(--glass-text);
+                margin: 0;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .transfer-card-header .product-name i {
+                color: var(--glass-primary);
+                font-size: 18px;
+            }
+            .transfer-target-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                padding: 3px 10px;
+                border-radius: 20px;
+                font-size: 11px;
+                font-weight: 600;
+                white-space: nowrap;
+            }
+            .transfer-target-badge.public {
+                background: #D1FAE5;
+                color: #065F46;
+            }
+            .transfer-target-badge.private {
+                background: #FEF3C7;
+                color: #92400E;
+            }
+            .transfer-info {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+            .transfer-info-item {
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+            }
+            .transfer-info-item .label {
+                font-size: 11px;
+                color: var(--glass-text-muted);
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+            }
+            .transfer-info-item .value {
+                font-size: 14px;
+                color: var(--glass-text);
+                font-weight: 600;
+            }
+            .transfer-price {
+                font-size: 28px;
+                font-weight: 800;
+                color: #DC2626;
+                text-align: center;
+                padding: 8px 0;
+            }
+            .transfer-price.free {
+                color: #059669;
+            }
+            .transfer-price small {
+                font-size: 14px;
+                font-weight: 500;
+            }
+            .transfer-card-actions {
+                display: flex;
+                flex-direction: row;
+                gap: 10px;
+                justify-content: space-between;
+            }
+            .transfer-card-actions .btn {
+                flex: 1 1 0;
+                min-width: 0;
+                font-weight: 600;
+                font-size: 13px;
+                padding: 10px 8px;
+                border-radius: 10px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 5px;
+                white-space: nowrap;
+                height: auto;
+                line-height: 1.4;
+            }
+            .btn-contact {
+                background: var(--glass-bg);
+                border: 1px solid var(--glass-border);
+                color: var(--glass-text);
+                transition: all var(--transition);
+            }
+            .btn-contact:hover {
+                border-color: var(--glass-primary);
+                color: var(--glass-primary);
+                background: var(--glass-bg-light);
+            }
+            .btn-cancel-transfer {
+                background: #FEF2F2;
+                border: 1px solid #FECACA;
+                color: #DC2626;
+                transition: all var(--transition);
+            }
+            .btn-cancel-transfer:hover {
+                background: #FEE2E2;
+                border-color: #FCA5A5;
+            }
+            .btn-view {
+                background: #EFF6FF;
+                border: 1px solid #BFDBFE;
+                color: #1D4ED8;
+                transition: all var(--transition);
+            }
+            .btn-view:hover {
+                background: #DBEAFE;
+                border-color: #93C5FD;
+            }
+            .btn-chat {
+                background: #DCFCE7;
+                border: 1px solid #BBF7D0;
+                color: #166534;
+                transition: all var(--transition);
+            }
+            .btn-chat:hover {
+                background: #BBF7D0;
+                border-color: #86EFAC;
+            }
+            .empty-state {
+                text-align: center;
+                padding: 80px 20px;
+                color: var(--glass-text-muted);
+                grid-column: 1 / -1;
+            }
+            .empty-state i {
+                font-size: 48px;
+                margin-bottom: 16px;
+                display: block;
+            }
+            .empty-state h3 {
+                font-size: 18px;
+                color: var(--glass-text);
+                margin-bottom: 8px;
+            }
+            .original-price {
+                text-decoration: line-through;
+                color: var(--glass-text-muted);
+                font-size: 13px;
+                text-align: center;
+                margin-top: -8px;
+            }
+            .my-transfer-label {
+                position: absolute;
+                top: -8px;
+                right: 16px;
+                background: linear-gradient(135deg, #3B82F6, #2563EB);
+                color: #fff;
+                font-size: 10px;
+                font-weight: 700;
+                padding: 3px 10px;
+                border-radius: 20px;
+                letter-spacing: 0.04em;
+            }
+            .config-table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+            .config-table td { padding: 8px 12px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+            .config-table td:first-child { color: var(--glass-text-muted); width: 90px; font-weight: 500; }
+            .config-table td:last-child { color: var(--glass-text); font-weight: 600; }
+            @media (max-width: 768px) {
+                .transfer-hero { flex-direction: column; align-items: flex-start; gap: 16px; }
+                .transfer-hero h1 { font-size: 22px; }
+                .transfer-grid { grid-template-columns: 1fr; }
+                .transfer-card { padding: 18px; }
+                .transfer-price { font-size: 24px; }
+                .transfer-tabs { overflow-x: auto; }
+            }
+
+            /* Chat Modal */
+            .chat-modal-overlay {
+                position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.4); z-index: 9999;
+                display: none; align-items: center; justify-content: center;
+            }
+            .chat-modal-overlay.show { display: flex; }
+            .chat-modal {
+                width: 420px; max-width: 90vw; max-height: 75vh;
+                background: #fff; border-radius: 16px;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+                display: flex; flex-direction: column; overflow: hidden;
+            }
+            .chat-modal-header {
+                display: flex; align-items: center; justify-content: space-between;
+                padding: 14px 18px; border-bottom: 1px solid #f1f5f9;
+                background: #f8fafc;
+            }
+            .chat-modal-header h4 {
+                margin: 0; font-size: 15px; font-weight: 700; color: #1e293b;
+                display: flex; align-items: center; gap: 8px;
+            }
+            .chat-modal-header h4 .dot {
+                width: 8px; height: 8px; border-radius: 50%; background: #10B981;
+            }
+            .chat-modal-close {
+                background: none; border: none; font-size: 20px; cursor: pointer;
+                color: #94a3b8; padding: 4px; line-height: 1;
+            }
+            .chat-modal-close:hover { color: #0f172a; }
+            .chat-messages {
+                flex: 1; overflow-y: auto; padding: 16px;
+                display: flex; flex-direction: column; gap: 12px;
+                min-height: 200px; max-height: 360px; background: #fafbfc;
+            }
+            .chat-msg {
+                display: flex;
+                flex-direction: row;
+                align-items: flex-start;
+                gap: 8px;
+                max-width: 85%;
+            }
+            .chat-msg.mine { align-self: flex-end; flex-direction: row-reverse; }
+            .chat-msg.other { align-self: flex-start; }
+            .chat-msg .avatar {
+                width: 32px; height: 32px; border-radius: 50%; object-fit: cover;
+                flex-shrink: 0; background: #e2e8f0;
+            }
+            .chat-msg .msg-body { display: flex; flex-direction: column; }
+            .chat-msg.mine .msg-body { align-items: flex-end; }
+            .chat-msg.other .msg-body { align-items: flex-start; }
+            .chat-msg .bubble {
+                padding: 10px 14px; border-radius: 14px; font-size: 13px;
+                line-height: 1.6; word-break: break-word;
+            }
+            .chat-msg.mine .bubble {
+                background: linear-gradient(135deg, #3B82F6, #2563EB);
+                color: #fff; border-bottom-right-radius: 4px;
+            }
+            .chat-msg.other .bubble {
+                background: #fff; color: #334155; border: 1px solid #e2e8f0;
+                border-bottom-left-radius: 4px;
+            }
+            .chat-msg .time {
+                font-size: 10px; color: #94a3b8; margin-top: 3px;
+            }
+            .chat-empty {
+                text-align: center; color: #94a3b8; padding: 40px 0; font-size: 13px;
+            }
+            .chat-input-area {
+                display: flex; gap: 8px; padding: 12px 16px;
+                border-top: 1px solid #f1f5f9; background: #fff;
+            }
+            .chat-input-area input {
+                flex: 1; border: 1px solid #e2e8f0; border-radius: 20px;
+                padding: 8px 14px; font-size: 13px; outline: none;
+                transition: border-color 0.2s;
+            }
+            .chat-input-area input:focus { border-color: #3B82F6; }
+            .chat-input-area button {
+                background: linear-gradient(135deg, #3B82F6, #2563EB);
+                color: #fff; border: none; border-radius: 20px;
+                padding: 8px 16px; font-size: 13px; font-weight: 600;
+                cursor: pointer; white-space: nowrap;
+                transition: opacity 0.2s;
+            }
+            .chat-input-area button:hover { opacity: 0.9; }
+            .chat-input-area button:disabled { opacity: 0.5; cursor: not-allowed; }
+        </style>
+
+        <div class="transfer-page">
+            <div class="transfer-hero">
+                <div>
+                    <h1>转让市场</h1>
+                    <p>浏览可购买的转让主机，或发布您的主机转让</p>
+                </div>
+                <a href="__ROOT__/user/transferHost" class="glass-btn glass-btn-primary">
+                    <i class="fas fa-paper-plane"></i> 发布转让
+                </a>
+            </div>
+
+            <div class="transfer-tabs">
+                <button class="transfer-tab active" onclick="filterTab('all', this)">全部转让</button>
+                <button class="transfer-tab" onclick="filterTab('public', this)">公开转让</button>
+                <button class="transfer-tab" onclick="filterTab('private', this)">指定转让</button>
+                <button class="transfer-tab" onclick="filterTab('my', this)">我的转让</button>
+            </div>
+
+            <div class="transfer-grid" id="transferGrid">
+                {if $transfers && count($transfers) > 0}
+                {foreach $transfers as $t}
+                <div class="transfer-card glass-reveal {if $t.userid == $myUserId}my-transfer{/if}"
+                     data-target="{$t.target_userid > 0 ? 'private' : 'public'}"
+                     data-mine="{if $t.userid == $myUserId}1{else}0{/if}">
+                    {if $t.userid == $myUserId}
+                    <div class="my-transfer-label">我的转让</div>
+                    {/if}
+                    <div class="transfer-card-header">
+                        <div class="product-name">
+                            <i class="fas fa-server"></i>
+                            {$t.product_name|default='未知产品'}
+                        </div>
+                        {if $t.target_userid > 0}
+                        <span class="transfer-target-badge private">
+                            <i class="fas fa-lock"></i> 指定用户
+                        </span>
+                        {else}
+                        <span class="transfer-target-badge public">
+                            <i class="fas fa-globe"></i> 公开转让
+                        </span>
+                        {/if}
+                    </div>
+                    <div class="transfer-info">
+                        <div class="transfer-info-item">
+                            <span class="label">卖家</span>
+                            <span class="value">{$t.seller_name|default='-'}</span>
+                        </div>
+                        <div class="transfer-info-item">
+                            <span class="label">主机账号</span>
+                            <span class="value">{$t.host_user|default='-'}</span>
+                        </div>
+                        <div class="transfer-info-item">
+                            <span class="label">开通时间</span>
+                            <span class="value">{$t.atime|date='Y-m-d',###}</span>
+                        </div>
+                        <div class="transfer-info-item">
+                            <span class="label">到期时间</span>
+                            <span class="value">{$t.ztime|date='Y-m-d',###}</span>
+                        </div>
+                    </div>
+                    {if $t.original_price > 0}
+                    <div class="original-price">原价 ¥{$t.original_price}</div>
+                    {/if}
+                    <div class="transfer-price {if $t.price == 0}free{/if}">
+                        {if $t.price > 0}
+                        ¥{$t.price}
+                        {else}
+                        <small>免费</small>
+                        {/if}
+                    </div>
+                    <div class="transfer-card-actions">
+                        <button class="btn btn-contact" onclick="contactSeller({$t.id})">
+                            <i class="fas fa-comment-dots"></i> 联系卖家
+                        </button>
+                        {if $t.userid == $myUserId}
+                        <button class="btn btn-cancel-transfer" onclick="cancelMyTransfer({$t.id})">
+                            <i class="fas fa-times-circle"></i> 取消转让
+                        </button>
+                        <button class="btn btn-chat" onclick="openChat({$t.id}, {$t.userid}, '{$t.seller_name|default='卖家'}', true)">
+                            <i class="fas fa-comments"></i> 查看对话
+                        </button>
+                        {else}
+                        <button class="btn btn-view" onclick="viewDetail({$t.id}, {$t.price})">
+                            <i class="fas fa-info-circle"></i> 查看配置
+                        </button>
+                        <button class="btn btn-chat" onclick="openChat({$t.id}, {$t.userid}, '{$t.seller_name|default='卖家'}', false)">
+                            <i class="fas fa-comments"></i> 在线对话
+                        </button>
+                        {/if}
+                    </div>
+                </div>
+                {/foreach}
+                {else}
+                <div class="empty-state">
+                    <i class="fas fa-store-slash"></i>
+                    <h3>暂无转让主机</h3>
+                    <p>当前市场没有可购买的转让主机，请稍后再来查看</p>
+                </div>
+                {/if}
+            </div>
+
+            {if $transfers && count($transfers) > 0}
+            <div style="text-align:center;margin-top:24px;">{$transfers->render()}</div>
+            {/if}
+        </div>
+    </div>
+
+    <!-- 在线对话弹窗 -->
+    <div class="chat-modal-overlay" id="chatOverlay">
+        <div class="chat-modal">
+            <div class="chat-modal-header">
+                <h4><span class="dot"></span> 与 <span id="chatSellerName">卖家</span> 对话</h4>
+                <button class="chat-modal-close" onclick="closeChat()">&times;</button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="chat-empty">暂无消息，发送第一条消息开始对话</div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="chatInput" placeholder="输入消息..." maxlength="500" onkeydown="if(event.key==='Enter')sendMsg()">
+                <button id="chatSendBtn" onclick="sendMsg()">发送</button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+function filterTab(type, btn) {
+    $('.transfer-tab').removeClass('active');
+    $(btn).addClass('active');
+    $('#transferGrid .transfer-card').each(function() {
+        var $card = $(this);
+        if (type === 'all') {
+            $card.show();
+        } else if (type === 'my') {
+            $card.toggle($card.data('mine') == 1);
+        } else {
+            $card.toggle($card.data('target') === type);
+        }
+    });
+}
+
+function contactSeller(transferId) {
+    $.get('__ROOT__/user/transferContact', {transfer_id: transferId}, function(res) {
+        if (res.code == '1') {
+            var html = '<div style="padding:10px 0;line-height:2.2;">';
+            html += '<p><strong>卖家：</strong>' + res.seller_name + '</p>';
+            if (res.seller_qq) {
+                html += '<p><strong>QQ：</strong>' + res.seller_qq;
+                html += ' <a href="https://wpa.qq.com/msgrd?v=3&uin=' + res.seller_qq + '&site=qq&menu=yes" target="_blank" style="display:inline-block;margin-left:8px;padding:3px 12px;background:#12B7F5;color:#fff;border-radius:15px;font-size:11px;text-decoration:none;"><i class="fab fa-qq"></i> 在线联系</a></p>';
+            }
+            html += '<p><strong>联系方式：</strong>' + res.contact_info + '</p>';
+            html += '</div>';
+            layer.open({
+                type: 1,
+                title: '<i class="fas fa-address-card"></i> 联系卖家',
+                area: ['420px', 'auto'],
+                btn: ['确定'],
+                content: html
+            });
+        } else {
+            showToast(res.msg, 'danger');
+        }
+    }, 'json');
+}
+
+function viewDetail(transferId, price) {
+    var load = layer.load(1, {time: false});
+    $.get('__ROOT__/user/transferDetail', {transfer_id: transferId}, function(res) {
+        layer.close(load);
+        if (res.code == '1') {
+            var d = res.data;
+            var html = '<div style="padding:8px 0;">';
+            html += '<table class="config-table">';
+            html += '<tr><td>产品名称</td><td>' + (d.product_name || '-') + '</td></tr>';
+            html += '<tr><td>主机账号</td><td>' + (d.host_user || '-') + '</td></tr>';
+            html += '<tr><td>所在服务器</td><td>' + (d.server_name || '-') + '</td></tr>';
+            html += '<tr><td>开通时间</td><td>' + (d.atime ? new Date(d.atime*1000).toLocaleDateString() : '-') + '</td></tr>';
+            html += '<tr><td>到期时间</td><td>' + (d.ztime ? new Date(d.ztime*1000).toLocaleDateString() : '-') + '</td></tr>';
+            html += '<tr><td>原购买价</td><td>' + (d.original_price > 0 ? '¥' + d.original_price : '免费') + '</td></tr>';
+            html += '<tr><td>转让价</td><td style="color:#DC2626;font-weight:700;">' + (d.price > 0 ? '¥' + d.price : '免费') + '</td></tr>';
+            if (d.product_desc) {
+                html += '<tr><td>产品描述</td><td>' + d.product_desc + '</td></tr>';
+            }
+            html += '</table></div>';
+
+            var btnLabel = price > 0 ? '确认购买 ¥' + price : '免费领取';
+            layer.open({
+                type: 1,
+                title: '<i class="fas fa-info-circle"></i> 主机配置详情',
+                area: ['460px', 'auto'],
+                btn: [btnLabel, '取消'],
+                btn1: function(index) {
+                    layer.close(index);
+                    doBuy(transferId, price);
+                },
+                content: html
+            });
+        } else {
+            showToast(res.msg, 'danger');
+        }
+    }, 'json').fail(function() {
+        layer.close(load);
+        showToast('请求失败，请稍后再试', 'danger');
+    });
+}
+
+function doBuy(transferId, price) {
+    var msg = price > 0 ? '确定要购买该转让主机吗？将支付 ¥' + price : '确定要领取该免费转让主机吗？';
+    layer.confirm(msg, {icon: 3, title: '确认购买'}, function() {
+        var load = layer.load(1, {time: false});
+        $.post('__ROOT__/user/transferBuy', {transfer_id: transferId}, function(res) {
+            layer.close(load);
+            if (res.code == '1') {
+                layer.alert(res.msg, {icon: 1}, function() {
+                    location.reload();
+                });
+            } else {
+                layer.alert(res.msg, {icon: 2});
+            }
+        }, 'json').fail(function() {
+            layer.close(load);
+            layer.alert('请求失败，请稍后再试', {icon: 2});
+        });
+    });
+}
+
+function cancelMyTransfer(transferId) {
+    layer.confirm('确定要取消该转让吗？取消后其他用户将无法购买。', {icon: 3, title: '取消转让'}, function() {
+        var load = layer.load(1, {time: false});
+        $.post('__ROOT__/user/transferCancel', {transfer_id: transferId}, function(res) {
+            layer.close(load);
+            if (res.code == '1') {
+                layer.alert(res.msg, {icon: 1}, function() {
+                    location.reload();
+                });
+            } else {
+                layer.alert(res.msg, {icon: 2});
+            }
+        }, 'json').fail(function() {
+            layer.close(load);
+            layer.alert('请求失败，请稍后再试', {icon: 2});
+        });
+    });
+}
+
+// ========== 在线对话 ==========
+var chatTransferId = 0;
+var chatSellerId = 0;
+var chatIsSeller = false;
+var chatPollTimer = null;
+var chatLastId = 0;
+var myUserId = parseInt('{$myUserId}') || 0;
+
+function openChat(transferId, sellerId, sellerName, isSeller) {
+    chatTransferId = transferId;
+    chatSellerId = sellerId;
+    chatIsSeller = !!isSeller;
+    chatLastId = 0;
+    $('#chatSellerName').text(isSeller ? '买家咨询' : sellerName);
+    $('#chatMessages').html('<div class="chat-empty">加载中...</div>');
+    $('#chatInput').val('');
+    $('#chatOverlay').addClass('show');
+    loadMessages();
+    // 每3秒轮询新消息
+    if (chatPollTimer) clearInterval(chatPollTimer);
+    chatPollTimer = setInterval(loadMessages, 3000);
+}
+
+function closeChat() {
+    $('#chatOverlay').removeClass('show');
+    chatTransferId = 0;
+    if (chatPollTimer) { clearInterval(chatPollTimer); chatPollTimer = null; }
+}
+
+function getAvatarUrl(qq) {
+    return qq ? 'https://q1.qlogo.cn/g?b=qq&nk=' + qq + '&s=100' : '__ROOT__/static/assets/images/avatar-default.png';
+}
+
+function loadMessages() {
+    if (!chatTransferId) return;
+    $.get('__ROOT__/user/transferGetMsgs', {transfer_id: chatTransferId, last_id: chatLastId}, function(res) {
+        if (res.code == '1') {
+            var msgs = res.data;
+            if (chatLastId === 0) {
+                $('#chatMessages').empty();
+            }
+            if (msgs && msgs.length > 0) {
+                for (var i = 0; i < msgs.length; i++) {
+                    var m = msgs[i];
+                    var cls = m.is_mine ? 'mine' : 'other';
+                    var avatar = getAvatarUrl(m.sender_qq);
+                    var html = '<div class="chat-msg ' + cls + '">';
+                    html += '<img class="avatar" src="' + avatar + '" alt="">';
+                    html += '<div class="msg-body">';
+                    html += '<div class="bubble">' + escapeHtml(m.content) + '</div>';
+                    html += '<div class="time">' + m.time_str + '</div>';
+                    html += '</div></div>';
+                    $('#chatMessages').append(html);
+                    chatLastId = Math.max(chatLastId, m.id);
+                }
+                scrollChatBottom();
+            } else if (chatLastId === 0) {
+                $('#chatMessages').html('<div class="chat-empty">' + (chatIsSeller ? '暂无买家咨询' : '暂无消息，发送第一条消息开始对话') + '</div>');
+            }
+        }
+    }, 'json');
+}
+
+function sendMsg() {
+    var content = $.trim($('#chatInput').val());
+    if (!content) return;
+    if (!chatTransferId) return;
+    if (chatIsSeller && chatLastId === 0) {
+        showToast('暂无买家咨询，无法主动发送', 'warning');
+        return;
+    }
+
+    var btn = $('#chatSendBtn');
+    btn.prop('disabled', true).text('发送中...');
+
+    $.post('__ROOT__/user/transferSendMsg', {transfer_id: chatTransferId, content: content}, function(res) {
+        btn.prop('disabled', false).text('发送');
+        if (res.code == '1') {
+            $('#chatInput').val('');
+            // 立即加载新消息
+            loadMessages();
+        } else {
+            showToast(res.msg, 'danger');
+        }
+    }, 'json').fail(function() {
+        btn.prop('disabled', false).text('发送');
+        showToast('发送失败，请稍后再试', 'danger');
+    });
+}
+
+function scrollChatBottom() {
+    var el = document.getElementById('chatMessages');
+    if (el) { el.scrollTop = el.scrollHeight; }
+}
+
+function escapeHtml(text) {
+    var div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// 关闭弹窗时点击遮罩
+$('#chatOverlay').on('click', function(e) {
+    if (e.target === this) closeChat();
+});
+</script>
+{include file="default/user/footer" /}

@@ -1,0 +1,1499 @@
+{include file="default/header" title="网站设置"/}
+<style>
+/* ========== 设置页面全新布局 v2.0 ========== */
+.settings-page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* 顶部标签导航 */
+.settings-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  margin-bottom: 24px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  box-shadow: var(--glass-shadow-sm);
+}
+.settings-tabs::-webkit-scrollbar { height: 0; }
+.settings-tab {
+  flex-shrink: 0;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--glass-text-secondary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.settings-tab i { font-size: 14px; opacity: 0.7; }
+.settings-tab:hover { color: var(--glass-text); background: var(--glass-bg-light); }
+.settings-tab.active {
+  color: #fff;
+  background: linear-gradient(135deg, var(--glass-primary), var(--glass-primary-light));
+  box-shadow: 0 2px 12px var(--glass-primary-glow);
+}
+.settings-tab.active i { opacity: 1; }
+
+/* 卡片网格 */
+.settings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+.settings-grid.full { grid-template-columns: 1fr; }
+.settings-grid.triple { grid-template-columns: 1fr 1fr 1fr; }
+
+/* 设置卡片 */
+.settings-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--glass-shadow-sm), var(--glass-shadow-inset);
+  transition: all 0.3s ease;
+}
+.settings-card:hover {
+  box-shadow: var(--glass-shadow), var(--glass-shadow-inset);
+  border-color: var(--glass-border-strong);
+}
+.settings-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--glass-border-subtle);
+  background: var(--glass-bg-light);
+}
+.settings-card-header i {
+  width: 34px; height: 34px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 10px;
+  font-size: 15px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--glass-primary), var(--glass-primary-light));
+  flex-shrink: 0;
+}
+.settings-card-header .title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--glass-text);
+}
+.settings-card-header .desc {
+  font-size: 11.5px;
+  color: var(--glass-text-muted);
+  margin-top: 1px;
+}
+.settings-card-body {
+  padding: 20px;
+}
+
+/* 表单字段 */
+.settings-field { margin-bottom: 16px; }
+.settings-field:last-child { margin-bottom: 0; }
+.settings-field-label {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--glass-text-secondary);
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.settings-field-hint {
+  font-size: 11px;
+  color: var(--glass-text-muted);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+/* 双列字段行 */
+.settings-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.settings-field-row .settings-field { margin-bottom: 0; }
+
+/* 开关行 */
+.settings-switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--glass-bg-light);
+  border-radius: 12px;
+  border: 1px solid var(--glass-border-subtle);
+  margin-bottom: 10px;
+  transition: all 0.2s;
+}
+.settings-switch-row:hover { border-color: var(--glass-border); background: var(--glass-bg); }
+.settings-switch-row .info { flex: 1; min-width: 0; padding-right: 14px; }
+.settings-switch-row .info .label {
+  font-size: 13.5px; font-weight: 600; color: var(--glass-text); display: block;
+}
+.settings-switch-row .info .desc {
+  font-size: 11.5px; color: var(--glass-text-muted); margin-top: 2px;
+}
+
+/* 表单控件 */
+.settings-content-area .form-control,
+.settings-content-area .form-select {
+  background: rgba(255,255,255,0.7) !important;
+  border: 1.5px solid var(--glass-border) !important;
+  border-radius: 10px !important;
+  padding: 9px 14px !important;
+  font-size: 13.5px !important;
+  color: var(--glass-text) !important;
+  transition: all 0.2s !important;
+  box-shadow: var(--glass-shadow-inset) !important;
+  width: 100%;
+}
+.settings-content-area .form-control:focus,
+.settings-content-area .form-select:focus {
+  border-color: var(--glass-primary) !important;
+  box-shadow: 0 0 0 3px var(--glass-primary-glow) !important;
+  background: rgba(255,255,255,0.9) !important;
+}
+.settings-content-area textarea.form-control {
+  resize: vertical;
+  min-height: 90px;
+}
+.settings-content-area .form-switch .form-check-input {
+  width: 42px; height: 23px; cursor: pointer;
+}
+.settings-content-area .form-switch .form-check-input:checked {
+  background-color: var(--glass-primary);
+  border-color: var(--glass-primary);
+}
+.settings-content-area .form-range {
+  height: 5px; border-radius: 3px;
+}
+.settings-content-area .form-range::-webkit-slider-thumb {
+  background: var(--glass-primary);
+  width: 18px; height: 18px; border-radius: 50%;
+  box-shadow: 0 2px 8px var(--glass-primary-glow);
+  cursor: pointer;
+}
+.settings-content-area .input-group-text {
+  background: var(--glass-bg-light) !important;
+  border: 1.5px solid var(--glass-border) !important;
+  color: var(--glass-text-muted) !important;
+  font-size: 13px;
+}
+
+/* 渐变色选择器 */
+.gradient-picker {
+  display: flex; gap: 8px; flex-wrap: wrap;
+}
+.gradient-swatch {
+  width: 36px; height: 36px; border-radius: 50%;
+  cursor: pointer; border: 3px solid transparent;
+  transition: all 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+.gradient-swatch:hover { transform: scale(1.15); }
+.gradient-swatch.active {
+  border-color: var(--glass-primary);
+  box-shadow: 0 0 0 4px var(--glass-primary-glow);
+  transform: scale(1.1);
+}
+
+/* 上传区域 */
+.upload-area {
+  border: 2px dashed var(--glass-border);
+  border-radius: 14px; padding: 24px; text-align: center;
+  cursor: pointer; transition: all 0.2s;
+  background: var(--glass-bg-light);
+}
+.upload-area:hover {
+  border-color: var(--glass-primary);
+  background: var(--glass-bg);
+  box-shadow: 0 0 0 4px var(--glass-primary-glow);
+}
+.upload-area i { font-size: 28px; color: var(--glass-text-muted); margin-bottom: 6px; display: block; }
+.upload-area p { font-size: 13px; color: var(--glass-text-secondary); margin: 0; }
+.upload-area .hint { font-size: 11px; color: var(--glass-text-muted); margin-top: 3px; }
+
+/* 预览区 */
+.preview-box { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.preview-item { position: relative; display: inline-block; }
+.preview-item img, .preview-item video {
+  width: 100px; height: 66px; object-fit: cover;
+  border-radius: 10px; border: 1px solid var(--glass-border);
+}
+.preview-item .remove-btn {
+  position: absolute; top: -6px; right: -6px;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--glass-danger); color: #fff; border: none;
+  font-size: 11px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* 提示框 */
+.info-block {
+  background: rgba(79,124,255,0.05);
+  border: 1px solid rgba(79,124,255,0.12);
+  border-radius: 12px; padding: 12px 16px;
+  font-size: 12.5px; color: var(--glass-text); line-height: 1.6;
+  margin-top: 14px;
+}
+.info-block i { color: var(--glass-primary); margin-right: 5px; }
+.info-block a { color: var(--glass-primary); font-weight: 500; }
+
+/* 面板显隐 */
+.settings-pane { display: none; }
+.settings-pane.active { display: block; }
+
+/* 右上角保存按钮 */
+.settings-save-top {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  padding: 9px 24px; font-size: 13px; font-weight: 700;
+  border-radius: 12px; border: none; color: #fff;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  box-shadow: 0 3px 14px rgba(102,126,234,0.35);
+  cursor: pointer; transition: all 0.2s ease;
+  display: flex; align-items: center; gap: 6px;
+  white-space: nowrap; z-index: 5;
+}
+.settings-save-top:hover {
+  transform: translateY(calc(-50% - 1px));
+  box-shadow: 0 6px 20px rgba(102,126,234,0.45);
+}
+.settings-save-top:active { transform: translateY(-50%) scale(0.97); }
+
+/* 响应式 */
+@media (max-width: 992px) {
+  .settings-grid { grid-template-columns: 1fr; }
+  .settings-grid.triple { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 768px) {
+  .settings-tabs { border-radius: 12px; padding: 3px; }
+  .settings-tab { padding: 8px 14px; font-size: 12.5px; border-radius: 10px; }
+  .settings-tab i { display: none; }
+  .settings-grid.triple { grid-template-columns: 1fr; }
+  .settings-card-header { padding: 12px 16px; }
+  .settings-card-body { padding: 16px; }
+  .settings-field-row { grid-template-columns: 1fr; }
+  .settings-save-top { position: static; transform: none; margin-left: auto; padding: 7px 16px; font-size: 12px; border-radius: 10px; }
+}
+</style>
+
+<main class="lyear-layout-content">
+  <div class="container-fluid glass-animate-in settings-page settings-content-area">
+    <form action="" method="post" name="edit-form" class="edit-form admin-form">
+
+      <!-- ========== 顶部标签导航 ========== -->
+      <div class="settings-tabs" id="settingsTabs" style="position:relative;">
+        <button type="button" class="settings-tab active" data-tab="tab-basic">
+          <i class="mdi mdi-cog"></i> 基本设置
+        </button>
+        <button type="button" class="settings-tab" data-tab="tab-bg">
+          <i class="mdi mdi-image"></i> 背景设置
+        </button>
+        <button type="button" class="settings-tab" data-tab="tab-email">
+          <i class="mdi mdi-email-outline"></i> 邮件设置
+        </button>
+        <button type="button" class="settings-tab" data-tab="tab-security">
+          <i class="mdi mdi-shield-check"></i> 安全设置
+        </button>
+        <button type="button" class="settings-tab" data-tab="tab-extras">
+          <i class="mdi mdi-puzzle"></i> 扩展功能
+        </button>
+        <!-- 右上角保存按钮 -->
+        <button type="submit" class="settings-save-top">
+          <i class="mdi mdi-content-save"></i> 保存全部设置
+        </button>
+      </div>
+
+      <!-- ================================================================ -->
+      <!-- 1. 基本设置 -->
+      <!-- ================================================================ -->
+      <div class="settings-pane active" id="pane-tab-basic">
+        <div class="settings-grid">
+          <!-- 网站基本信息 -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <i class="mdi mdi-information-outline"></i>
+              <div><div class="title">网站基本信息</div><div class="desc">站点名称、描述与关键词</div></div>
+            </div>
+            <div class="settings-card-body">
+              <div class="settings-field">
+                <label class="settings-field-label">网站名称</label>
+                <input class="form-control" type="text" name="name" value="{$web.name}">
+              </div>
+              <div class="settings-field">
+                <label class="settings-field-label">网站描述</label>
+                <input class="form-control" type="text" name="description" value="{$web.description}">
+              </div>
+              <div class="settings-field">
+                <label class="settings-field-label">网站关键词</label>
+                <input class="form-control" type="text" name="keywords" value="{$web.keywords}">
+              </div>
+            </div>
+          </div>
+
+          <!-- 模板与维护 -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <i class="mdi mdi-palette"></i>
+              <div><div class="title">模板与维护</div><div class="desc">切换模板与维护模式</div></div>
+            </div>
+            <div class="settings-card-body">
+              <div class="settings-field-row">
+                <div class="settings-field">
+                  <label class="settings-field-label">前台模板</label>
+                  <select name="template" class="form-select">
+                    {volist name="template" id="t"}
+                    <option value="{$t}" {if $web.template==$t}selected{/if}>{$t}</option>
+                    {/volist}
+                  </select>
+                </div>
+                <div class="settings-field">
+                  <label class="settings-field-label">后台模板</label>
+                  <select name="admintemplate" class="form-select">
+                    {volist name="admintemplate" id="ad"}
+                    <option value="{$ad}" {if $web.template==$ad}selected{/if}>{$ad}</option>
+                    {/volist}
+                  </select>
+                </div>
+              </div>
+              <div class="settings-field" style="margin-top:14px;">
+                <label class="settings-field-label">维护模式</label>
+                <select name="wh" class="form-select">
+                  <option value="1" {if $web.wh=="1"}selected{/if}>开启</option>
+                  <option value="0" {if $web.wh=="0"}selected{/if}>关闭</option>
+                </select>
+              </div>
+              <div class="settings-field">
+                <label class="settings-field-label">维护信息</label>
+                <textarea class="form-control" name="whxx" style="height:80px;">{$web.whxx}</textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 站点信息 (brand + beian + contact + datacenter + popup) -->
+        <div class="settings-grid">
+          <!-- 品牌标识 -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <i class="mdi mdi-format-paint"></i>
+              <div><div class="title">品牌标识</div><div class="desc">网站图标与 Logo</div></div>
+            </div>
+            <div class="settings-card-body">
+              <div class="settings-field">
+                <label class="settings-field-label">网站头像 (Favicon)</label>
+                <input class="form-control" type="text" name="favicon" value="{$web.favicon}" placeholder="/favicon.ico">
+              </div>
+              <div class="settings-field">
+                <label class="settings-field-label">Logo 图标 (Material Design)</label>
+                <input class="form-control" type="text" name="logo_icon" value="{$web.logo_icon|default='mdi mdi-server'}" placeholder="mdi mdi-server">
+              </div>
+              <div class="settings-field">
+                <label class="settings-field-label">首页 Logo 图片地址</label>
+                <input class="form-control" type="text" name="logo" value="{$web.logo|default=''}" placeholder="留空则使用上方图标">
+                <div class="settings-field-hint">建议尺寸 200x50px，支持 PNG/WebP</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 备案与许可证 -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <i class="mdi mdi-certificate"></i>
+              <div><div class="title">备案与许可证</div><div class="desc">ICP、公安备案及营业执照</div></div>
+            </div>
+            <div class="settings-card-body">
+              <div class="settings-field">
+                <label class="settings-field-label">ICP 备案号</label>
+                <input class="form-control" type="text" name="icp" value="{$web.icp|default=''}" placeholder="如：京ICP备XXXXXX号">
+              </div>
+              <div class="settings-field">
+                <label class="settings-field-label">营业执照号</label>
+                <input class="form-control" type="text" name="business_license" value="{$web.business_license|default=''}">
+              </div>
+              <div class="settings-field">
+                <label class="settings-field-label">公安备案号</label>
+                <input class="form-control" type="text" name="police_beian" value="{$web.police_beian|default=''}">
+              </div>
+              <div class="settings-field">
+                <label class="settings-field-label">增值电信业务许可证</label>
+                <input class="form-control" type="text" name="telecom_license" value="{$web.telecom_license|default=''}">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-grid">
+          <!-- 联系方式 -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <i class="mdi mdi-link-variant"></i>
+              <div><div class="title">联系方式</div><div class="desc">客服邮箱与QQ群</div></div>
+            </div>
+            <div class="settings-card-body">
+              <div class="settings-field">
+                <label class="settings-field-label">客服邮箱</label>
+                <input class="form-control" type="email" name="service_email" value="{$web.service_email|default=''}" placeholder="留空则使用邮箱配置中的账号">
+              </div>
+              <div class="settings-field">
+                <label class="settings-field-label">QQ 官方群号/链接</label>
+                <input class="form-control" type="text" name="qq_group" value="{$web.qq_group|default=''}" placeholder="群号或完整加群链接">
+              </div>
+            <div class="text-end mt-3">
+              <button type="submit" class="btn-admin btn-admin-primary">
+                <i class="mdi mdi-content-save"></i> 保存
+              </button>
+            </div>
+            </div>
+          </div>
+
+          <!-- 全球数据中心 -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <i class="mdi mdi-map-marker"></i>
+              <div><div class="title">全球数据中心</div><div class="desc">自定义节点列表 JSON</div></div>
+            </div>
+            <div class="settings-card-body">
+              <div class="settings-field">
+                <label class="settings-field-label">数据中心列表 (JSON)</label>
+                <textarea class="form-control" name="global_datacenters" style="height:100px;" placeholder='[{"name":"美国洛杉矶","region":"US West","status":"运行正常","icon":"mdi mdi-map-marker"}]'>{$web.global_datacenters|default=''}</textarea>
+                <div class="settings-field-hint">留空则使用默认节点。每个节点包含 name/region/status/icon</div>
+              </div>
+            <div class="text-end mt-3">
+              <button type="submit" class="btn-admin btn-admin-primary">
+                <i class="mdi mdi-content-save"></i> 保存
+              </button>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 弹窗公告 -->
+        <div class="settings-grid full">
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <i class="mdi mdi-bullhorn"></i>
+              <div><div class="title">弹窗公告</div><div class="desc">进入网站时自动弹出公告窗口</div></div>
+            </div>
+            <div class="settings-card-body">
+              <div class="settings-switch-row">
+                <div class="info">
+                  <span class="label">启用弹窗公告</span>
+                  <span class="desc">开启后访问网站首页将弹出公告</span>
+                </div>
+                <div class="form-check form-switch">
+                  <input type="hidden" name="popup_notice" value="0">
+                  <input class="form-check-input" type="checkbox" name="popup_notice" value="1" {if isset($web.popup_notice) && $web.popup_notice=="1"}checked{/if}>
+                </div>
+              </div>
+              <div class="settings-field-row">
+                <div class="settings-field">
+                  <label class="settings-field-label">公告标题</label>
+                  <input class="form-control" type="text" name="popup_title" value="{$web.popup_title|default=''}" placeholder="网站公告">
+                </div>
+                <div class="settings-field">
+                  <label class="settings-field-label">公告内容 (支持 HTML)</label>
+                  <textarea class="form-control" name="popup_content" style="height:100px;" placeholder="可输入 HTML，包括 iframe 视频、图片等">{$web.popup_content|default=''}</textarea>
+                </div>
+              </div>
+            <div class="text-end mt-3">
+              <button type="submit" class="btn-admin btn-admin-primary">
+                <i class="mdi mdi-content-save"></i> 保存
+              </button>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================ -->
+      <!-- 2. 背景设置 -->
+      <!-- ================================================================ -->
+      <div class="settings-pane" id="pane-tab-bg">
+        <div class="settings-grid">
+          <!-- 液态玻璃主题 -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <i class="mdi mdi-auto-fix"></i>
+              <div><div class="title">液态玻璃主题</div><div class="desc">全站视觉效果控制</div></div>
+            </div>
+            <div class="settings-card-body">
+              <div class="settings-field">
+                <label class="settings-field-label">配色方案</label>
+                <select name="glass_theme" class="form-select">
+                  <option value="default" {if !isset($web.glass_theme) || $web.glass_theme=='default'}selected{/if}>冰蓝默认（默认）</option>
+                  <option value="pink_blue" {if isset($web.glass_theme) && $web.glass_theme=='pink_blue'}selected{/if}>粉蓝渐变风</option>
+                </select>
+                <div class="settings-field-hint">切换全站配色方案，冰蓝清爽 / 粉蓝甜美</div>
+              </div>
+              <div class="settings-switch-row">
+                <div class="info">
+                  <span class="label">启用液态玻璃效果</span>
+                  <span class="desc">关闭后全站恢复原始主题样式</span>
+                </div>
+                <div class="form-check form-switch">
+                  <input type="hidden" name="glass_enabled" value="0">
+                  <input class="form-check-input" type="checkbox" name="glass_enabled" value="1" {if !isset($web.glass_enabled) || $web.glass_enabled=="1"}checked{/if}>
+                </div>
+              </div>
+              <div class="settings-field">
+                <label class="settings-field-label">页面透明度</label>
+                <div class="d-flex align-items-center gap-3">
+                  <input type="range" class="form-range flex-grow-1" name="glass_opacity" min="30" max="100" value="{php}echo isset($web['glass_opacity']) ? intval($web['glass_opacity']) : 72;{/php}" oninput="document.getElementById('opacityVal').textContent=this.value+'%'">
+                  <span id="opacityVal" style="font-weight:700;min-width:42px;color:var(--glass-primary);">{php}echo isset($web['glass_opacity']) ? intval($web['glass_opacity']) : 72;{/php}%</span>
+                </div>
+                <div class="settings-field-hint">数值越大越不透明，推荐 65%~80%</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 背景类型与文件 -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <i class="mdi mdi-filmstrip"></i>
+              <div><div class="title">背景类型与文件</div><div class="desc">全局背景图/视频/GIF</div></div>
+            </div>
+            <div class="settings-card-body">
+              <div class="settings-field-row">
+                <div class="settings-field">
+                  <label class="settings-field-label">背景类型</label>
+                  <select name="bg_type" class="form-select" id="bgTypeSelect">
+                    <option value="image" {if !isset($web.bg_type) || $web.bg_type=='image'}selected{/if}>普通图片</option>
+                    <option value="video" {if isset($web.bg_type) && $web.bg_type=='video'}selected{/if}>视频 (MP4/WebM)</option>
+                    <option value="gif" {if isset($web.bg_type) && $web.bg_type=='gif'}selected{/if}>动态 GIF</option>
+                  </select>
+                </div>
+                <div class="settings-field">
+                  <label class="settings-field-label">背景模糊程度</label>
+                  <div class="d-flex align-items-center gap-3">
+                    <input type="range" class="form-range flex-grow-1" name="bg_blur" min="0" max="10" value="{$web.bg_blur|default='3'}" oninput="document.getElementById('blurVal').textContent=this.value+'px'">
+                    <span id="blurVal" style="font-weight:700;min-width:42px;color:var(--glass-primary);">{$web.bg_blur|default='3'}px</span>
+                  </div>
+                  <div class="settings-field-hint">0=清晰原图，10=最模糊</div>
+                </div>
+              </div>
+              {php}$videoOptionsStyle = (!isset($web['bg_type']) || $web['bg_type'] != 'video') ? 'display:none;' : '';{/php}
+              <div class="settings-field-row video-bg-options" style="{$videoOptionsStyle}">
+                <div class="settings-field">
+                  <div class="settings-switch-row">
+                    <div class="info"><span class="label">循环播放</span></div>
+                    <div class="form-check form-switch">
+                      <input type="hidden" name="bg_video_loop" value="0">
+                      <input class="form-check-input" type="checkbox" name="bg_video_loop" value="1" {if !isset($web.bg_video_loop) || $web.bg_video_loop=="1"}checked{/if}>
+                    </div>
+                  </div>
+                </div>
+                <div class="settings-field">
+                  <div class="settings-switch-row">
+                    <div class="info"><span class="label">静音播放</span></div>
+                    <div class="form-check form-switch">
+                      <input type="hidden" name="bg_video_muted" value="0">
+                      <input class="form-check-input" type="checkbox" name="bg_video_muted" value="1" {if !isset($web.bg_video_muted) || $web.bg_video_muted=="1"}checked{/if}>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="settings-field">
+                <div class="upload-area" id="bgUploadArea">
+                  <i class="mdi mdi-cloud-upload-outline"></i>
+                  <p>点击或拖拽文件上传</p>
+                  <span class="hint" id="bgUploadHint">支持 JPG/PNG/WebP，建议 1920x1080</span>
+                  <input type="file" id="bgFileInput" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm,image/gif" style="display:none;">
+                </div>
+                <div class="preview-box" id="bgPreviewContainer">
+                  {if isset($web.bg_image) && $web.bg_image}
+                  <div class="preview-item">
+                    {if isset($web.bg_type) && $web.bg_type=='video'}
+                    <video src="{$web.bg_image}" muted loop playsinline></video>
+                    {else}
+                    <img src="{$web.bg_image}">
+                    {/if}
+                    <button type="button" class="remove-btn btn-remove-bg">&times;</button>
+                  </div>
+                  {/if}
+                </div>
+              </div>
+            <div class="text-end mt-3">
+              <button type="submit" class="btn-admin btn-admin-primary">
+                <i class="mdi mdi-content-save"></i> 保存
+              </button>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-grid">
+          <!-- 轮播背景图 -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <i class="mdi mdi-image-multiple"></i>
+              <div><div class="title">轮播背景图</div><div class="desc">多张背景图自动轮播</div></div>
+            </div>
+            <div class="settings-card-body">
+              <div class="settings-field">
+                <div class="upload-area mb-2" id="bgMultiUploadArea">
+                  <i class="mdi mdi-image-multiple"></i>
+                  <p>上传轮播背景图</p>
+                  <span class="hint">支持 JPG/PNG/WebP，可多选</span>
+                  <input type="file" id="bgMultiFileInput" accept="image/jpeg,image/png,image/webp" style="display:none;" multiple>
+                </div>
+                <div class="preview-box" id="bgMultiPreview"></div>
+                <textarea name="bg_images" class="form-control mt-2" rows="3" placeholder="每行一个图片URL，也可上方上传自动填入">{$web.bg_images|default=''}</textarea>
+              </div>
+              <div class="settings-field">
+                <label class="settings-field-label">轮播间隔 (秒)</label>
+                <div class="input-group" style="max-width:180px;">
+                  <input type="number" class="form-control" name="bg_switch_interval" min="0" step="1" value="{$web.bg_switch_interval|default='0'}">
+                  <span class="input-group-text">秒</span>
+                </div>
+                <div class="settings-field-hint">0 = 不轮播</div>
+              </div>
+            <div class="text-end mt-3">
+              <button type="submit" class="btn-admin btn-admin-primary">
+                <i class="mdi mdi-content-save"></i> 保存
+              </button>
+            </div>
+            </div>
+          </div>
+
+          <!-- 预设渐变色 -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <i class="mdi mdi-format-paint"></i>
+              <div><div class="title">预设渐变色</div><div class="desc">选择页面背景渐变方案</div></div>
+            </div>
+            <div class="settings-card-body">
+              {php}$bgGradient = isset($web['bg_gradient']) ? $web['bg_gradient'] : 'default';{/php}
+              <input type="hidden" name="bg_gradient" id="bgGradientInput" value="{$bgGradient}">
+              <div class="gradient-picker" id="bgGradientPicker">
+                <div class="gradient-swatch {if $bgGradient == 'default'}active{/if}" data-gradient="default" style="background:linear-gradient(135deg,#EEF2FF,#E0E7FF);" title="默认冰蓝"></div>
+                <div class="gradient-swatch {if $bgGradient == 'purple'}active{/if}" data-gradient="purple" style="background:linear-gradient(135deg,#F5F3FF,#EDE9FE);" title="紫罗兰"></div>
+                <div class="gradient-swatch {if $bgGradient == 'rose'}active{/if}" data-gradient="rose" style="background:linear-gradient(135deg,#FFF1F2,#FFE4E6);" title="玫瑰粉"></div>
+                <div class="gradient-swatch {if $bgGradient == 'emerald'}active{/if}" data-gradient="emerald" style="background:linear-gradient(135deg,#ECFDF5,#D1FAE5);" title="翡翠绿"></div>
+                <div class="gradient-swatch {if $bgGradient == 'amber'}active{/if}" data-gradient="amber" style="background:linear-gradient(135deg,#FFFBEB,#FEF3C7);" title="琥珀黄"></div>
+                <div class="gradient-swatch {if $bgGradient == 'slate'}active{/if}" data-gradient="slate" style="background:linear-gradient(135deg,#F8FAFC,#E2E8F0);" title="岩石灰"></div>
+                <div class="gradient-swatch {if $bgGradient == 'sky'}active{/if}" data-gradient="sky" style="background:linear-gradient(135deg,#F0F9FF,#E0F2FE);" title="天空蓝"></div>
+                <div class="gradient-swatch {if $bgGradient == 'teal'}active{/if}" data-gradient="teal" style="background:linear-gradient(135deg,#F0FDFA,#CCFBF1);" title="青绿色"></div>
+              </div>
+            <div class="text-end mt-3">
+              <button type="submit" class="btn-admin btn-admin-primary">
+                <i class="mdi mdi-content-save"></i> 保存
+              </button>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================ -->
+      <!-- 3. 邮件设置 -->
+      <!-- ================================================================ -->
+      <div class="settings-pane" id="pane-tab-email">
+        <div class="settings-grid">
+          <!-- SMTP 配置 -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <i class="mdi mdi-cog-outline"></i>
+              <div><div class="title">SMTP 配置</div><div class="desc">邮件发送服务器参数</div></div>
+            </div>
+            <div class="settings-card-body">
+              <div class="settings-switch-row">
+                <div class="info">
+                  <span class="label">开启邮箱通知</span>
+                  <span class="desc">启用后系统将通过 SMTP 发送邮件</span>
+                </div>
+                <select name="email" class="form-select" style="width:110px;">
+                  <option value="1" {if $web.email=="1"}selected{/if}>开启</option>
+                  <option value="0" {if $web.email=="0"}selected{/if}>关闭</option>
+                </select>
+              </div>
+              <div class="settings-field-row">
+                <div class="settings-field">
+                  <label class="settings-field-label">SMTP 服务器</label>
+                  <input class="form-control" type="text" name="emailhost" value="{$web.emailhost}" placeholder="如：smtp.qq.com">
+                </div>
+                <div class="settings-field">
+                  <label class="settings-field-label">服务器端口</label>
+                  <input class="form-control" type="text" name="emailport" value="{$web.emailport}" placeholder="如：465">
+                </div>
+              </div>
+              <div class="settings-field-row">
+                <div class="settings-field">
+                  <label class="settings-field-label">SMTP 协议</label>
+                  <input class="form-control" type="text" name="emailsecure" value="{$web.emailsecure}" placeholder="如：ssl">
+                </div>
+                <div class="settings-field">
+                  <label class="settings-field-label">邮件编码</label>
+                  <input class="form-control" type="text" name="emailchar" value="{$web.emailchar}" placeholder="如：UTF-8">
+                </div>
+              </div>
+            <div class="text-end mt-3">
+              <button type="submit" class="btn-admin btn-admin-primary">
+                <i class="mdi mdi-content-save"></i> 保存
+              </button>
+            </div>
+            </div>
+          </div>
+
+          <!-- 认证信息 -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <i class="mdi mdi-account-lock"></i>
+              <div><div class="title">认证信息</div><div class="desc">邮箱账号与授权码</div></div>
+            </div>
+            <div class="settings-card-body">
+              <div class="settings-switch-row">
+                <div class="info">
+                  <span class="label">开启邮箱认证</span>
+                  <span class="desc">需要登录验证时启用</span>
+                </div>
+                <select name="emailauth" class="form-select" style="width:110px;">
+                  <option value="true" {if $web.emailauth=="true"}selected{/if}>开启</option>
+                  <option value="false" {if $web.emailauth=="false"}selected{/if}>关闭</option>
+                </select>
+              </div>
+              <div class="settings-field">
+                <label class="settings-field-label">邮箱账号</label>
+                <input class="form-control" type="email" name="emailname" value="{$web.emailname}" placeholder="如：admin@example.com">
+              </div>
+              <div class="settings-field">
+                <label class="settings-field-label">邮箱密码 / 授权码</label>
+                <input class="form-control" type="password" name="emailpass" value="{$web.emailpass}" placeholder="QQ邮箱请使用授权码">
+              </div>
+            <div class="text-end mt-3">
+              <button type="submit" class="btn-admin btn-admin-primary">
+                <i class="mdi mdi-content-save"></i> 保存
+              </button>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 邮箱验证 -->
+        <div class="settings-grid full">
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <i class="mdi mdi-email-open-outline"></i>
+              <div><div class="title">邮箱验证设置</div><div class="desc">注册验证、邮箱登录与防临时邮箱</div></div>
+            </div>
+            <div class="settings-card-body">
+              <div class="settings-switch-row">
+                <div class="info">
+                  <span class="label">注册邮箱验证</span>
+                  <span class="desc">开启后用户注册需验证邮箱</span>
+                </div>
+                <select name="zcyxyz" class="form-select" style="width:110px;">
+                  <option value="1" {if $web.zcyxyz=="1"}selected{/if}>开启</option>
+                  <option value="0" {if $web.zcyxyz=="0"}selected{/if}>关闭</option>
+                </select>
+              </div>
+              <div class="settings-switch-row">
+                <div class="info">
+                  <span class="label">邮箱登录</span>
+                  <span class="desc">开启后支持邮箱+验证码登录</span>
+                </div>
+                <select name="yxdl" class="form-select" style="width:110px;">
+                  <option value="1" {if $web.yxdl=="1"}selected{/if}>开启</option>
+                  <option value="0" {if $web.yxdl=="0"}selected{/if}>关闭</option>
+                </select>
+              </div>
+              <div class="settings-switch-row">
+                <div class="info">
+                  <span class="label">防临时邮箱注册</span>
+                  <span class="desc">禁止使用10分钟邮箱等临时邮箱注册</span>
+                </div>
+                <select name="disposable_email_block" class="form-select" style="width:110px;">
+                  <option value="1" {if isset($web.disposable_email_block) && $web.disposable_email_block=="1"}selected{/if}>开启</option>
+                  <option value="0" {if !isset($web.disposable_email_block) || $web.disposable_email_block=="0"}selected{/if}>关闭</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================ -->
+      <!-- 4. 安全设置 -->
+      <!-- ================================================================ -->
+      <div class="settings-pane" id="pane-tab-security">
+        <!-- 实名认证 -->
+        <div class="settings-grid">
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <i class="mdi mdi-card-account-details"></i>
+              <div><div class="title">认证模式</div><div class="desc">实名认证方式与API选择</div></div>
+            </div>
+            <div class="settings-card-body">
+              <div class="settings-field">
+                <label class="settings-field-label">实名认证模式</label>
+                <select name="realname_mode" class="form-select">
+                  <option value="0" {if condition="!isset($web.realname_mode) || $web.realname_mode=='0'"}selected{/if}>关闭</option>
+                  <option value="1" {if $web.realname_mode=='1'}selected{/if}>API 接口认证</option>
+                  <option value="2" {if $web.realname_mode=='2'}selected{/if}>人工审核</option>
+                  <option value="3" {if $web.realname_mode=='3'}selected{/if}>阿里云认证</option>
+                </select>
+              </div>
+              <div class="settings-field">
+                <label class="settings-field-label">API 接口选择</label>
+                <select name="realname_api_type" class="form-select" id="realname_api_type">
+                  <option value="1" {if $web.realname_api_type=='1'}selected{/if}>花迹数据 (appid+appkey)</option>
+                  <option value="2" {if $web.realname_api_type=='2'}selected{/if}>云市场 二要素 (SecretId+SecretKey)</option>
+                  <option value="3" {if $web.realname_api_type=='3'}selected{/if}>云市场 手机三要素 (SecretId+SecretKey)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- 未实名限制 -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <i class="mdi mdi-cancel"></i>
+              <div><div class="title">未实名限制</div><div class="desc">未认证用户的操作限制</div></div>
+            </div>
+            <div class="settings-card-body">
+              <div class="settings-field-row">
+                <div class="settings-field">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="realname_limit_pay" value="1" {if $web.realname_limit_pay=='1'}checked{/if}>
+                    <label class="form-check-label">限制余额充值</label>
+                  </div>
+                </div>
+                <div class="settings-field">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="realname_limit_buy" value="1" {if $web.realname_limit_buy=='1'}checked{/if}>
+                    <label class="form-check-label">限制购买主机</label>
+                  </div>
+                </div>
+                <div class="settings-field">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="realname_limit_ticket" value="1" {if $web.realname_limit_ticket=='1'}checked{/if}>
+                    <label class="form-check-label">限制提交工单</label>
+                  </div>
+                </div>
+                <div class="settings-field">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="realname_limit_renew" value="1" {if $web.realname_limit_renew=='1'}checked{/if}>
+                    <label class="form-check-label">限制续费主机</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-grid">
+          <!-- API 配置 -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <i class="mdi mdi-key-variant"></i>
+              <div><div class="title">API 配置</div><div class="desc">实名认证接口密钥</div></div>
+            </div>
+            <div class="settings-card-body">
+              <div class="realname-config realname-config-1">
+                <div class="settings-field">
+                  <label class="settings-field-label">AppID (花迹数据)</label>
+                  <input type="text" name="realname_api_appid" class="form-control" placeholder="AppID" value="{$web.realname_api_appid|default=''}">
+                </div>
+                <div class="settings-field">
+                  <label class="settings-field-label">AppKey (花迹数据)</label>
+                  <input type="text" name="realname_api_appkey" class="form-control" placeholder="AppKey" value="{$web.realname_api_appkey|default=''}">
+                </div>
+              </div>
+              <div class="realname-config realname-config-2" style="display:none;">
+                <div class="settings-field">
+                  <label class="settings-field-label">SecretId (云市场)</label>
+                  <input type="text" name="realname_secret_id" class="form-control" placeholder="SecretId" value="{$web.realname_secret_id|default=''}">
+                </div>
+                <div class="settings-field">
+                  <label class="settings-field-label">SecretKey (云市场)</label>
+                  <input type="text" name="realname_secret_key" class="form-control" placeholder="SecretKey" value="{$web.realname_secret_key|default=''}">
+                </div>
+              </div>
+              <div style="margin-top:12px;">
+                <button type="button" class="btn btn-admin-primary btn-sm" id="btnTestRealnameApi">
+                  <i class="mdi mdi-power-plug"></i> 测试 API 连接
+                </button>
+                <span id="testRealnameApiMsg" style="margin-left:10px;font-size:13px;"></span>
+              </div>
+            <div class="text-end mt-3">
+              <button type="submit" class="btn-admin btn-admin-primary">
+                <i class="mdi mdi-content-save"></i> 保存
+              </button>
+            </div>
+            </div>
+          </div>
+
+          <!-- 认证收费 -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <i class="mdi mdi-currency-cny"></i>
+              <div><div class="title">认证收费</div><div class="desc">首次免费与每次收费</div></div>
+            </div>
+            <div class="settings-card-body">
+              <div class="settings-field">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="realname_first_free" value="1" {if (!isset($web.realname_first_free) || $web.realname_first_free=='1')}checked{/if}>
+                  <label class="form-check-label">首次认证免费</label>
+                </div>
+              </div>
+              <div class="settings-field">
+                <label class="settings-field-label">每次认证收费</label>
+                <div class="input-group" style="max-width:200px;">
+                  <input type="number" name="realname_charge_amount" class="form-control" step="0.01" min="0" placeholder="0" value="{$web.realname_charge_amount|default='0'}">
+                  <span class="input-group-text">元</span>
+                </div>
+                <div class="settings-field-hint">输入错误信息同样扣除费用，不可退回</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 聚合登录 -->
+        <div class="settings-grid full">
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <i class="mdi mdi-login"></i>
+              <div><div class="title">聚合登录配置</div><div class="desc">QQ 快捷登录与绑定</div></div>
+            </div>
+            <div class="settings-card-body">
+              <div class="settings-switch-row">
+                <div class="info">
+                  <span class="label">启用聚合登录</span>
+                  <span class="desc">开启后用户可使用 QQ 快捷登录和绑定</span>
+                </div>
+                <div class="form-check form-switch">
+                  <input type="hidden" name="oauth_enabled" value="0">
+                  <input class="form-check-input" type="checkbox" name="oauth_enabled" value="1" {if isset($web.oauth_enabled) && $web.oauth_enabled=="1"}checked{/if}>
+                </div>
+              </div>
+              <div class="settings-field-row">
+                <div class="settings-field">
+                  <label class="settings-field-label">应用 ID</label>
+                  <input class="form-control" type="text" name="oauth_appid" value="{$web.oauth_appid|default=''}" placeholder="登录 mapay.cn 获取">
+                </div>
+                <div class="settings-field">
+                  <label class="settings-field-label">应用密钥</label>
+                  <input class="form-control" type="text" name="oauth_appkey" value="{$web.oauth_appkey|default=''}" placeholder="登录 mapay.cn 获取">
+                </div>
+              </div>
+              <div class="settings-field">
+                <label class="settings-field-label">回调 URL</label>
+                <input class="form-control" type="text" name="oauth_callback" value="{$web.oauth_callback|default=''}" placeholder="https://您的域名/oauth/callback">
+                <div class="settings-field-hint">需与 mapay.cn 后台回调地址一致，留空则自动拼接当前域名</div>
+              </div>
+              <div class="info-block">
+                <i class="mdi mdi-information-outline"></i>
+                聚合登录服务由 <a href="https://login.mapay.cn/" target="_blank">login.mapay.cn</a> 提供，请先前往注册获取应用ID和密钥。
+              </div>
+            <div class="text-end mt-3">
+              <button type="submit" class="btn-admin btn-admin-primary">
+                <i class="mdi mdi-content-save"></i> 保存
+              </button>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================ -->
+      <!-- 5. 扩展功能 -->
+      <!-- ================================================================ -->
+      <div class="settings-pane" id="pane-tab-extras">
+        <div class="settings-grid">
+          <!-- Live2D 看板娘 -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <i class="mdi mdi-account-tie"></i>
+              <div><div class="title">Live2D 看板娘</div><div class="desc">首页和用户控制台显示角色</div></div>
+            </div>
+            <div class="settings-card-body">
+              <div class="settings-switch-row">
+                <div class="info">
+                  <span class="label">启用看板娘</span>
+                  <span class="desc">首页和用户控制台显示 Live2D 角色</span>
+                </div>
+                <div class="form-check form-switch">
+                  <input type="hidden" name="live2d_enabled" value="0">
+                  <input class="form-check-input" type="checkbox" name="live2d_enabled" value="1" {if !isset($web.live2d_enabled) || $web.live2d_enabled=="1"}checked{/if}>
+                </div>
+              </div>
+              <div class="settings-field-row">
+                <div class="settings-field">
+                  <label class="settings-field-label">选择模型</label>
+                  <select class="form-select" name="live2d_model">
+                    <option value="shufulei" {if !isset($web.live2d_model) || $web.live2d_model=='shufulei'}selected{/if}>舒芙蕾（推荐）</option>
+                    <option value="youxiaomiao" {if isset($web.live2d_model) && $web.live2d_model=='youxiaomiao'}selected{/if}>悠小喵（新）</option>
+                    <option value="shizuku" {if isset($web.live2d_model) && $web.live2d_model=='shizuku'}selected{/if}>Shizuku</option>
+                    <option value="shizuku_pajama" {if isset($web.live2d_model) && $web.live2d_model=='shizuku_pajama'}selected{/if}>Shizuku 睡衣版</option>
+                    <option value="pio" {if isset($web.live2d_model) && $web.live2d_model=='pio'}selected{/if}>Pio</option>
+                    <option value="senko" {if isset($web.live2d_model) && $web.live2d_model=='senko'}selected{/if}>Senko 仙狐</option>
+                    <option value="hk416" {if isset($web.live2d_model) && $web.live2d_model=='hk416'}selected{/if}>HK416</option>
+                    <option value="cat_black" {if isset($web.live2d_model) && $web.live2d_model=='cat_black'}selected{/if}>黑猫</option>
+                  </select>
+                </div>
+                <div class="settings-field">
+                  <label class="settings-field-label">缩放比例</label>
+                  <input class="form-control" type="number" step="0.01" min="0.01" max="1.0" name="live2d_scale" value="{$web.live2d_scale|default='0.1'}" placeholder="0.1">
+                  <div class="settings-field-hint">范围 0.01~1.0，默认 0.1</div>
+                </div>
+              </div>
+              <div class="settings-field-row">
+                <div class="settings-field">
+                  <label class="settings-field-label">主题色</label>
+                  <input class="form-control" type="color" name="live2d_primary_color" value="{$web.live2d_primary_color|default='#38B0DE'}">
+                </div>
+                <div class="settings-field">
+                  <label class="settings-field-label">水平位置</label>
+                  <input class="form-control" type="number" step="1" name="live2d_pos_x" value="{$web.live2d_pos_x|default='70'}" placeholder="70">
+                </div>
+                <div class="settings-field">
+                  <label class="settings-field-label">垂直位置</label>
+                  <input class="form-control" type="number" step="1" name="live2d_pos_y" value="{$web.live2d_pos_y|default='70'}" placeholder="70">
+                </div>
+              </div>
+              <!-- AI聊天设置 -->
+              <div class="settings-switch-row mt-3">
+                <div class="info">
+                  <span class="label">启用AI聊天</span>
+                  <span class="desc">点击看板娘打开AI聊天面板，支持智能问答</span>
+                </div>
+                <div class="form-check form-switch">
+                  <input type="hidden" name="live2d_ai_enabled" value="0">
+                  <input class="form-check-input" type="checkbox" name="live2d_ai_enabled" value="1" {if !isset($web.live2d_ai_enabled) || $web.live2d_ai_enabled=="1"}checked{/if}>
+                </div>
+              </div>
+              <div class="settings-field-row">
+                <div class="settings-field">
+                  <label class="settings-field-label">AI模型</label>
+                  <select class="form-control" name="live2d_ai_model">
+                    <option value="deepseek-v4-flash" {if !isset($web.live2d_ai_model) || $web.live2d_ai_model=='deepseek-v4-flash' || $web.live2d_ai_model==''}selected{/if}>DeepSeek V4 Flash（快速便宜）</option>
+                    <option value="deepseek-v4-pro" {if isset($web.live2d_ai_model) && $web.live2d_ai_model=='deepseek-v4-pro'}selected{/if}>DeepSeek V4 Pro（更强推理）</option>
+                  </select>
+                  <div class="settings-field-hint">选择对接的AI大模型，DeepSeek V4 Flash 性价比最高</div>
+                </div>
+                <div class="settings-field">
+                  <label class="settings-field-label">AI API地址</label>
+                  <input class="form-control" type="text" name="live2d_ai_api_url" value="{$web.live2d_ai_api_url|default=''}" placeholder="https://api.deepseek.com/chat/completions">
+                  <div class="settings-field-hint">DeepSeek/OpenAI兼容API地址，留空默认使用DeepSeek</div>
+                </div>
+                <div class="settings-field">
+                  <label class="settings-field-label">AI API密钥</label>
+                  <input class="form-control" type="text" name="live2d_ai_api_key" value="{$web.live2d_ai_api_key|default=''}" placeholder="sk-xxx..." autocomplete="off">
+                  <div class="settings-field-hint"><a href="https://platform.deepseek.com/api_keys" target="_blank">DeepSeek API Key</a>，仅填密钥即可（API地址自动使用DeepSeek）</div>
+                </div>
+              </div>
+              <div class="settings-field">
+                <label class="settings-field-label">AI人设（自定义）</label>
+                <textarea class="form-control" name="live2d_ai_persona" rows="4" placeholder="留空使用默认人设。例如：你是xxx的AI看板娘舒芙蕾，一个毒舌又温柔的傲娇少女，喜欢吐槽但很靠谱……">{$web.live2d_ai_persona|default=''}</textarea>
+                <div class="settings-field-hint">自定义AI看板娘的性格、语气、身份设定；只要不是离谱/违法/危险的问题，AI都会认真回答</div>
+              </div>
+              <div class="info-block">
+                <i class="mdi mdi-information-outline"></i>
+                基于 <a href="https://github.com/Raven9527/oh-my-live2d" target="_blank">oh-my-live2d</a> 开源项目。AI聊天默认对接 <a href="https://api-docs.deepseek.com/" target="_blank">DeepSeek大模型</a>，只需填写API Key即可使用。点击看板娘即可触发专属表情，双击打开AI聊天面板。
+              </div>
+            <div class="text-end mt-3">
+              <button type="submit" class="btn-admin btn-admin-primary">
+                <i class="mdi mdi-content-save"></i> 保存
+              </button>
+            </div>
+            </div>
+          </div>
+
+          <!-- 推广中心 -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <i class="mdi mdi-cash"></i>
+              <div><div class="title">推广佣金设置</div><div class="desc">推广者佣金与提现门槛</div></div>
+            </div>
+            <div class="settings-card-body">
+              <div class="settings-field">
+                <label class="settings-field-label">推广佣金比例</label>
+                <div class="input-group" style="max-width:200px;">
+                  <input class="form-control" type="text" name="affdiscount" value="{$web.affdiscount}" placeholder="如：10">
+                  <span class="input-group-text">%</span>
+                </div>
+                <div class="settings-field-hint">推广者获得的佣金百分比</div>
+              </div>
+              <div class="settings-field">
+                <label class="settings-field-label">最小提现金额</label>
+                <div class="input-group" style="max-width:200px;">
+                  <input class="form-control" type="text" name="affwithdrawal" value="{$web.affwithdrawal}" placeholder="如：50">
+                  <span class="input-group-text">元</span>
+                </div>
+                <div class="settings-field-hint">佣金满此金额方可提现</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-grid">
+          <!-- 主机开通 -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <i class="mdi mdi-server"></i>
+              <div><div class="title">主机开通设置</div><div class="desc">自动/手动开通模式</div></div>
+            </div>
+            <div class="settings-card-body">
+              <div class="settings-field">
+                <label class="settings-field-label">开通模式</label>
+                <select name="host_auto_create" class="form-select">
+                  <option value="0" {if $web.host_auto_create=="0"}selected{/if}>手动开通</option>
+                  <option value="1" {if $web.host_auto_create=="1"}selected{/if}>自动开通</option>
+                </select>
+              </div>
+              <div class="settings-field">
+                <label class="settings-field-label">自动开通延迟 (分钟)</label>
+                <input class="form-control" type="text" name="host_auto_create_delay" value="{$web.host_auto_create_delay|default='0'}" placeholder="如：5">
+                <div class="settings-field-hint">支付成功后延迟多久自动开通</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 计划任务 -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <i class="mdi mdi-clock-outline"></i>
+              <div><div class="title">计划任务配置</div><div class="desc">Cron 任务地址与清理设置</div></div>
+            </div>
+            <div class="settings-card-body">
+              <div class="settings-field">
+                <label class="settings-field-label">计划任务地址</label>
+                <input class="form-control" type="text" value="{$cronurl}" readonly style="background:#f8fafc !important;font-family:monospace;font-size:12px;">
+                <div class="settings-field-hint">将此地址添加到服务器 Crontab 或宝塔计划任务中</div>
+              </div>
+              <div class="settings-field-row">
+                <div class="settings-field">
+                  <label class="settings-field-label">产品到期后终止 (天)</label>
+                  <input class="form-control" type="text" name="cronzz" value="{$web.cronzz}" placeholder="如：3">
+                </div>
+                <div class="settings-field">
+                  <label class="settings-field-label">终止后删除 (天)</label>
+                  <input class="form-control" type="text" name="cronsc" value="{$web.cronsc}" placeholder="如：7">
+                </div>
+              </div>
+              <div class="settings-field-row">
+                <div class="settings-field">
+                  <label class="settings-field-label">删除未支付订单 (分钟)</label>
+                  <input class="form-control" type="text" name="paycron" value="{$web.paycron}" placeholder="如：30">
+                </div>
+                <div class="settings-field">
+                  <label class="settings-field-label">删除未回复工单 (天)</label>
+                  <input class="form-control" type="text" name="tickcron" value="{$web.tickcron}" placeholder="如：7">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 强制QQ群 -->
+        <div class="settings-grid full">
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <i class="mdi mdi-qqchat"></i>
+              <div><div class="title">强制QQ群设置</div><div class="desc">用户需输入卡密才能正常使用网站</div></div>
+            </div>
+            <div class="settings-card-body">
+              <div class="settings-switch-row">
+                <div class="info">
+                  <span class="label">强制加入QQ群</span>
+                  <span class="desc">开启后用户需输入卡密才能正常使用网站</span>
+                </div>
+                <div class="form-check form-switch">
+                  <input type="hidden" name="force_qq_group" value="0">
+                  <input class="form-check-input" type="checkbox" name="force_qq_group" value="1" {if isset($web.force_qq_group) && $web.force_qq_group=="1"}checked{/if}>
+                </div>
+              </div>
+              <div class="settings-field-row">
+                <div class="settings-field">
+                  <label class="settings-field-label">验证卡密</label>
+                  <input class="form-control" type="text" name="force_qq_group_key" value="{$web.force_qq_group_key|default=''}" placeholder="设置用户需要输入的卡密">
+                </div>
+                <div class="settings-field">
+                  <label class="settings-field-label">QQ群号码</label>
+                  <input class="form-control" type="text" name="force_qq_group_number" value="{$web.force_qq_group_number|default=''}" placeholder="如：123456789">
+                </div>
+              </div>
+              <div class="settings-field">
+                <label class="settings-field-label">QQ群加群链接</label>
+                <input class="form-control" type="text" name="force_qq_group_link" value="{$web.force_qq_group_link|default=''}" placeholder="https://qm.qq.com/q/xxxxx">
+              </div>
+              <div class="settings-field">
+                <label class="settings-field-label">加群原因说明</label>
+                <textarea class="form-control" name="force_qq_group_reason" style="height:80px;" placeholder="说明为什么需要加入QQ群">{$web.force_qq_group_reason|default=''}</textarea>
+                <div class="settings-field-hint">此文本将显示在强制弹窗中</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</main>
+{include file="default/footer" /}
+
+<script>
+$(function() {
+  // ========== 顶部标签切换 ==========
+  $('#settingsTabs').on('click', '.settings-tab', function(e) {
+    e.preventDefault();
+    var tab = $(this).data('tab');
+    $('#settingsTabs .settings-tab').removeClass('active');
+    $(this).addClass('active');
+    $('.settings-pane').removeClass('active');
+    $('#pane-' + tab).addClass('active');
+  });
+
+  // ========== 表单提交 ==========
+  $("form").submit(function (){
+    var load = layer.msg('保存中，请稍后...', {icon:16, shade:0.8, time:false});
+    var form = $('form').serializeArray();
+    $.ajax({
+      type: 'POST',
+      url: '',
+      data: form,
+      dataType: 'json',
+      success: function (data) {
+        layer.close(load);
+        if (data.code == 1) {
+          setTimeout(function() { location.href = ''; }, 1000);
+          layer.alert(data.msg, {icon:1, shade:0.8});
+        } else {
+          layer.alert(data.msg, {icon:2, shade:0.8});
+        }
+      },
+      error: function (xhr, status, error) {
+        layer.close(load);
+        var msg = '提交失败';
+        if (xhr.status) msg += '（HTTP ' + xhr.status + '）';
+        if (xhr.responseText && xhr.responseText.length < 500) {
+          msg += '：' + xhr.responseText;
+        } else if (error) {
+          msg += '：' + error;
+        }
+        layer.alert(msg, {icon:2, shade:0.8});
+      }
+    });
+    return false;
+  });
+
+  // ========== 实名认证 API 切换 ==========
+  function toggleRealnameConfig() {
+    var type = $('#realname_api_type').val();
+    $('.realname-config').hide();
+    if (type == '2' || type == '3') {
+      $('.realname-config-2').show();
+    } else {
+      $('.realname-config-1').show();
+    }
+  }
+  toggleRealnameConfig();
+  $('#realname_api_type').on('change', toggleRealnameConfig);
+
+  // ========== 测试实名认证 API ==========
+  $('#btnTestRealnameApi').on('click', function() {
+    var btn = $(this);
+    var msgEl = $('#testRealnameApiMsg');
+    var apiType = $('#realname_api_type').val();
+    var postData = {api_type: apiType};
+    if (apiType == '2' || apiType == '3') {
+      postData.secret_id = $('input[name="realname_secret_id"]').val().trim();
+      postData.secret_key = $('input[name="realname_secret_key"]').val().trim();
+      if (!postData.secret_id || !postData.secret_key) { msgEl.html('<span style="color:#dc3545;">请先填写 SecretId 和 SecretKey</span>'); return; }
+    } else {
+      postData.appid = $('input[name="realname_api_appid"]').val().trim();
+      postData.appkey = $('input[name="realname_api_appkey"]').val().trim();
+      if (!postData.appid || !postData.appkey) { msgEl.html('<span style="color:#dc3545;">请先填写 AppID 和 AppKey</span>'); return; }
+    }
+    btn.prop('disabled', true).html('<i class="mdi mdi-loading mdi-spin"></i> 测试中...');
+    msgEl.html('');
+    $.ajax({
+      type: 'POST', url: '/admin/test_realname_api', data: postData, dataType: 'json',
+      success: function(res) {
+        btn.prop('disabled', false).html('<i class="mdi mdi-power-plug"></i> 测试 API 连接');
+        if (res.code == 1) {
+          msgEl.html('<span style="color:#198754;"><i class="mdi mdi-check-circle"></i> ' + res.msg + '</span>');
+        } else {
+          msgEl.html('<span style="color:#dc3545;"><i class="mdi mdi-close-circle"></i> ' + res.msg + '</span>');
+        }
+      },
+      error: function(xhr) {
+        btn.prop('disabled', false).html('<i class="mdi mdi-power-plug"></i> 测试 API 连接');
+        msgEl.html('<span style="color:#dc3545;">请求失败（HTTP ' + xhr.status + '）</span>');
+      }
+    });
+  });
+
+  // ========== 背景图上传 ==========
+  var bgImages = [];
+  {if isset($web.bg_image) && $web.bg_image}
+  bgImages.push('{$web.bg_image}');
+  {/if}
+  renderBgPreview();
+
+  function getBgType() { return $('#bgTypeSelect').val() || 'image'; }
+  function isVideoBg() { return getBgType() === 'video'; }
+
+  function renderBgPreview() {
+    var $c = $('#bgPreviewContainer').empty();
+    if (bgImages.length > 0) {
+      var $item = $('<div class="preview-item"></div>');
+      if (isVideoBg()) {
+        $item.append('<video src="'+bgImages[0]+'" muted loop playsinline></video>');
+      } else {
+        $item.append('<img src="'+bgImages[0]+'">');
+      }
+      $item.append('<button type="button" class="remove-btn btn-remove-bg">&times;</button>');
+      $c.append($item);
+    }
+  }
+
+  function updateBgTypeUI() {
+    var type = getBgType();
+    var $hint = $('#bgUploadHint');
+    var $input = $('#bgFileInput');
+    if (type === 'video') {
+      $hint.text('支持 MP4/WebM，建议 1920x1080，不超过 50MB');
+      $input.attr('accept', 'video/mp4,video/webm');
+      $('.video-bg-options').show();
+    } else if (type === 'gif') {
+      $hint.text('支持 GIF 动图，建议 1920x1080，不超过 20MB');
+      $input.attr('accept', 'image/gif');
+      $('.video-bg-options').hide();
+    } else {
+      $hint.text('支持 JPG/PNG/WebP，建议 1920x1080，不超过 50MB');
+      $input.attr('accept', 'image/jpeg,image/png,image/webp');
+      $('.video-bg-options').hide();
+    }
+    renderBgPreview();
+  }
+  updateBgTypeUI();
+  $('#bgTypeSelect').on('change', updateBgTypeUI);
+
+  $('#bgPreviewContainer').on('click', '.btn-remove-bg', function() {
+    $.post('/admin/bg_reset', function(res) {
+      if (res.code == 1) {
+        bgImages = [];
+        renderBgPreview();
+        layer.msg('已重置', {icon:1});
+      } else { layer.msg(res.msg || '操作失败', {icon:2}); }
+    }, 'json').fail(function() { layer.msg('请求失败', {icon:2}); });
+  });
+
+  function uploadBgFile(file) {
+    var formData = new FormData();
+    formData.append('file', file);
+    formData.append('bg_type', getBgType());
+    var load = layer.msg('上传中...', {icon:16, shade:0.3, time:false});
+    $.ajax({
+      url: '/admin/bg_upload', type: 'POST', data: formData,
+      processData: false, contentType: false, dataType: 'json',
+      success: function(res) {
+        layer.close(load);
+        if (res.code == 1) { bgImages = [res.url]; renderBgPreview(); layer.msg('上传成功', {icon:1}); }
+        else { layer.msg(res.msg, {icon:2}); }
+      },
+      error: function() { layer.close(load); layer.msg('上传失败', {icon:2}); }
+    });
+  }
+
+  $('#bgUploadArea').on('click', function() { $('#bgFileInput').click(); });
+  $('#bgFileInput').on('click', function(e) { e.stopPropagation(); });
+  $('#bgFileInput').on('change', function() { if (this.files && this.files[0]) uploadBgFile(this.files[0]); });
+  $('#bgUploadArea').on('dragover', function(e) { e.preventDefault(); $(this).addClass('dragover'); });
+  $('#bgUploadArea').on('dragleave', function() { $(this).removeClass('dragover'); });
+  $('#bgUploadArea').on('drop', function(e) {
+    e.preventDefault(); $(this).removeClass('dragover');
+    if (e.originalEvent.dataTransfer.files && e.originalEvent.dataTransfer.files[0]) uploadBgFile(e.originalEvent.dataTransfer.files[0]);
+  });
+
+  // ========== 轮播背景图 ==========
+  function refreshBgMultiPreview() {
+    var urls = $.trim($('textarea[name="bg_images"]').val() || '').split(/\n/).filter(function(u){ return $.trim(u); });
+    var $wrap = $('#bgMultiPreview').empty();
+    urls.forEach(function(url, idx) {
+      var $item = $('<div class="preview-item"></div>');
+      $item.append('<img src="'+url+'">');
+      var $del = $('<button type="button" class="remove-btn">&times;</button>');
+      $del.on('click', function() {
+        urls.splice(idx, 1);
+        $('textarea[name="bg_images"]').val(urls.join('\n'));
+        refreshBgMultiPreview();
+      });
+      $item.append($del);
+      $wrap.append($item);
+    });
+  }
+  refreshBgMultiPreview();
+
+  function uploadBgMultiFile(file) {
+    var formData = new FormData();
+    formData.append('file', file);
+    var load = layer.msg('上传中...', {icon:16, shade:0.3, time:false});
+    $.ajax({
+      url: '/admin/bg_multi_upload', type: 'POST', data: formData,
+      processData: false, contentType: false, dataType: 'json',
+      success: function(res) {
+        layer.close(load);
+        if (res.code == 1) {
+          var urls = $.trim($('textarea[name="bg_images"]').val() || '').split(/\n/).filter(function(u){ return $.trim(u); });
+          urls.push(res.url);
+          $('textarea[name="bg_images"]').val(urls.join('\n'));
+          refreshBgMultiPreview();
+          layer.msg('上传成功', {icon:1});
+        } else { layer.msg(res.msg, {icon:2}); }
+      },
+      error: function() { layer.close(load); layer.msg('上传失败', {icon:2}); }
+    });
+  }
+
+  $('#bgMultiUploadArea').on('click', function() { $('#bgMultiFileInput').click(); });
+  $('#bgMultiFileInput').on('click', function(e) { e.stopPropagation(); });
+  $('#bgMultiFileInput').on('change', function() {
+    if (this.files) { for (var i = 0; i < this.files.length; i++) uploadBgMultiFile(this.files[i]); }
+  });
+  $('#bgMultiUploadArea').on('dragover', function(e) { e.preventDefault(); $(this).addClass('dragover'); });
+  $('#bgMultiUploadArea').on('dragleave', function() { $(this).removeClass('dragover'); });
+  $('#bgMultiUploadArea').on('drop', function(e) {
+    e.preventDefault(); $(this).removeClass('dragover');
+    if (e.originalEvent.dataTransfer.files) { for (var i = 0; i < e.originalEvent.dataTransfer.files.length; i++) uploadBgMultiFile(e.originalEvent.dataTransfer.files[i]); }
+  });
+
+  // ========== 渐变色选择 ==========
+  var gradients = {
+    'default': 'linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 25%, #F0F4FF 50%, #E8EEFF 75%, #EFF3FF 100%)',
+    'purple': 'linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 25%, #F8F5FF 50%, #F3F0FF 75%, #F5F3FF 100%)',
+    'rose': 'linear-gradient(135deg, #FFF1F2 0%, #FFE4E6 25%, #FFF5F5 50%, #FFF1F2 75%, #FFF5F5 100%)',
+    'emerald': 'linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 25%, #ECFDF5 50%, #D1FAE5 75%, #ECFDF5 100%)',
+    'amber': 'linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 25%, #FFFBEB 50%, #FEF3C7 75%, #FFFBEB 100%)',
+    'slate': 'linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 25%, #F8FAFC 50%, #E2E8F0 75%, #F8FAFC 100%)',
+    'sky': 'linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 25%, #F0F9FF 50%, #E0F2FE 75%, #F0F9FF 100%)',
+    'teal': 'linear-gradient(135deg, #F0FDFA 0%, #CCFBF1 25%, #F0FDFA 50%, #CCFBF1 75%, #F0FDFA 100%)'
+  };
+  $('#bgGradientPicker .gradient-swatch').on('click', function() {
+    var grad = $(this).data('gradient');
+    $('#bgGradientPicker .gradient-swatch').removeClass('active');
+    $(this).addClass('active');
+    $('#bgGradientInput').val(grad);
+    localStorage.setItem('glass_bg_gradient', grad);
+    if (gradients[grad]) { $('body.glass-enabled').css('background', gradients[grad]); }
+  });
+});
+</script>

@@ -1,0 +1,411 @@
+{include file="default/header" title="IP封禁管理"/}
+<style>
+.lyear-layout-content.page-wrap{position:relative!important;height:auto!important;width:100%!important;max-width:1400px!important;margin:0 auto!important;left:auto!important;padding:calc(64px + 24px) 20px 40px 20px!important}
+.page-wrap { --pri: #ef4444; --pri2: #dc2626; --radius: 16px; }
+.page-header-bar {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  border-radius: 16px; padding: 20px 24px; margin-bottom: 20px;
+  color: #fff; box-shadow: 0 4px 20px rgba(239,68,68,0.25);
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+.page-header-bar h2 { margin: 0; font-size: 20px; font-weight: 700; }
+.page-header-bar .sub { font-size: 12px; opacity: 0.8; margin-top: 2px; }
+.content-card {
+  background: #fff; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,0,0,0.05);
+  border: 1px solid #e8ecf1; overflow: hidden; margin-bottom: 20px;
+}
+.content-card-header {
+  padding: 14px 20px; border-bottom: 1px solid #f1f5f9;
+  font-weight: 700; color: #1a1a2e; font-size: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.content-card-header::before{
+  content:''; width:4px; height:18px; border-radius:2px;
+  background: linear-gradient(180deg,#ef4444,#dc2626);
+}
+.content-card-body { padding: 18px 20px; }
+.new-table { width:100%; border-collapse:collapse; font-size:13px; }
+.new-table thead th {
+  background:#f8fafc; color:#475569; font-weight:600;
+  padding:10px 12px; border-bottom:2px solid #e2e8f0;
+  font-size:11px; text-transform:uppercase; letter-spacing:0.04em; white-space:nowrap;
+}
+.new-table tbody td {
+  padding:10px 12px; border-bottom:1px solid #f1f5f9; color:#334155; vertical-align:middle;
+}
+.new-table tbody tr:hover { background:#fafbfc; }
+.new-btn {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:7px 16px; border-radius:10px; border:none;
+  font-size:12px; font-weight:600; cursor:pointer;
+  transition:all 0.2s; text-decoration:none;
+}
+.new-btn.primary { background:linear-gradient(135deg,#ef4444,#dc2626); color:#fff; box-shadow:0 3px 10px rgba(239,68,68,0.3); }
+.new-btn.primary:hover { transform:translateY(-1px); box-shadow:0 5px 16px rgba(239,68,68,0.4); }
+.new-btn.success { background:linear-gradient(135deg,#10b981,#059669); color:#fff; }
+.new-btn.success:hover { transform:translateY(-1px); }
+.new-btn.outline { background:#fff; color:#ef4444; border:2px solid #e2e8f0; }
+.new-btn.outline:hover { border-color:#ef4444; background:#fef2f2; }
+.new-btn.sm { padding:4px 10px; font-size:11px; }
+.new-badge { display:inline-flex; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600; }
+.new-badge.danger { background:#fef2f2; color:#dc2626; }
+.new-badge.success { background:#ecfdf5; color:#059669; }
+.new-badge.warning { background:#fffbeb; color:#d97706; }
+.new-badge.info { background:#eff6ff; color:#2563eb; }
+.form-input { padding:9px 14px; border:2px solid #e2e8f0; border-radius:10px; font-size:13px; transition:all 0.2s; background:#fff; color:#334155; }
+.form-input:focus { border-color:#ef4444; box-shadow:0 0 0 3px rgba(239,68,68,0.1); outline:none; }
+.form-select { padding:9px 14px; border:2px solid #e2e8f0; border-radius:10px; font-size:13px; background:#fff; color:#334155; }
+.form-select:focus { border-color:#ef4444; box-shadow:0 0 0 3px rgba(239,68,68,0.1); outline:none; }
+.search-box { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.search-box .form-input { width:auto; min-width:220px; }
+.mono { font-family:'SF Mono','Fira Code','Consolas',monospace; font-size:12px; color:#64748b; }
+.path-list { font-size:11px; color:#94a3b8; }
+.path-list span { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:220px; }
+.path-list .p { color:#6366f1; }
+.add-ban-form { background:#f8fafc; border-radius:12px; padding:16px; border:1px solid #e2e8f0; }
+.add-ban-form .row { display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; }
+.add-ban-form .field { flex:1; min-width:140px; }
+.add-ban-form .field label { display:block; font-size:11px; font-weight:600; color:#475569; margin-bottom:4px; }
+.add-ban-form .field select { width:100%; }
+
+/* Tab样式 */
+.tab-nav { display:flex; gap:0; margin-bottom:20px; border-radius:12px; overflow:hidden; border:1px solid #e2e8f0; }
+.tab-nav a { display:inline-flex; align-items:center; gap:6px; padding:10px 24px; font-size:13px; font-weight:600; text-decoration:none; color:#64748b; background:#f8fafc; border-right:1px solid #e2e8f0; transition:all 0.2s; }
+.tab-nav a:last-child { border-right:none; }
+.tab-nav a:hover { background:#f1f5f9; color:#334155; }
+.tab-nav a.active.normal { background:linear-gradient(135deg,#10b981,#059669); color:#fff; }
+.tab-nav a.active.abnormal { background:linear-gradient(135deg,#ef4444,#dc2626); color:#fff; }
+.tab-nav a.active.banned { background:linear-gradient(135deg,#64748b,#475569); color:#fff; }
+.tab-nav a .tab-dot { display:inline-block; width:8px; height:8px; border-radius:50%; }
+.tab-nav a .tab-dot.green { background:#10b981; }
+.tab-nav a .tab-dot.red { background:#ef4444; }
+.tab-nav a .tab-dot.gray { background:#94a3b8; }
+.tab-nav a.active .tab-dot.green,
+.tab-nav a.active .tab-dot.red,
+.tab-nav a.active .tab-dot.gray { background:#fff; }
+
+@media (max-width:768px){
+  .page-header-bar { padding:14px 16px; border-radius:12px; }
+  .page-header-bar h2 { font-size:17px; }
+  .content-card-body { padding:12px 14px; }
+  .new-table thead { display:none; }
+  .new-table tbody td { display:block; text-align:right; padding:6px 8px; }
+  .new-table tbody td::before { content:attr(data-label); float:left; font-weight:600; color:#475569; font-size:10px; text-transform:uppercase; }
+  .new-table tbody tr { display:block; margin-bottom:6px; background:#fafbfc; border-radius:10px; padding:4px 8px; }
+  .search-box { flex-direction:column; align-items:stretch; }
+  .search-box .form-input { min-width:auto; width:100%; }
+  .add-ban-form .row { flex-direction:column; }
+  .tab-nav { flex-direction:column; }
+  .tab-nav a { border-right:none; border-bottom:1px solid #e2e8f0; }
+  .tab-nav a:last-child { border-bottom:none; }
+}
+</style>
+<main class="lyear-layout-content page-wrap">
+  <div class="container-fluid">
+    <div class="page-header-bar">
+      <div>
+        <h2>IP封禁管理（纯手动封禁）</h2>
+        <div class="sub">管理访客日志与手动封禁的非法IP</div>
+      </div>
+      <div>
+        <span style="font-size:12px;opacity:0.85;">共 {if !empty($bannedIps)}{$bannedIps->total()}{else}0{/if} 条封禁记录</span>
+      </div>
+    </div>
+
+    <!-- Tab切换 -->
+    <div class="tab-nav">
+      <a href="?tab=normal" class="{if $tab=='normal'}active normal{/if}">
+        <span class="tab-dot green"></span> 正常用户区
+      </a>
+      <a href="?tab=abnormal" class="{if $tab=='abnormal'}active abnormal{/if}">
+        <span class="tab-dot red"></span> 非正常用户区（抓包/脚本）
+      </a>
+      <a href="?tab=banned" class="{if $tab=='banned'}active banned{/if}">
+        <span class="tab-dot gray"></span> 已封禁IP
+      </a>
+    </div>
+
+    <!-- 手动封禁表单 -->
+    <div class="content-card">
+      <div class="content-card-header">手动封禁IP</div>
+      <div class="content-card-body">
+        <div class="add-ban-form">
+          {:token()}
+          <div class="row">
+            <div class="field" style="flex:0 0 180px">
+              <label>IP地址</label>
+              <input class="form-input" type="text" id="ban-ip" placeholder="如 192.168.1.1"/>
+            </div>
+            <div class="field" style="flex:0 0 200px">
+              <label>封禁原因</label>
+              <input class="form-input" type="text" id="ban-reason" value="管理员手动封禁" placeholder="封禁原因"/>
+            </div>
+            <div class="field" style="flex:0 0 160px">
+              <label>封禁时长</label>
+              <select class="form-select" id="ban-duration">
+                <option value="0">永久封禁</option>
+                <option value="1">1天</option>
+                <option value="3">3天</option>
+                <option value="7">7天</option>
+                <option value="30">30天</option>
+              </select>
+            </div>
+            <div class="field" style="flex:0 0 auto">
+              <label>&nbsp;</label>
+              <button class="new-btn primary" onclick="manualBan()">
+                <i class="mdi mdi-shield-plus-outline"></i> 立即封禁
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {if $tab != 'banned'}
+    <!-- 正常/非正常用户区 -->
+    <div class="content-card">
+      <div class="content-card-body">
+        <form method="get" action="">
+          <input type="hidden" name="tab" value="{$tab}"/>
+          <div class="search-box" style="margin-bottom:16px;">
+            <input class="form-input" type="text" name="search" placeholder="搜索IP..." value="{$search|default=''}"/>
+            <button class="new-btn primary" type="submit">搜索</button>
+            {if $search}
+            <a href="?tab={$tab}" class="new-btn outline">清除</a>
+            {/if}
+          </div>
+        </form>
+        <div class="table-responsive-sm">
+          <table class="new-table">
+            <thead>
+              <tr>
+                <th>IP地址</th>
+                {if $tab == 'normal'}<th>关联用户</th>{/if}
+                <th>请求次数</th>
+                {if $tab == 'abnormal'}<th>疑似机器人</th>{/if}
+                <th>最近访问路径</th>
+                <th>最近UA</th>
+                <th>最近访问时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+{if !empty($visitors)}
+{foreach $visitors as $v}
+              <tr>
+                <td data-label="IP地址"><span class="mono" style="font-weight:600;color:#1a1a2e;">{$v.ip}</span></td>
+                {if $tab == 'normal'}
+                <td data-label="关联用户">
+                  {if $v.user_name}
+                  <span style="font-weight:600;color:#1a1a2e;">{$v.user_name}</span>
+                  {else}
+                  <span style="color:#94a3b8;">-</span>
+                  {/if}
+                </td>
+                {/if}
+                <td data-label="请求次数"><strong>{$v.visit_count}</strong>次</td>
+                {if $tab == 'abnormal'}
+                <td data-label="疑似机器人">
+                  {if $v.is_bot}
+                  <span class="new-badge danger">是</span>
+                  {if $v.bot_reason}<div style="font-size:10px;color:#94a3b8;margin-top:2px;">{$v.bot_reason}</div>{/if}
+                  {else}
+                  <span class="new-badge success">否</span>
+                  {/if}
+                </td>
+                {/if}
+                <td data-label="最近访问路径">
+                  <div class="path-list">
+                    {if !empty($v.paths)}
+                      {foreach $v.paths as $p}
+                        <span class="p">{:htmlspecialchars(mb_strlen($p)>60 ? mb_substr($p,0,60).'...' : $p)}</span>
+                      {/foreach}
+                    {else}
+                      <span>{:htmlspecialchars(mb_strlen($v.last_uri)>60 ? mb_substr($v.last_uri,0,60).'...' : $v.last_uri)}</span>
+                    {/if}
+                  </div>
+                </td>
+                <td data-label="最近UA"><span style="font-size:11px;color:#94a3b8;">{:htmlspecialchars(mb_strlen($v.last_ua)>50 ? mb_substr($v.last_ua,0,50).'...' : $v.last_ua)}</span></td>
+                <td data-label="最近访问时间">{if $v.max_visit_time>0}{:date('m-d H:i:s',$v.max_visit_time)}{else}-{/if}</td>
+                <td data-label="操作">
+                  {if $v.is_banned}
+                  <span class="new-badge danger">已封禁</span>
+                  {else}
+                  <button onclick="quickBan('{$v.ip}')" class="new-btn primary sm">封禁</button>
+                  {/if}
+                </td>
+              </tr>
+{/foreach}
+{else}
+              <tr>
+                <td colspan="{if $tab=='normal'}8{else}7{/if}" style="text-align:center;padding:40px;color:#94a3b8;">
+                  <i class="mdi mdi-shield-check-outline" style="font-size:40px;display:block;margin-bottom:10px;"></i>
+                  暂无记录
+                </td>
+              </tr>
+{/if}
+            </tbody>
+          </table>
+        </div>
+        {if !empty($visitors) && !empty($visitors->items())}
+        <div style="text-align:center;margin-top:16px;">{$visitors->render()}</div>
+        {/if}
+      </div>
+    </div>
+
+    {else}
+    <!-- 已封禁IP列表 -->
+    <div class="content-card">
+      <div class="content-card-body">
+        <form method="get" action="">
+          <input type="hidden" name="tab" value="banned"/>
+          <div class="search-box" style="margin-bottom:16px;">
+            <select class="form-select" name="status" onchange="this.form.submit()">
+              <option value="">全部状态</option>
+              <option value="1" {if $status==='1'}selected{/if}>封禁中</option>
+              <option value="0" {if $status==='0'}selected{/if}>已解除</option>
+            </select>
+            <input class="form-input" type="text" name="search" placeholder="搜索IP或原因..." value="{$search|default=''}"/>
+            <button class="new-btn primary" type="submit">搜索</button>
+            {if $search || $status!==''}
+            <a href="?tab=banned" class="new-btn outline">清除</a>
+            {/if}
+          </div>
+        </form>
+        <div class="table-responsive-sm">
+          <table class="new-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>IP地址</th>
+                <th>封禁原因</th>
+                <th>类型</th>
+                <th>触发次数</th>
+                <th>探测路径</th>
+                <th>首次发现</th>
+                <th>最近触发</th>
+                <th>状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+{if !empty($bannedIps)}
+{foreach $bannedIps as $ip}
+              <tr>
+                <td data-label="ID">{$ip.id}</td>
+                <td data-label="IP地址"><span class="mono" style="font-weight:600;color:#1a1a2e;">{$ip.ip}</span></td>
+                <td data-label="封禁原因">{$ip.reason|default='-'}</td>
+                <td data-label="类型">
+                  {if $ip.ban_type=='permanent'}<span class="new-badge danger">永久</span>
+                  {elseif $ip.ban_type=='timeout'}<span class="new-badge warning">定时({if $ip.unban_at>0}{:date('m-d H:i',$ip.unban_at)}解封{/if})</span>
+                  {else}<span class="new-badge info">自动</span>{/if}
+                </td>
+                <td data-label="触发次数"><strong>{$ip.trigger_count}</strong>次</td>
+                <td data-label="探测路径">
+                  <div class="path-list">
+                    {if !empty($ip.paths)}
+                      {foreach $ip.paths as $p}
+                        <span class="p">{:htmlspecialchars($p)}</span>
+                      {/foreach}
+                    {else}
+                      <span>-</span>
+                    {/if}
+                  </div>
+                </td>
+                <td data-label="首次发现">{$ip.first_seen|date='m-d H:i',###}</td>
+                <td data-label="最近触发">{$ip.last_seen|date='m-d H:i',###}</td>
+                <td data-label="状态">
+                  {if $ip.status==1}<span class="new-badge danger">封禁中</span>
+                  {else}<span class="new-badge success">已解除</span>{/if}
+                </td>
+                <td data-label="操作">
+                  {if $ip.status==1}
+                  <button onclick="unbanIp({$ip.id},'{$ip.ip}')" class="new-btn success sm">解封</button>
+                  {/if}
+                </td>
+              </tr>
+{/foreach}
+{else}
+              <tr>
+                <td colspan="10" style="text-align:center;padding:40px;color:#94a3b8;">
+                  <i class="mdi mdi-shield-check-outline" style="font-size:40px;display:block;margin-bottom:10px;"></i>
+                  暂无封禁记录
+                </td>
+              </tr>
+{/if}
+            </tbody>
+          </table>
+        </div>
+        {if !empty($bannedIps) && !empty($bannedIps->items())}
+        <div style="text-align:center;margin-top:16px;">{$bannedIps->render()}</div>
+        {/if}
+      </div>
+    </div>
+    {/if}
+  </div>
+</main>
+{include file="default/footer" /}
+<script>
+// 手动封禁
+function manualBan() {
+    var ip = $('#ban-ip').val().trim();
+    var reason = $('#ban-reason').val().trim();
+    var duration = $('#ban-duration').val();
+    var token = $('input[name="__token__"]').val();
+
+    if (!ip) { layer.msg('请输入IP地址', {icon: 2}); return; }
+
+    var load = layer.load(1, {time: false});
+    $.ajax({
+        type: 'POST',
+        url: window.location.pathname + '/ban',
+        data: { ip: ip, reason: reason, duration: duration, __token__: token },
+        dataType: 'json',
+        success: function(data) {
+            layer.close(load);
+            if (data.code == 1) {
+                layer.msg(data.msg, {icon: 1}, function() { window.location.reload(); });
+            } else {
+                layer.msg(data.msg, {icon: 2});
+            }
+        },
+        error: function() {
+            layer.close(load);
+            layer.msg('请求异常', {icon: 2});
+        }
+    });
+}
+
+// 快捷封禁（从访客列表）
+function quickBan(ip) {
+    $('#ban-ip').val(ip);
+    $('html, body').animate({ scrollTop: $('.add-ban-form').offset().top - 100 }, 300);
+    $('#ban-reason').focus();
+}
+
+// 解封IP
+function unbanIp(id, ip) {
+    layer.confirm('确定要解除 <strong style="color:#059669;">' + ip + '</strong> 的封禁吗？', function() {
+        var load = layer.load(1, {time: false});
+        var token = $('input[name="__token__"]').val();
+        $.ajax({
+            type: 'POST',
+            url: window.location.pathname + '/unban',
+            data: { id: id, __token__: token },
+            dataType: 'json',
+            success: function(data) {
+                layer.close(load);
+                if (data.code == 1) {
+                    layer.msg(data.msg, {icon: 1}, function() { window.location.reload(); });
+                } else {
+                    layer.msg(data.msg, {icon: 2});
+                }
+            },
+            error: function() {
+                layer.close(load);
+                layer.msg('请求异常', {icon: 2});
+            }
+        });
+    });
+}
+</script>

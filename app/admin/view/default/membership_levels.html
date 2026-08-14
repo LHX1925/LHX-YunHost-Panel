@@ -1,0 +1,64 @@
+{include file="default/header" title="会员等级管理" /}
+<main class="lyear-layout-content">
+  <div class="container-fluid glass-animate-in">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card admin-card">
+          <header class="card-header">
+            <div class="card-title">会员等级配置</div>
+            <small class="text-muted ms-2">会员等级根据累计充值消费自动升级，购买/续费折扣在下方设置</small>
+          </header>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-admin">
+                <thead>
+                  <tr>
+                    <th>等级</th>
+                    <th>图标</th>
+                    <th>等级名称</th>
+                    <th>升级所需累计充值</th>
+                    <th>购买折扣</th>
+                    <th>续费折扣</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {if !empty($levels)}
+                  {foreach $levels as $lv}
+                  <tr>
+                    <td><strong>Lv.{$lv.level}</strong></td>
+                    <td>
+                      {if !empty($lv.icon)}
+                      <img src="__ROOT__/static/img/vip/{$lv.icon}" alt="{$lv.name}" style="width:32px;height:32px;">
+                      {else}
+                      <span class="text-muted">-</span>
+                      {/if}
+                    </td>
+                    <td><strong>{$lv.name}</strong></td>
+                    <td>¥{$lv.min_recharge|number_format=2}</td>
+                    <td><span class="admin-badge admin-badge-info">{php}echo ($lv['discount']*100);{/php}%</span></td>
+                    <td><span class="admin-badge admin-badge-warning">{php}echo ($lv['renew_discount']*100);{/php}%</span></td>
+                    <td>
+                      {if $lv.status == 1}<span class="admin-badge admin-badge-success">启用</span>
+                      {else}<span class="admin-badge admin-badge-danger">禁用</span>
+                      {/if}
+                    </td>
+                    <td>
+                      <a href="{:url('admin/index/membershipLevels',['id'=>$lv.id])}" class="btn btn-sm btn-admin-primary">编辑</a>
+                    </td>
+                  </tr>
+                  {/foreach}
+                  {else}
+                  <tr><td colspan="8" class="text-center py-4 text-muted">暂无会员等级</td></tr>
+                  {/if}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{include file="default/footer" /}

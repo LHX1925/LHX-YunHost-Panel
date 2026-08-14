@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{$description}">
+    <meta name="keywords" content="{$keywords}">
+    <link rel="shortcut icon" type="image/x-icon" href="{$favicon}"/>
+    <meta name="robots" content="none">
+    <title>{$webname} - 404 Not Found</title>
+    <link rel="stylesheet" type="text/css" href="__ROOT__/static/assets/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="__ROOT__/static/css/glass-theme.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif; background: var(--glass-page-bg); color: var(--glass-text); min-height: 100vh; display: flex; align-items: center; justify-content: center; -webkit-font-smoothing: antialiased; position: relative; overflow: hidden; }
+        body::after { content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(ellipse at 30% 50%, rgba(79,124,255,0.06) 0%, transparent 60%), radial-gradient(ellipse at 70% 50%, rgba(139,92,246,0.05) 0%, transparent 60%); }
+        .error-orb { position: absolute; border-radius: 50%; filter: blur(100px); z-index: -1; opacity: 0.25; animation: orbFloat 20s ease-in-out infinite; }
+        .orb-1 { width: 350px; height: 350px; top: -100px; right: -100px; background: linear-gradient(135deg, var(--glass-primary), var(--glass-purple)); }
+        .orb-2 { width: 250px; height: 250px; bottom: -80px; left: -80px; background: linear-gradient(135deg, var(--glass-info), var(--glass-primary)); animation-delay: -7s; }
+        @keyframes orbFloat { 0%,100% { transform: translateY(0) translateX(0); } 25% { transform: translateY(-20px) translateX(10px); } 50% { transform: translateY(0) translateX(20px); } 75% { transform: translateY(20px) translateX(10px); } }
+        .error-container { text-align: center; padding: 48px 32px; max-width: 520px; width: 100%; background: var(--glass-bg-strong); backdrop-filter: blur(var(--glass-blur-strong)); -webkit-backdrop-filter: blur(var(--glass-blur-strong)); border: 1px solid var(--glass-border-strong); border-radius: var(--glass-radius-xl); box-shadow: var(--glass-shadow-xl), var(--glass-shadow-inset); }
+        .error-code { font-size: 120px; font-weight: 800; background: linear-gradient(135deg, var(--glass-primary), var(--glass-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; margin-bottom: 8px; letter-spacing: -4px; }
+        .error-icon { font-size: 48px; color: var(--glass-primary); margin-bottom: 20px; opacity: 0.8; }
+        .error-title { font-size: 22px; font-weight: 700; color: var(--glass-text); margin-bottom: 12px; }
+        .error-desc { font-size: 15px; color: var(--glass-text-secondary); line-height: 1.7; margin-bottom: 32px; }
+        .error-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+        @media (max-width: 576px) { .error-code { font-size: 80px; } .error-title { font-size: 18px; } .error-desc { font-size: 14px; } .error-container { padding: 32px 20px; } }
+    </style>
+</head>
+<body class="glass-enabled">
+    <div class="error-orb orb-1"></div>
+    <div class="error-orb orb-2"></div>
+    <div class="error-container glass-animate-in">
+        <div class="error-icon"><i class="fas fa-exclamation-triangle"></i></div>
+        <div class="error-code">404</div>
+        <div class="error-title">页面未找到</div>
+        <div class="error-desc">你访问的页面可能已被移除、链接失效或地址输入错误。</div>
+        <div class="error-actions">
+            <a href="/" class="glass-btn glass-btn-primary"><i class="fas fa-home"></i> 返回首页</a>
+            <a href="javascript:history.back()" class="glass-btn glass-btn-outline"><i class="fas fa-arrow-left"></i> 返回上页</a>
+        </div>
+    </div>
+    <script src="__ROOT__/static/js/glass-animations.js"></script>
+</body>
+</html>

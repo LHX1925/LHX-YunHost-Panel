@@ -1,0 +1,167 @@
+{include file="default/header" title="编辑角色"/}
+<script>document.title = '{$webname} - 编辑角色';</script>
+<style>
+.admin-form .form-check-input:checked { background-color: #2563EB; border-color: #2563EB; }
+.admin-form .form-check-label { font-size: 13px; color: #42526e; }
+.perm-section { background: #f8fafc; border-radius: 10px; padding: 16px; border: 1px solid #e2e8f0; }
+.perm-section .form-check { margin-bottom: 8px; }
+.btn-admin-secondary { background: #6B7280; border-color: #6B7280; color: #fff; }
+.btn-admin-secondary:hover { background: #4B5563; border-color: #4B5563; }
+</style>
+    <main class="lyear-layout-content">
+      <div class="container-fluid glass-animate-in">
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="card admin-card">
+              <header class="card-header"><div class="card-title">编辑角色 - {$role.name}</div></header>
+              <div class="card-body">
+                <form action="" method="post" name="edit-form" class="edit-form admin-form">
+                  <div class="mb-3">
+                    <label for="name" class="form-label">角色名称</label>
+                    <input class="form-control" type="text" name="name" value="{$role.name}" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="description" class="form-label">描述</label>
+                    <input class="form-control" type="text" name="description" value="{$role.description}">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">权限设置</label>
+                    <div class="perm-section"><div class="row">
+                      <div class="col-md-4">
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" name="permissions[]" value="all" id="perm_all" {if in_array('all', $role.permissions)}checked{/if}>
+                          <label class="form-check-label" for="perm_all">所有权限</label>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-check">
+                          <input class="form-check-input perm-item" type="checkbox" name="permissions[]" value="user" id="perm_user" {if in_array('user', $role.permissions)}checked{/if}>
+                          <label class="form-check-label" for="perm_user">用户管理</label>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-check">
+                          <input class="form-check-input perm-item" type="checkbox" name="permissions[]" value="product" id="perm_product" {if in_array('product', $role.permissions)}checked{/if}>
+                          <label class="form-check-label" for="perm_product">产品管理</label>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-check">
+                          <input class="form-check-input perm-item" type="checkbox" name="permissions[]" value="order" id="perm_order" {if in_array('order', $role.permissions)}checked{/if}>
+                          <label class="form-check-label" for="perm_order">订单管理</label>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-check">
+                          <input class="form-check-input perm-item" type="checkbox" name="permissions[]" value="ticket" id="perm_ticket" {if in_array('ticket', $role.permissions)}checked{/if}>
+                          <label class="form-check-label" for="perm_ticket">工单管理</label>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-check">
+                          <input class="form-check-input perm-item" type="checkbox" name="permissions[]" value="announcement" id="perm_announcement" {if in_array('announcement', $role.permissions)}checked{/if}>
+                          <label class="form-check-label" for="perm_announcement">公告管理</label>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-check">
+                          <input class="form-check-input perm-item" type="checkbox" name="permissions[]" value="pay" id="perm_pay" {if in_array('pay', $role.permissions)}checked{/if}>
+                          <label class="form-check-label" for="perm_pay">支付配置</label>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-check">
+                          <input class="form-check-input perm-item" type="checkbox" name="permissions[]" value="aff" id="perm_aff" {if in_array('aff', $role.permissions)}checked{/if}>
+                          <label class="form-check-label" for="perm_aff">推广管理</label>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-check">
+                          <input class="form-check-input perm-item" type="checkbox" name="permissions[]" value="set" id="perm_set" {if in_array('set', $role.permissions)}checked{/if}>
+                          <label class="form-check-label" for="perm_set">网站设置</label>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-check">
+                          <input class="form-check-input perm-item" type="checkbox" name="permissions[]" value="server" id="perm_server" {if in_array('server', $role.permissions)}checked{/if}>
+                          <label class="form-check-label" for="perm_server">服务器管理</label>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-check">
+                          <input class="form-check-input perm-item" type="checkbox" name="permissions[]" value="classification" id="perm_classification" {if in_array('classification', $role.permissions)}checked{/if}>
+                          <label class="form-check-label" for="perm_classification">分类管理</label>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-check">
+                          <input class="form-check-input perm-item" type="checkbox" name="permissions[]" value="admin_manager" id="perm_admin_manager" {if in_array('admin_manager', $role.permissions)}checked{/if}>
+                          <label class="form-check-label" for="perm_admin_manager">管理员管理</label>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-check">
+                          <input class="form-check-input perm-item" type="checkbox" name="permissions[]" value="sq" id="perm_sq" {if in_array('sq', $role.permissions)}checked{/if}>
+                          <label class="form-check-label" for="perm_sq">授权管理</label>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-check">
+                          <input class="form-check-input perm-item" type="checkbox" name="permissions[]" value="transaction" id="perm_transaction" {if in_array('transaction', $role.permissions)}checked{/if}>
+                          <label class="form-check-label" for="perm_transaction">消费/过户记录</label>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-check">
+                          <input class="form-check-input perm-item" type="checkbox" name="permissions[]" value="op_log" id="perm_op_log" {if in_array('op_log', $role.permissions)}checked{/if}>
+                          <label class="form-check-label" for="perm_op_log">操作日志</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  </div></div>
+                  <button type="submit" class="btn-admin btn-admin-primary me-1">确 定</button>
+                  <a href="/admin/admin_manager/roles" class="btn-admin btn-admin-secondary">返回</a>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+<script>
+$('#perm_all').change(function() {
+  if ($(this).is(':checked')) {
+    $('.perm-item').prop('checked', true);
+  } else {
+    $('.perm-item').prop('checked', false);
+  }
+});
+$('.perm-item').change(function() {
+  if (!$(this).is(':checked')) {
+    $('#perm_all').prop('checked', false);
+  }
+});
+$("form").submit(function (){
+    var load = layer.msg('修改中，请稍后...',{icon:16,shade:0.8,time:false});
+    var form = $('form').serializeArray();
+    $.ajax({
+        type:'POST',
+        url:'',
+        data:form,
+        dataType:'json',
+        success:function (data){
+            layer.close(load);
+            if(data.code == 1){
+                layer.alert(data.msg,{icon:1,shade:0.8},function(){
+                    location.href = '/admin/admin_manager/roles';
+                });
+            }else{
+                layer.alert(data.msg,{icon:2,shade:0.8});
+            }
+        }
+    });
+    return false;
+});
+</script>
+{include file="default/footer" /}

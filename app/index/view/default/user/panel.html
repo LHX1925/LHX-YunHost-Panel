@@ -1,0 +1,443 @@
+{include file="default/user/header" title="产品控制台" /}
+<style>
+    .console-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 28px 0 60px;
+    }
+
+    .console-header {
+        margin-bottom: 24px;
+    }
+
+    .console-header h1 {
+        font-size: 26px;
+        font-weight: 700;
+        color: var(--glass-text);
+        margin: 0 0 6px;
+    }
+
+    .console-header p {
+        font-size: 14px;
+        color: var(--glass-text-secondary);
+        margin: 0;
+    }
+
+    .console-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .console-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        -webkit-backdrop-filter: blur(var(--glass-blur));
+        border: 1px solid var(--glass-border);
+        border-radius: var(--glass-radius-lg);
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04), var(--glass-shadow-inset);
+    }
+
+    .console-card-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--glass-text);
+        margin-bottom: 20px;
+        padding-left: 10px;
+        border-left: 4px solid var(--glass-primary);
+        line-height: 1.2;
+    }
+
+    .info-card {
+        display: flex;
+        align-items: stretch;
+        gap: 20px;
+    }
+
+    .info-list {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 14px;
+    }
+
+    .info-label {
+        color: var(--glass-text-secondary);
+        flex-shrink: 0;
+        margin-right: 16px;
+    }
+
+    .info-value {
+        color: var(--glass-text);
+        font-weight: 500;
+        text-align: right;
+        word-break: break-all;
+    }
+
+    .status-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 6px;
+        background: var(--success);
+    }
+
+    .status-warning { background: var(--warning); }
+    .status-danger { background: var(--danger); }
+
+    .server-illustration {
+        width: 160px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .server-illustration img {
+        width: 100%;
+        height: auto;
+        max-height: 180px;
+        object-fit: contain;
+        display: block;
+    }
+
+    .action-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    .action-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 13px 16px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        width: 100%;
+    }
+
+    .action-btn-primary {
+        background: linear-gradient(135deg, #2563EB 0%, #1d4ed8 100%);
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(37,99,235,0.25);
+    }
+
+    .action-btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(37,99,235,0.32);
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .action-btn-outline {
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        -webkit-backdrop-filter: blur(var(--glass-blur));
+        color: var(--glass-text);
+        border: 1.5px solid var(--glass-border);
+    }
+
+    .action-btn-outline:hover {
+        border-color: var(--glass-primary);
+        color: var(--glass-primary);
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        -webkit-backdrop-filter: blur(var(--glass-blur));
+        text-decoration: none;
+    }
+
+    .action-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none !important;
+    }
+
+    .password-mask {
+        font-family: monospace;
+        letter-spacing: 2px;
+    }
+
+    .btn-toggle-pass {
+        background: none;
+        border: none;
+        color: var(--glass-primary);
+        cursor: pointer;
+        font-size: 12px;
+        padding: 0;
+        margin-left: 6px;
+    }
+
+    .btn-toggle-pass:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 991px) {
+        .console-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .info-card {
+            flex-direction: column;
+        }
+
+        .server-illustration {
+            width: 120px;
+            order: -1;
+        }
+
+    }
+
+    @media (max-width: 576px) {
+        .console-page {
+            padding: 20px 0 40px;
+        }
+
+        .console-card {
+            padding: 18px;
+            border-radius: 16px;
+        }
+
+        .console-header h1 {
+            font-size: 22px;
+        }
+
+        .action-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .info-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4px;
+        }
+
+        .info-value {
+            text-align: left;
+        }
+    }
+</style>
+
+<main id="main-container">
+    <div class="content glass-animate-in">
+        <div class="console-page">
+            <div class="console-header">
+                <h1>产品控制台</h1>
+                <p>管理主机信息与服务操作</p>
+            </div>
+
+            <div class="console-grid">
+                <!-- 产品信息 -->
+                <div class="console-card glass-reveal">
+                    <div class="console-card-title">产品信息</div>
+                    <div class="info-card">
+                        <div class="info-list">
+                            <div class="info-item">
+                                <span class="info-label">产品名称</span>
+                                <span class="info-value">{$cart.name}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">主机账号</span>
+                                <span class="info-value">{$data.user}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">主机密码</span>
+                                <span class="info-value">
+                                    <span class="password-mask" id="passText">********</span>
+                                    <button type="button" class="btn-toggle-pass" onclick="togglePass()">显示</button>
+                                    <button type="button" class="btn-toggle-pass" onclick="copyPass()" title="复制密码">复制</button>
+                                </span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">套餐类型</span>
+                                <span class="info-value">{$cart.name}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">开通时间</span>
+                                <span class="info-value">{$data.atime|date="Y-m-d",###}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">到期时间</span>
+                                <span class="info-value">{$data.ztime|date="Y-m-d",###}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">运行状态</span>
+                                <span class="info-value">
+                                    {if $data.state=="1"}<span class="status-dot"></span>运行中{/if}
+                                    {if $data.state=="2"}<span class="status-dot status-warning"></span>暂停{/if}
+                                    {if $data.state=="3"}<span class="status-dot status-danger"></span>终止{/if}
+                                    {if $data.state=="0"}<span class="status-dot status-warning"></span>待开通{/if}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="server-illustration">
+                            <img src="__ROOT__/static/assets/images/host-badge.png?v=1" alt="主机服务" class="server-badge-img">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 产品操作 -->
+                <div class="console-card glass-reveal">
+                    <div class="console-card-title">产品操作</div>
+                    <div class="action-grid">
+                        <button type="button" class="action-btn action-btn-primary" onclick="renew()">
+                            <i class="fas fa-sync-alt"></i> 续费
+                        </button>
+
+                        {if $server.serverplugins=='mnbt' && $server.host && $server.port}
+                        <form action="{if $server.ssl=='1'}https{else}http{/if}://{$server.host}:{$server.port}/user/idcdl.php?gn=logine" method="post" target="_blank" style="display:block;width:100%;">
+                            <input type="hidden" name="username" value="{$data.user}">
+                            <input type="hidden" name="password" value="{$data.password}">
+                            <button type="submit" class="action-btn action-btn-outline">
+                                <i class="fas fa-sign-in-alt"></i> 登录控制面板
+                            </button>
+                        </form>
+                        {elseif $server.serverplugins=='easypanel' && $server.host && $server.port}
+                        <form action="{if $server.ssl=='1'}https{else}http{/if}://{$server.host}:{$server.port}/vhost/?c=session&a=login" method="post" target="_blank" style="display:block;width:100%;">
+                            <input type="hidden" name="username" value="{$data.user}">
+                            <input type="hidden" name="passwd" value="{$data.password}">
+                            <button type="submit" class="action-btn action-btn-outline">
+                                <i class="fas fa-sign-in-alt"></i> 登录控制面板
+                            </button>
+                        </form>
+                        {elseif $server.host && $server.port}
+                        <form action="{if $server.ssl=='1'}https{else}http{/if}://{$server.host}:{$server.port}" method="get" target="_blank" style="display:block;width:100%;">
+                            <button type="submit" class="action-btn action-btn-outline">
+                                <i class="fas fa-sign-in-alt"></i> 登录控制面板
+                            </button>
+                        </form>
+                        {else}
+                        <button type="button" class="action-btn action-btn-outline" onclick="showToast('未配置服务器地址，请联系管理员', 'warning', 2500)">
+                            <i class="fas fa-sign-in-alt"></i> 登录控制面板
+                        </button>
+                        {/if}
+
+                        <button type="button" class="action-btn action-btn-outline" onclick="resetpass({$data.id})">
+                            <i class="fas fa-key"></i> 重置密码
+                        </button>
+
+                        <button type="button" class="action-btn action-btn-outline" onclick="upgrade()">
+                            <i class="fas fa-arrow-up"></i> 升降级
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+{include file="default/user/footer" /}
+<script>
+    var realPass = '{:addslashes($data.password)}';
+
+    function togglePass() {
+        var passText = document.getElementById('passText');
+        var btn = event.target;
+        if (passText.textContent === '********') {
+            passText.textContent = realPass;
+            btn.textContent = '隐藏';
+        } else {
+            passText.textContent = '********';
+            btn.textContent = '显示';
+        }
+    }
+
+    function resetpass(id){
+        layer.confirm('确定要重置密码吗？重置后原密码将不可使用！',{icon:3}, function (){
+            resetApi(id)
+        });
+    }
+
+    function resetApi(id){
+        var load = layer.load('1',{time:false});
+        $.ajax({
+            type:'POST', url:'', data:{ act:'reset', id:id }, dataType:'json',
+            success:function (data){
+                layer.close(load);
+                if(data.code == 1){
+                    showToast(data.msg, 'success', 1800);
+                    setTimeout(function (){ location.href = '' },1800);
+                }else{
+                    showToast(data.msg || '操作失败', 'danger', 2500);
+                }
+            }
+        });
+    }
+
+    function renew(){
+        layer.prompt({title: '续费/{if $cart.cycle=="day"}日{/if}{if $cart.cycle=="month"}月{/if}{if $cart.cycle=="year"}年{/if}{if $cart.cycle=="unrestricted"}一次性{/if}', formType: 3}, function(time, index){
+            layer.close(index);
+            layer.confirm('确定要续费<b style="color:var(--glass-primary)">'+time+'</b>{if $cart.cycle=="day"}日{/if}{if $cart.cycle=="month"}月{/if}{if $cart.cycle=="year"}年{/if}{if $cart.cycle=="unrestricted"}一次性{/if}吗？',{icon:3}, function (){ renews(time) });
+        });
+    }
+
+    function renews(time){
+        var load = layer.load('1',{shade:0.8,time:false});
+        $.ajax({
+            type:'POST', url:'', data:{ act:'renew', id:{$data.id}, time:time }, dataType:'json',
+            success:function (data){
+                layer.close(load);
+                if(handleRealnameResponse(data, '__ROOT__/user/realname', '__ROOT__/user/order')){
+                    return;
+                }
+                if(data.code == 1){ showToast(data.msg, 'success', 1800); setTimeout(function (){ location.href = '' },1800); }else{ showToast(data.msg || '续费失败', 'danger', 2500); }
+            }
+        });
+    }
+
+    function upgrade() {
+        layer.open({
+            type: 1, closeBtn: false, shift: 7, shadeClose: true, title:"产品升降级",
+            content: '<form><div class="block-content"><div class="form-group"><label style="display:block;margin-bottom:6px;font-size:14px;font-weight:500;color:var(--glass-text);">请选择产品</label><select name="newcartid" class="form-control" id="newcartid"><option value="">不选择</option>{if $upgrades}{volist name="upgrades" id="up"}<option value="{$up.id}">{$up.information}</option>{/volist}{/if}</select></div><div class="form-group"><button type="button" onclick="upgrades()" class="btn btn-primary btn-block" style="width:100%;padding:12px;font-size:15px;font-weight:600;">提交</button></div></div></form>'
+        });
+    }
+
+    function upgrades(){
+        var load = layer.load(1,{time:false});
+        var newcartid=$("#newcartid").val();
+        $.ajax({
+            type:'POST', url:'', data:{ act:'upgrade', newcartid:newcartid }, dataType:'json',
+            success:function (data){
+                layer.close(load);
+                if(data.code == 1){
+                    showToast(data.msg, 'success', 1800);
+                    setTimeout(function (){ location.href = '' },1800);
+                }else{
+                    showToast(data.msg || '操作失败', 'danger', 2500);
+                }
+            }
+        });
+    }
+
+    function copyPass() {
+        var textarea = document.createElement('textarea');
+        textarea.value = realPass;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        showToast('密码已复制到剪贴板', 'success', 1500);
+    }
+
+    // 每5分钟自动刷新主机状态
+    var panelRefreshTimer = setInterval(function() {
+        location.reload();
+    }, 300000);
+</script>

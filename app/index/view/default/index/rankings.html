@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>{$webname} - 用户排行榜</title>
+    {include file="default/index/header" /}
+    <style>
+        .rankings-section {
+            padding: 60px 0 80px;
+        }
+        .rankings-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .rankings-header h1 {
+            font-size: 30px;
+            font-weight: 800;
+            color: var(--glass-text);
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+        .rankings-header p {
+            color: var(--glass-text-secondary);
+            font-size: 15px;
+        }
+
+        /* Tab Navigation */
+        .rankings-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+        .rankings-tab {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 22px;
+            border-radius: var(--glass-radius-full);
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--glass-text-secondary);
+            cursor: pointer;
+            transition: all var(--glass-transition);
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border-subtle);
+            box-shadow: var(--glass-shadow-inset);
+            user-select: none;
+        }
+        .rankings-tab:hover {
+            color: var(--glass-text);
+            border-color: var(--glass-border);
+            background: var(--glass-bg-hover);
+        }
+        .rankings-tab.active {
+            color: #fff;
+            background: linear-gradient(135deg, var(--glass-primary), var(--glass-primary-light));
+            border-color: transparent;
+            box-shadow: 0 4px 16px var(--glass-primary-glow);
+        }
+        .rankings-tab i {
+            font-size: 15px;
+        }
+
+        /* Tab Content */
+        .rankings-panel {
+            display: none;
+        }
+        .rankings-panel.active {
+            display: block;
+        }
+
+        /* Ranking List Card */
+        .ranking-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border-subtle);
+            border-radius: var(--glass-radius-lg);
+            box-shadow: var(--glass-shadow-sm), var(--glass-shadow-inset);
+            overflow: hidden;
+        }
+
+        /* Ranking Item */
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 24px;
+            border-bottom: 1px solid var(--glass-border-subtle);
+            transition: all var(--glass-transition);
+        }
+        .ranking-item:last-child {
+            border-bottom: none;
+        }
+        .ranking-item:hover {
+            background: var(--glass-bg-light);
+        }
+
+        /* Rank Number */
+        .rank-num {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 800;
+            flex-shrink: 0;
+            margin-right: 16px;
+            color: var(--glass-text-secondary);
+            background: var(--glass-bg-light);
+        }
+        .rank-num.top1 {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #fff;
+            font-size: 20px;
+            box-shadow: 0 4px 14px rgba(255, 215, 0, 0.4);
+        }
+        .rank-num.top2 {
+            background: linear-gradient(135deg, #C0C0C0, #A8A8A8);
+            color: #fff;
+            font-size: 18px;
+            box-shadow: 0 4px 14px rgba(192, 192, 192, 0.4);
+        }
+        .rank-num.top3 {
+            background: linear-gradient(135deg, #CD7F32, #B8722E);
+            color: #fff;
+            font-size: 18px;
+            box-shadow: 0 4px 14px rgba(205, 127, 50, 0.4);
+        }
+
+        /* User Info */
+        .rank-user {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .rank-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+            border: 2px solid var(--glass-border-subtle);
+            background: var(--glass-bg-light);
+        }
+        .rank-user-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .rank-user-info .username {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--glass-text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .rank-user-info .userid {
+            font-size: 12px;
+            color: var(--glass-text-muted);
+            margin-top: 2px;
+        }
+
+        /* Rank Value */
+        .rank-value {
+            flex-shrink: 0;
+            text-align: right;
+            margin-left: 16px;
+        }
+        .rank-value .val {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--glass-primary);
+        }
+        .rank-value .unit {
+            font-size: 12px;
+            color: var(--glass-text-muted);
+            margin-left: 2px;
+        }
+        .rank-value .vip-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .vip-level-1 { background: rgba(205,127,50,0.15); color: #8B6914; border: 1px solid rgba(205,127,50,0.3); }
+        .vip-level-2 { background: rgba(192,192,192,0.2); color: #6B7280; border: 1px solid rgba(192,192,192,0.4); }
+        .vip-level-3 { background: rgba(255,215,0,0.15); color: #B8860B; border: 1px solid rgba(255,215,0,0.35); }
+        .vip-level-4 { background: rgba(139,92,246,0.15); color: #6D28D9; border: 1px solid rgba(139,92,246,0.3); }
+        .vip-level-5 { background: rgba(59,130,246,0.15); color: #1D4ED8; border: 1px solid rgba(59,130,246,0.3); }
+        .vip-level-6 { background: linear-gradient(135deg, rgba(239,68,68,0.12), rgba(245,158,11,0.12)); color: #B91C1C; border: 1px solid rgba(239,68,68,0.25); }
+
+        /* Empty State */
+        .ranking-empty {
+            text-align: center;
+            padding: 60px 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border);
+            border-radius: var(--glass-radius-lg);
+            box-shadow: var(--glass-shadow-sm), var(--glass-shadow-inset);
+        }
+        .ranking-empty i {
+            font-size: 48px;
+            color: var(--glass-text-muted);
+            margin-bottom: 16px;
+            display: block;
+        }
+        .ranking-empty h3 {
+            font-size: 18px;
+            color: var(--glass-text-secondary);
+            margin-bottom: 8px;
+        }
+        .ranking-empty p {
+            font-size: 14px;
+            color: var(--glass-text-muted);
+        }
+
+        /* Top 3 Highlight Row */
+        .ranking-item.top1-row { background: rgba(255,215,0,0.06); }
+        .ranking-item.top2-row { background: rgba(192,192,192,0.05); }
+        .ranking-item.top3-row { background: rgba(205,127,50,0.05); }
+
+        @media (max-width: 768px) {
+            .rankings-section {
+                padding: 40px 0 60px;
+            }
+            .rankings-header h1 {
+                font-size: 24px;
+            }
+            .rankings-tab {
+                padding: 8px 16px;
+                font-size: 13px;
+                gap: 5px;
+            }
+            .ranking-item {
+                padding: 12px 16px;
+            }
+            .rank-num {
+                width: 34px;
+                height: 34px;
+                font-size: 14px;
+                margin-right: 12px;
+            }
+            .rank-num.top1 { font-size: 18px; }
+            .rank-num.top2,
+            .rank-num.top3 { font-size: 16px; }
+            .rank-avatar {
+                width: 38px;
+                height: 38px;
+            }
+            .rank-user {
+                gap: 10px;
+            }
+            .rank-value .val {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<section class="rankings-section">
+    <div class="container">
+        <div class="rankings-header glass-animate-in">
+            <h1><i class="fas fa-trophy" style="color:#F59E0B;"></i> 用户排行榜</h1>
+            <p>查看各维度排名，看看谁是本站的顶尖玩家</p>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="rankings-tabs glass-animate-in">
+            <div class="rankings-tab active" data-tab="points">
+                <i class="fas fa-coins"></i> 积分排行榜
+            </div>
+            <div class="rankings-tab" data-tab="recharge">
+                <i class="fas fa-yen-sign"></i> 充值排行榜
+            </div>
+            <div class="rankings-tab" data-tab="vip">
+                <i class="fas fa-crown"></i> VIP排行榜
+            </div>
+            <div class="rankings-tab" data-tab="host">
+                <i class="fas fa-server"></i> 主机数排行榜
+            </div>
+        </div>
+
+        <!-- Points Ranking -->
+        <div class="rankings-panel active" id="panel-points">
+            {if empty($pointsRanking)}
+            <div class="ranking-empty">
+                <i class="fas fa-coins"></i>
+                <h3>暂无数据</h3>
+                <p>还没有用户获得积分，快来参与吧</p>
+            </div>
+            {else}
+            <div class="ranking-card glass-reveal">
+                {foreach $pointsRanking as $k=>$user}
+                <div class="ranking-item {if $k==0}top1-row{elseif $k==1}top2-row{elseif $k==2}top3-row{/if}">
+                    <div class="rank-num {if $k==0}top1{elseif $k==1}top2{elseif $k==2}top3{/if}">
+                        {if $k==0}<i class="fas fa-medal"></i>{elseif $k==1}<i class="fas fa-medal"></i>{elseif $k==2}<i class="fas fa-medal"></i>{else}{$k+1}{/if}
+                    </div>
+                    <div class="rank-user">
+                        <img src="https://q1.qlogo.cn/g?b=qq&nk={$user.qq|default='0'}&s=100" alt="" class="rank-avatar">
+                        <div class="rank-user-info">
+                            <div class="username">{$user.name|default=$user.user}</div>
+                            <div class="userid">@{$user.user}</div>
+                        </div>
+                    </div>
+                    <div class="rank-value">
+                        <span class="val">{$user.points|default=0}</span>
+                        <span class="unit">积分</span>
+                    </div>
+                </div>
+                {/foreach}
+            </div>
+            {/if}
+        </div>
+
+        <!-- Recharge Ranking -->
+        <div class="rankings-panel" id="panel-recharge">
+            {if empty($rechargeRanking)}
+            <div class="ranking-empty">
+                <i class="fas fa-yen-sign"></i>
+                <h3>暂无数据</h3>
+                <p>还没有充值记录</p>
+            </div>
+            {else}
+            <div class="ranking-card glass-reveal">
+                {foreach $rechargeRanking as $k=>$user}
+                <div class="ranking-item {if $k==0}top1-row{elseif $k==1}top2-row{elseif $k==2}top3-row{/if}">
+                    <div class="rank-num {if $k==0}top1{elseif $k==1}top2{elseif $k==2}top3{/if}">
+                        {if $k==0}<i class="fas fa-medal"></i>{elseif $k==1}<i class="fas fa-medal"></i>{elseif $k==2}<i class="fas fa-medal"></i>{else}{$k+1}{/if}
+                    </div>
+                    <div class="rank-user">
+                        <img src="https://q1.qlogo.cn/g?b=qq&nk={$user.qq|default='0'}&s=100" alt="" class="rank-avatar">
+                        <div class="rank-user-info">
+                            <div class="username">{$user.name|default=$user.user}</div>
+                            <div class="userid">@{$user.user}</div>
+                        </div>
+                    </div>
+                    <div class="rank-value">
+                        <span class="val">{$user.total_recharge|default=0}</span>
+                        <span class="unit">元</span>
+                    </div>
+                </div>
+                {/foreach}
+            </div>
+            {/if}
+        </div>
+
+        <!-- VIP Ranking -->
+        <div class="rankings-panel" id="panel-vip">
+            {if empty($vipRanking)}
+            <div class="ranking-empty">
+                <i class="fas fa-crown"></i>
+                <h3>暂无数据</h3>
+                <p>还没有VIP用户</p>
+            </div>
+            {else}
+            <div class="ranking-card glass-reveal">
+                {foreach $vipRanking as $k=>$user}
+                <div class="ranking-item {if $k==0}top1-row{elseif $k==1}top2-row{elseif $k==2}top3-row{/if}">
+                    <div class="rank-num {if $k==0}top1{elseif $k==1}top2{elseif $k==2}top3{/if}">
+                        {if $k==0}<i class="fas fa-medal"></i>{elseif $k==1}<i class="fas fa-medal"></i>{elseif $k==2}<i class="fas fa-medal"></i>{else}{$k+1}{/if}
+                    </div>
+                    <div class="rank-user">
+                        <img src="https://q1.qlogo.cn/g?b=qq&nk={$user.qq|default='0'}&s=100" alt="" class="rank-avatar">
+                        <div class="rank-user-info">
+                            <div class="username">{$user.name|default=$user.user}</div>
+                            <div class="userid">@{$user.user}</div>
+                        </div>
+                    </div>
+                    <div class="rank-value">
+                        <span class="vip-badge vip-level-{$user.membership_level}">{$user.vip_name|default='VIP'.$user.membership_level}</span>
+                    </div>
+                </div>
+                {/foreach}
+            </div>
+            {/if}
+        </div>
+
+        <!-- Host Count Ranking -->
+        <div class="rankings-panel" id="panel-host">
+            {if empty($hostRanking)}
+            <div class="ranking-empty">
+                <i class="fas fa-server"></i>
+                <h3>暂无数据</h3>
+                <p>还没有活跃主机</p>
+            </div>
+            {else}
+            <div class="ranking-card glass-reveal">
+                {foreach $hostRanking as $k=>$user}
+                <div class="ranking-item {if $k==0}top1-row{elseif $k==1}top2-row{elseif $k==2}top3-row{/if}">
+                    <div class="rank-num {if $k==0}top1{elseif $k==1}top2{elseif $k==2}top3{/if}">
+                        {if $k==0}<i class="fas fa-medal"></i>{elseif $k==1}<i class="fas fa-medal"></i>{elseif $k==2}<i class="fas fa-medal"></i>{else}{$k+1}{/if}
+                    </div>
+                    <div class="rank-user">
+                        <img src="https://q1.qlogo.cn/g?b=qq&nk={$user.qq|default='0'}&s=100" alt="" class="rank-avatar">
+                        <div class="rank-user-info">
+                            <div class="username">{$user.name|default=$user.user}</div>
+                            <div class="userid">@{$user.user}</div>
+                        </div>
+                    </div>
+                    <div class="rank-value">
+                        <span class="val">{$user.host_count|default=0}</span>
+                        <span class="unit">台</span>
+                    </div>
+                </div>
+                {/foreach}
+            </div>
+            {/if}
+        </div>
+    </div>
+</section>
+
+{include file="default/index/footer" /}
+
+<script>
+(function() {
+    var tabs = document.querySelectorAll('.rankings-tab');
+    var panels = document.querySelectorAll('.rankings-panel');
+
+    tabs.forEach(function(tab) {
+        tab.addEventListener('click', function() {
+            var target = this.getAttribute('data-tab');
+
+            // Update active tab
+            tabs.forEach(function(t) { t.classList.remove('active'); });
+            this.classList.add('active');
+
+            // Show corresponding panel
+            panels.forEach(function(p) { p.classList.remove('active'); });
+            var panel = document.getElementById('panel-' + target);
+            if (panel) {
+                panel.classList.add('active');
+            }
+        });
+    });
+})();
+</script>

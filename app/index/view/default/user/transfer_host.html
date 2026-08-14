@@ -1,0 +1,366 @@
+{include file="default/user/header" title="发起转让" /}
+<main id="main-container">
+    <div class="content">
+        {if $isBanned}
+        <div class="alert alert-warning" style="border-radius:10px;border-left:4px solid #F59E0B;background:#FFFBEB;color:#92400E;padding:14px 18px;margin-bottom:20px;font-size:14px;">
+            <strong><i class="fas fa-exclamation-triangle"></i> 您的账号已被封禁，暂无法转让</strong>
+        </div>
+        {/if}
+
+        <style>
+            .transfer-form-page { max-width: 680px; margin: 0 auto; }
+            .transfer-form-page h1 { font-size: 26px; font-weight: 800; color: var(--glass-text); margin: 0 0 6px; }
+            .transfer-form-page .subtitle { font-size: 14px; color: var(--glass-text-secondary); margin-bottom: 24px; }
+            .form-card {
+                background: var(--glass-bg);
+                backdrop-filter: blur(var(--glass-blur));
+                -webkit-backdrop-filter: blur(var(--glass-blur));
+                border: 1px solid var(--glass-border);
+                border-radius: var(--glass-radius-lg);
+                padding: 28px;
+                box-shadow: var(--glass-shadow-sm), var(--glass-shadow-inset);
+            }
+            .form-group { margin-bottom: 20px; }
+            .form-group label {
+                display: block;
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--glass-text);
+                margin-bottom: 6px;
+            }
+            .form-group label small {
+                font-weight: 400;
+                color: var(--glass-text-muted);
+                margin-left: 6px;
+            }
+            .form-group .form-control {
+                width: 100%;
+                background: var(--glass-bg-light);
+                border: 1.5px solid var(--glass-border);
+                border-radius: 10px;
+                padding: 10px 14px;
+                font-size: 14px;
+                color: var(--glass-text);
+                transition: all var(--transition);
+            }
+            .form-group .form-control:focus {
+                border-color: var(--glass-primary);
+                box-shadow: 0 0 0 3px var(--glass-primary-glow);
+                outline: none;
+            }
+            .form-group select.form-control {
+                cursor: pointer;
+                appearance: auto;
+            }
+            .code-group {
+                display: flex;
+                gap: 10px;
+            }
+            .code-group .form-control {
+                flex: 1;
+            }
+            .code-group .btn-send-code {
+                flex-shrink: 0;
+                padding: 10px 18px;
+                background: var(--glass-bg);
+                border: 1.5px solid var(--glass-border);
+                border-radius: 10px;
+                color: var(--glass-primary);
+                font-size: 13px;
+                font-weight: 600;
+                cursor: pointer;
+                white-space: nowrap;
+                transition: all var(--transition);
+            }
+            .code-group .btn-send-code:hover {
+                border-color: var(--glass-primary);
+                background: var(--glass-bg-light);
+            }
+            .code-group .btn-send-code:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+            .mode-tabs {
+                display: flex;
+                gap: 12px;
+                margin-bottom: 24px;
+                background: var(--glass-bg-light);
+                border-radius: 12px;
+                padding: 6px;
+                border: 1px solid var(--glass-border);
+            }
+            .mode-tab {
+                flex: 1;
+                text-align: center;
+                padding: 10px 14px;
+                border-radius: 10px;
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--glass-text-secondary);
+                cursor: pointer;
+                border: none;
+                background: transparent;
+                transition: all var(--transition);
+            }
+            .mode-tab.active {
+                background: var(--glass-bg);
+                color: var(--glass-primary);
+                box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            }
+            .mode-desc {
+                font-size: 12px;
+                color: var(--glass-text-muted);
+                margin-top: 4px;
+            }
+            .price-hint {
+                font-size: 12px;
+                color: var(--glass-text-muted);
+                margin-top: 4px;
+            }
+            .btn-submit {
+                width: 100%;
+                padding: 12px 24px;
+                font-size: 15px;
+                font-weight: 700;
+                border-radius: 12px;
+            }
+            .info-alert {
+                background: #EFF6FF;
+                border: 1px solid #BFDBFE;
+                border-radius: 10px;
+                padding: 14px 18px;
+                font-size: 13px;
+                color: #1E40AF;
+                margin-bottom: 20px;
+                line-height: 1.7;
+            }
+            .info-alert i {
+                margin-right: 6px;
+            }
+            .empty-state {
+                text-align: center;
+                padding: 60px 20px;
+                color: var(--glass-text-muted);
+            }
+            .empty-state i {
+                font-size: 48px;
+                margin-bottom: 16px;
+                display: block;
+            }
+            @media (max-width: 768px) {
+                .form-card { padding: 20px; border-radius: 16px; }
+                .transfer-form-page h1 { font-size: 22px; }
+                .code-group { flex-direction: column; }
+            }
+        </style>
+
+        <div class="transfer-form-page">
+            <h1>发起转让</h1>
+            <p class="subtitle">选择您的主机发布到转让市场，让其他用户购买</p>
+
+            {if empty($orders)}
+            <div class="form-card">
+                <div class="empty-state">
+                    <i class="fas fa-server"></i>
+                    <h3 style="font-size:16px;color:var(--glass-text);">没有可转让的主机</h3>
+                    <p>您当前没有运行中且未在转让中的主机</p>
+                </div>
+            </div>
+            {else}
+            <div class="info-alert">
+                <i class="fas fa-info-circle"></i>
+                转让前请确认：<br>
+                1. 转让需要邮箱验证，请确保已绑定邮箱<br>
+                2. 转让价格不能超过原购买价格<br>
+                3. 免费主机转让价格必须为0<br>
+                4. 转让完成后，主机将归属于购买方
+            </div>
+
+            <div class="form-card">
+                <div class="mode-tabs">
+                    <button type="button" class="mode-tab active" id="tabPublic" onclick="switchMode('public')">
+                        <i class="fas fa-globe"></i> 公开市场转让
+                        <div class="mode-desc">发布到转让市场，所有用户可见</div>
+                    </button>
+                    <button type="button" class="mode-tab" id="tabPrivate" onclick="switchMode('private')">
+                        <i class="fas fa-user-lock"></i> 指定用户转让
+                        <div class="mode-desc">仅指定ID的用户可购买</div>
+                    </button>
+                </div>
+
+                <div class="form-group">
+                    <label>选择主机 <small>*必选</small></label>
+                    <select class="form-control" id="order_id" onchange="onOrderChange()">
+                        <option value="">-- 请选择要转让的主机 --</option>
+                        {foreach $orders as $o}
+                        <option value="{$o.id}" data-money="{$o.money|default='0'}">
+                            {$o.product_name|default='未知产品'} (#{$o.id}) - 账号: {$o.user|default='-'} - 到期: {$o.ztime|date='Y-m-d',###}
+                        </option>
+                        {/foreach}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>原购买价格</label>
+                    <input type="text" class="form-control" id="original_price" readonly value="--" style="background:#f8fafc;color:var(--glass-text-muted);">
+                </div>
+
+                <div class="form-group">
+                    <label>转让价格 <small>（元，免费主机填0）</small></label>
+                    <input type="number" class="form-control" id="price" placeholder="请输入转让价格" value="0" min="0" step="0.01">
+                    <div class="price-hint" id="priceHint"></div>
+                </div>
+
+                <div class="form-group" id="targetUserGroup" style="display:none;">
+                    <label>指定接收用户ID <small>*指定转让必填</small></label>
+                    <input type="number" class="form-control" id="target_userid" placeholder="输入目标用户ID" value="" min="1">
+                    <div class="price-hint">仅该用户可在转让市场看到并购买此主机</div>
+                </div>
+
+                <div class="form-group">
+                    <label>联系方式 <small>（选填，方便买家联系您）</small></label>
+                    <input type="text" class="form-control" id="contact_info" placeholder="如：QQ号、微信号或其他联系方式" maxlength="500">
+                </div>
+
+                <div class="form-group">
+                    <label>邮箱验证码 <small>*必填</small></label>
+                    <div class="code-group">
+                        <input type="text" class="form-control" id="email_code" placeholder="请输入6位数字验证码" maxlength="6">
+                        <button type="button" class="btn-send-code" id="btnSendCode" onclick="sendCode()">发送验证码</button>
+                    </div>
+                </div>
+
+                <button type="button" class="glass-btn glass-btn-primary btn-submit" id="btnSubmit" onclick="submitTransfer()">
+                    <i class="fas fa-paper-plane"></i> 发布转让
+                </button>
+            </div>
+            {/if}
+        </div>
+    </div>
+</main>
+
+<script>
+var originalPrice = 0;
+var currentMode = 'public';
+
+function switchMode(mode) {
+    currentMode = mode;
+    $('#tabPublic').toggleClass('active', mode === 'public');
+    $('#tabPrivate').toggleClass('active', mode === 'private');
+    if (mode === 'private') {
+        $('#targetUserGroup').slideDown(200);
+    } else {
+        $('#targetUserGroup').slideUp(200);
+        $('#target_userid').val('');
+    }
+}
+
+function onOrderChange() {
+    var sel = $('#order_id').find('option:selected');
+    var money = sel.data('money') || 0;
+    originalPrice = parseFloat(money);
+    $('#original_price').val(originalPrice > 0 ? '¥' + originalPrice.toFixed(2) : '免费');
+    if (originalPrice > 0) {
+        $('#priceHint').text('转让价格不能超过原价 ¥' + originalPrice.toFixed(2));
+    } else {
+        $('#priceHint').text('免费主机转让价格必须为0');
+        $('#price').val('0');
+    }
+}
+
+var countdown = 0;
+function sendCode() {
+    var orderId = $('#order_id').val();
+    if (!orderId) {
+        showToast('请先选择要转让的主机', 'warning');
+        return;
+    }
+    if (countdown > 0) return;
+    var btn = $('#btnSendCode');
+    btn.prop('disabled', true);
+    btn.text('发送中...');
+    $.post('__ROOT__/user/transferSendCode', {act: 'sendcode'}, function(res) {
+        if (res.code == '1') {
+            showToast(res.msg, 'success');
+            countdown = 60;
+            btn.text(countdown + '秒后重发');
+            var timer = setInterval(function() {
+                countdown--;
+                if (countdown <= 0) {
+                    clearInterval(timer);
+                    btn.prop('disabled', false);
+                    btn.text('发送验证码');
+                } else {
+                    btn.text(countdown + '秒后重发');
+                }
+            }, 1000);
+        } else {
+            showToast(res.msg, 'danger');
+            btn.prop('disabled', false);
+            btn.text('发送验证码');
+        }
+    }, 'json').fail(function() {
+        showToast('发送失败，请稍后再试', 'danger');
+        btn.prop('disabled', false);
+        btn.text('发送验证码');
+    });
+}
+
+function submitTransfer() {
+    var orderId = $('#order_id').val();
+    if (!orderId) {
+        showToast('请选择要转让的主机', 'warning');
+        return;
+    }
+    var price = parseFloat($('#price').val()) || 0;
+    if (price < 0) {
+        showToast('转让价格不能为负数', 'warning');
+        return;
+    }
+    if (originalPrice > 0 && price > originalPrice) {
+        showToast('转让价格不能超过原购买价格（¥' + originalPrice.toFixed(2) + '）', 'warning');
+        return;
+    }
+    if (originalPrice == 0 && price > 0) {
+        showToast('免费主机转让价格必须为0', 'warning');
+        return;
+    }
+    var emailCode = $('#email_code').val().trim();
+    if (!emailCode) {
+        showToast('请输入邮箱验证码', 'warning');
+        return;
+    }
+    if (currentMode === 'private') {
+        var targetUserid = parseInt($('#target_userid').val()) || 0;
+        if (targetUserid <= 0) {
+            showToast('请输入指定接收用户的ID', 'warning');
+            return;
+        }
+    }
+
+    var btn = $('#btnSubmit');
+    btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> 提交中...');
+
+    $.post('__ROOT__/user/transferHost', {
+        act: 'submit',
+        order_id: orderId,
+        price: price,
+        target_userid: currentMode === 'private' ? ($('#target_userid').val() || 0) : 0,
+        contact_info: $('#contact_info').val().trim(),
+        email_code: emailCode
+    }, function(res) {
+        if (res.code == '1') {
+            layer.alert(res.msg, {icon: 1}, function() {
+                location.href = '__ROOT__/user/transferMarket';
+            });
+        } else {
+            showToast(res.msg, 'danger');
+            btn.prop('disabled', false).html('<i class="fas fa-paper-plane"></i> 发布转让');
+        }
+    }, 'json').fail(function() {
+        showToast('请求失败，请稍后再试', 'danger');
+        btn.prop('disabled', false).html('<i class="fas fa-paper-plane"></i> 发布转让');
+    });
+}
+</script>
+{include file="default/user/footer" /}

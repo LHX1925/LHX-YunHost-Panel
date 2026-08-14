@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<title>请设置运行目录为 /public</title>
+<style>body{font-family:sans-serif;max-width:600px;margin:40px auto;padding:0 20px;line-height:1.5;color:#333}code{background:#f4f4f4;padding:1px 4px;color:#c00}h1{font-size:1.3em;margin-bottom:10px}ul{padding-left:20px;margin:10px 0}</style>
+</head>
+<body>
+<h1>运行目录配置错误</h1>
+<p>请将网站运行目录（Web 根目录）设置为 <code>/public</code>。</p>
+<p>当前访问的是项目根目录，暴露 ThinkPHP 核心代码会导致严重安全风险。</p>
+<h2>修改指南</h2>
+<ul>
+<li><b>宝塔面板</b>：网站设置 -> 网站目录 -> 运行目录，选择 <code>/public</code> 并保存。</li>
+<li><b>其他环境</b>：将 Web 服务器（Nginx/Apache等）的根目录指向项目的 <code>public</code> 文件夹。</li>
+</ul>
+<p style="color:#999;font-size:12px">修改后请刷新页面。若仍显示此页，请检查伪静态规则。</p>
+</body>
+</html>

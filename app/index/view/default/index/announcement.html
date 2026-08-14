@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>{$webname} - 公告详情</title>
+    {include file="default/index/header" /}
+    <style>
+        .main-content { padding: 60px 0 60px; }
+        .btn-back { display: inline-flex; align-items: center; gap: 8px; background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur-light)); -webkit-backdrop-filter: blur(var(--glass-blur-light)); color: var(--glass-text-secondary); border: 1.5px solid var(--glass-border); padding: 9px 18px; font-size: 14px; font-weight: 500; border-radius: var(--glass-radius-sm); text-decoration: none; margin-bottom: 24px; transition: all var(--glass-transition); }
+        .btn-back:hover { border-color: var(--glass-primary); color: var(--glass-primary); background: var(--glass-bg-hover); }
+        .announcement-card { background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--glass-border); border-radius: var(--glass-radius-lg); padding: 32px; max-width: 860px; margin: 0 auto; box-shadow: var(--glass-shadow), var(--glass-shadow-inset); }
+        .announcement-header { padding-bottom: 20px; margin-bottom: 24px; border-bottom: 1px solid var(--glass-border); }
+        .announcement-header h1 { font-size: 22px; color: var(--glass-text); font-weight: 700; margin-bottom: 10px; line-height: 1.4; }
+        .announcement-header .meta { font-size: 13px; color: var(--glass-text-muted); display: flex; align-items: center; gap: 6px; }
+        .content-body { font-size: 15px; line-height: 1.8; color: var(--glass-text-secondary); }
+        .content-body p { margin-bottom: 16px; }
+        @media (max-width: 768px) { .announcement-card { padding: 24px 20px; } .announcement-header h1 { font-size: 18px; } .main-content { padding: 40px 0; } }
+    </style>
+    <section class="main-content">
+        <div class="container">
+            <a href="/announcements" class="btn-back glass-animate-in"><i class="fas fa-arrow-left"></i> 返回列表</a>
+            <div class="announcement-card glass-animate-in glass-stagger-1">
+                <div class="announcement-header"><h1>{$announcement.title}</h1><div class="meta"><i class="far fa-clock"></i> 发布时间：{$announcement.created_at|date="Y-m-d H:i",###}</div></div>
+                <div class="content-body">{$announcement.content}</div>
+            </div>
+        </div>
+    </section>
+    {include file="default/index/footer" /}

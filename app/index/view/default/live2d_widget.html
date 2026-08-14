@@ -1,0 +1,710 @@
+{php}
+$web = web_config();
+$live2dEnabled = isset($web['live2d_enabled']) ? intval($web['live2d_enabled']) : 1;
+$live2dModel = isset($web['live2d_model']) ? $web['live2d_model'] : 'shufulei';
+$live2dScale = isset($web['live2d_scale']) ? floatval($web['live2d_scale']) : 0.25;
+$live2dPrimaryColor = isset($web['live2d_primary_color']) ? $web['live2d_primary_color'] : '#FF69B4';
+$siteName = isset($web['name']) ? $web['name'] : '云主机';
+try {
+    $siteRoot = \think\Request::instance()->root();
+} catch (\Exception $e) {
+    $siteRoot = '';
+}
+$aiEnabled = isset($web['live2d_ai_enabled']) ? intval($web['live2d_ai_enabled']) : 1;
+
+$modelConfigs = [
+    'shufulei'       => ['path' => $siteRoot . '/static/live2d/models/舒芙蕾/舒芙蕾.model3.json', 'scale' => 0.015],
+    'youxiaomiao'    => ['path' => $siteRoot . '/static/live2d/models/悠小喵/悠小喵.model3.json', 'scale' => 0.012],
+    'shizuku'        => ['path' => 'https://cdn.jsdelivr.net/gh/hacxy/l2d-models@main/models/shizuku/shizuku.model.json', 'scale' => 0.2],
+    'shizuku_pajama' => ['path' => 'https://cdn.jsdelivr.net/gh/hacxy/l2d-models@main/models/shizuku_pajama/index.json', 'scale' => 0.2],
+    'pio'            => ['path' => 'https://cdn.jsdelivr.net/gh/hacxy/l2d-models@main/models/Pio/model.json', 'scale' => 0.35],
+    'senko'          => ['path' => 'https://cdn.jsdelivr.net/gh/hacxy/l2d-models@main/models/Senko_Normals/senko.model3.json', 'scale' => 0.08],
+    'hk416'          => ['path' => 'https://cdn.jsdelivr.net/gh/hacxy/l2d-models@main/models/HK416-1-normal/model.json', 'scale' => 0.05],
+    'cat_black'      => ['path' => 'https://cdn.jsdelivr.net/gh/hacxy/l2d-models@main/models/cat-black/model.json', 'scale' => 0.15],
+];
+$modelCfg = isset($modelConfigs[$live2dModel]) ? $modelConfigs[$live2dModel] : $modelConfigs['shufulei'];
+// 尊重后台"缩放比例"设置；未设置时使用模型推荐值
+$live2dScale = $live2dScale > 0 ? $live2dScale : $modelCfg['scale'];
+{/php}
+{if $live2dEnabled}
+<script>
+window.__live2dCfg = {
+    modelPath: '{$modelCfg.path}',
+    modelKey: '{$live2dModel}',
+    modelScale: {$live2dScale},
+    primaryColor: '{$live2dPrimaryColor}',
+    siteName: '{$siteName}',
+    siteRoot: '{$siteRoot}',
+    aiEnabled: {$aiEnabled}
+};
+</script>
+{literal}
+<style>
+.oml2d-tips,.oml2d-menus,.oml2d-statusBar,#oml2d-tips,#oml2d-menus,#oml2d-statusBar{display:none !important}
+#oml2d-stage{z-index:9999 !important;touch-action:none;-webkit-user-select:none;user-select:none}
+#oml2d-stage #l2d-panel,#oml2d-stage #l2d-msgs,#oml2d-stage #l2d-input-area,#oml2d-stage #l2d-quick,#oml2d-stage #l2d-input{touch-action:pan-y;-webkit-user-select:text;user-select:text}
+#l2d-bubble{position:absolute;right:20px;bottom:calc(100% + 10px);max-width:240px;min-width:150px;padding:10px 14px;padding-right:30px;background:#fff;border-radius:16px 16px 4px 16px;box-shadow:0 4px 20px rgba(0,0,0,.15);font-size:13px;line-height:1.6;color:#333;opacity:0;visibility:hidden;transform:translateY(8px) scale(.95);transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:10001;word-break:break-word;pointer-events:none;cursor:default}
+#l2d-bubble.show{opacity:1;visibility:visible;transform:translateY(0) scale(1);pointer-events:auto}
+#l2d-bubble .l2d-close{position:absolute;top:4px;right:6px;width:20px;height:20px;line-height:20px;text-align:center;border-radius:50%;color:#bbb;font-size:16px;cursor:pointer}
+#l2d-bubble .l2d-close:hover{background:rgba(0,0,0,.06);color:#666}
+#l2d-bubble a{color:#38B0DE;text-decoration:none}
+#l2d-bubble a:hover{text-decoration:underline}
+#l2d-panel{position:absolute;right:20px;bottom:calc(100% + 10px);width:320px;max-height:430px;background:#fff;border-radius:18px 18px 6px 18px;box-shadow:0 8px 34px rgba(0,0,0,.20);display:flex;flex-direction:column;opacity:0;visibility:hidden;transform:translateY(8px) scale(.95);transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:10002;overflow:hidden}
+#l2d-panel.show{opacity:1;visibility:visible;transform:translateY(0) scale(1)}
+#l2d-panel .l2d-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:linear-gradient(135deg,var(--l2d-primary,#FF69B4),var(--l2d-primary-2,#FF85C0));color:#fff;font-size:14px;font-weight:600}
+#l2d-panel .l2d-head .l2d-title{display:flex;align-items:center;gap:8px}
+#l2d-panel .l2d-head .l2d-badge{font-size:10px;background:rgba(255,255,255,.32);padding:2px 8px;border-radius:10px;font-weight:400}
+#l2d-panel .l2d-close{width:24px;height:24px;border-radius:50%;border:none;background:rgba(255,255,255,.22);color:#fff;font-size:16px;line-height:1;cursor:pointer}
+#l2d-panel .l2d-close:hover{background:rgba(255,255,255,.4)}
+#l2d-msgs{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px;min-height:60px;max-height:270px;scroll-behavior:smooth}
+#l2d-msgs::-webkit-scrollbar{width:4px}
+#l2d-msgs::-webkit-scrollbar-thumb{background:#ddd;border-radius:2px}
+.l2d-msg{max-width:85%;padding:8px 12px;border-radius:14px;font-size:13px;line-height:1.5;word-break:break-word;animation:l2d-msgIn .3s ease-out}
+@keyframes l2d-msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.l2d-msg.ai{align-self:flex-start;background:#f5f5f5;color:#333;border-bottom-left-radius:4px}
+.l2d-msg.user{align-self:flex-end;background:linear-gradient(135deg,var(--l2d-primary,#FF69B4),var(--l2d-primary-2,#FF85C0));color:#fff;border-bottom-right-radius:4px}
+.l2d-dots{display:flex;gap:3px;padding:4px 0}
+.l2d-dots span{width:6px;height:6px;border-radius:50%;background:#999;animation:l2d-dot 1.4s infinite ease-in-out}
+.l2d-dots span:nth-child(1){animation-delay:0s}.l2d-dots span:nth-child(2){animation-delay:.2s}.l2d-dots span:nth-child(3){animation-delay:.4s}
+@keyframes l2d-dot{0%,80%,100%{transform:scale(.6)}40%{transform:scale(1)}}
+#l2d-quick{display:flex;flex-wrap:wrap;gap:6px;padding:0 12px 8px}
+.l2d-quick-btn{font-size:11px;padding:4px 10px;border-radius:12px;border:1px solid #FFB6D9;background:#FFF0F5;color:#D63384;cursor:pointer;transition:all .2s;white-space:nowrap}
+.l2d-quick-btn:hover{background:var(--l2d-primary,#FF69B4);color:#fff;border-color:var(--l2d-primary,#FF69B4)}
+#l2d-input-area{display:flex;padding:10px 12px;border-top:1px solid #eee;gap:8px}
+#l2d-input{flex:1;border:1px solid #e0e0e0;border-radius:20px;padding:8px 14px;font-size:13px;outline:none;transition:border-color .2s}
+#l2d-input:focus{border-color:var(--l2d-primary,#FF69B4)}
+#l2d-send{width:36px;height:36px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--l2d-primary,#FF69B4),var(--l2d-primary-2,#FF85C0));color:#fff;font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:transform .2s,box-shadow .2s}
+#l2d-send:hover{transform:scale(1.08);box-shadow:0 2px 12px rgba(255,105,180,.4)}
+#l2d-send:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+@media (max-width:768px){#l2d-panel{width:calc(100vw - 70px);max-width:300px;right:10px}#l2d-bubble{max-width:calc(100vw - 80px);min-width:130px;font-size:12px;right:10px}}
+</style>
+<script>
+(function () {
+    var cfg = window.__live2dCfg;
+    if (!cfg || !cfg.modelPath) return;
+
+    var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+
+    var modelKey = cfg.modelKey || '';
+    // 统一使用后台"缩放比例"：手机端在此基础上放大 1.5 倍保证可见，后台修改立即生效
+    var scale = cfg.modelScale > 0 ? cfg.modelScale : 0.12;
+    if (isMobile) scale = scale * 1.5;
+
+    // ---------- 手机端纹理降采样：解决高分辨率纹理超过 WebGL MAX_TEXTURE_SIZE 导致模型纯黑 ----------
+    function resolveUrl(path, baseAbs) {
+        if (!path) return path;
+        if (/^(https?:|blob:|data:)/i.test(path)) return path;
+        try { return new URL(path, baseAbs).href; } catch (e) { return baseAbs + path; }
+    }
+
+    // ---------- 手机端纹理处理 ----------
+    // 探测设备 WebGL 最大纹理尺寸，用于决定目标压缩尺寸
+    function probeMaxTextureSize() {
+        try {
+            var c = document.createElement('canvas');
+            var gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+            if (gl) {
+                var m = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+                if (m && m > 0) return m;
+            }
+        } catch (e) {}
+        return 4096;
+    }
+
+    // 从 PNG 文件头读取宽高（只需前 24 字节，不做整图解码，省内存）
+    function readPngSize(blob) {
+        return blob.slice(0, 24).arrayBuffer().then(function (buf) {
+            if (buf.byteLength < 24) return null;
+            var dv = new DataView(buf);
+            return { w: dv.getUint32(16, false), h: dv.getUint32(20, false) };
+        }).catch(function () { return null; });
+    }
+
+    // 把绝对纹理 URL 转成服务器压缩接口地址（服务器端一次性压缩并缓存，手机端下载量小）
+    function toEndpointUrl(absUrl, size) {
+        try {
+            var root = cfg.siteRoot || '';
+            var rel = absUrl;
+            if (root && rel.indexOf(root) === 0) rel = rel.substring(root.length);
+            // 去掉协议和域名，只保留站点相对路径
+            var m = rel.match(/^https?:\/\/[^\/]+(\/.*)$/);
+            if (m) rel = m[1];
+            rel = rel.replace(/^\//, '');
+            return (root || '') + '/live2d/texture?f=' + encodeURIComponent(rel) + '&s=' + size;
+        } catch (e) { return absUrl; }
+    }
+
+    // 把已下载的图片（原尺寸）缩到 nw*nh 输出为 blob/dataURL
+    function imgToBlob(img, nw, nh, done, url) {
+        try {
+            var canvas = document.createElement('canvas');
+            canvas.width = nw;
+            canvas.height = nh;
+            var ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(img, 0, 0, nw, nh);
+            canvas.toBlob(function (b) {
+                if (b) { done(URL.createObjectURL(b)); }
+                else { try { done(canvas.toDataURL('image/png')); } catch (e) { done(url); } }
+            }, 'image/png');
+        } catch (e) { done(url); }
+    }
+
+    // 客户端降采样：读 PNG 头 → createImageBitmap 直接按目标尺寸解码（低内存）→ 不行再走 Image+canvas
+    function clientDownscale(absUrl, maxSize, done) {
+        fetch(absUrl)
+            .then(function (r) { if (!r.ok) throw new Error('bad'); return r.blob(); })
+            .then(function (blob) {
+                return readPngSize(blob).then(function (size) {
+                    if (!size) { done(absUrl); return; }
+                    var longest = Math.max(size.w, size.h);
+                    if (longest <= maxSize) { done(absUrl); return; }
+                    var ratio = maxSize / longest;
+                    var nw = Math.max(1, Math.round(size.w * ratio));
+                    var nh = Math.max(1, Math.round(size.h * ratio));
+                    if (window.createImageBitmap) {
+                        createImageBitmap(blob, { resizeWidth: nw, resizeHeight: nh, resizeQuality: 'high' })
+                            .then(function (bmp) {
+                                var canvas = document.createElement('canvas');
+                                canvas.width = nw;
+                                canvas.height = nh;
+                                canvas.getContext('2d').drawImage(bmp, 0, 0);
+                                if (bmp.close) { try { bmp.close(); } catch (e) {} }
+                                canvas.toBlob(function (b) {
+                                    if (b) { done(URL.createObjectURL(b)); }
+                                    else { try { done(canvas.toDataURL('image/png')); } catch (e2) { done(absUrl); } }
+                                }, 'image/png');
+                            })
+                            .catch(function () {
+                                var img = new Image();
+                                img.onload = function () { imgToBlob(img, nw, nh, done, absUrl); };
+                                img.onerror = function () { done(absUrl); };
+                                img.src = URL.createObjectURL(blob);
+                            });
+                    } else {
+                        var img = new Image();
+                        img.onload = function () { imgToBlob(img, nw, nh, done, absUrl); };
+                        img.onerror = function () { done(absUrl); };
+                        img.src = URL.createObjectURL(blob);
+                    }
+                });
+            })
+            .catch(function () { done(absUrl); });
+    }
+
+    // 处理单张纹理：优先服务器压缩接口，失败再客户端降采样，再失败用原图
+    function prepareTexture(absUrl, maxSize) {
+        return new Promise(function (resolve) {
+            var settled = false;
+            function done(u) { if (!settled) { settled = true; resolve(u); } }
+            var epUrl = toEndpointUrl(absUrl, maxSize);
+            fetch(epUrl)
+                .then(function (r) {
+                    if (!r.ok) throw new Error('ep');
+                    var ct = r.headers.get('content-type') || '';
+                    if (ct.indexOf('image/') !== 0) throw new Error('ep-ct');
+                    return r.blob();
+                })
+                .then(function (blob) { done(URL.createObjectURL(blob)); })
+                .catch(function () { clientDownscale(absUrl, maxSize, done); });
+        });
+    }
+
+    function prepareMobileModel(modelUrl, callback) {
+        // 手机端目标纹理边长：按设备上限折半，留足余量（4096→2048，2048→1024）
+        var texTarget = 2048;
+        try {
+            var devMax = probeMaxTextureSize();
+            texTarget = devMax >= 4096 ? 2048 : 1024;
+        } catch (e) {}
+        var absModelUrl;
+        try { absModelUrl = new URL(modelUrl, location.href).href; } catch (e) { absModelUrl = modelUrl; }
+        var baseAbs = absModelUrl.substring(0, absModelUrl.lastIndexOf('/') + 1);
+
+        function fallback() { done(modelUrl); }
+
+        var called = false;
+        function done(url) {
+            if (called) return;
+            called = true;
+            clearTimeout(overallTimer);
+            callback(url);
+        }
+
+        // 整体兜底：60s 内未完成（网络慢/压缩接口异常），直接加载原始模型，避免一直不显示
+        var overallTimer = setTimeout(function () { fallback(); }, 60000);
+
+        fetch(absModelUrl)
+            .then(function (r) { if (!r.ok) throw new Error('bad status'); return r.json(); })
+            .then(function (model) {
+                var fr = model && model.FileReferences;
+                var isV2 = !fr && model && Array.isArray(model.textures) && model.textures.length;
+                if (!fr && !isV2) { fallback(); return; }
+
+                if (isV2) {
+                    // Cubism 2 模型（shizuku/pio/hk416/黑猫）：字段为小写，位于顶层
+                    model.textures = model.textures.map(function (t) { return resolveUrl(t, baseAbs); });
+                    if (model.pose) model.pose = resolveUrl(model.pose, baseAbs);
+                    if (model.physics) model.physics = resolveUrl(model.physics, baseAbs);
+                    if (model.motions) {
+                        Object.keys(model.motions).forEach(function (group) {
+                            var arr = model.motions[group];
+                            if (Array.isArray(arr)) {
+                                arr.forEach(function (m) { if (m && m.file) m.file = resolveUrl(m.file, baseAbs); });
+                            }
+                        });
+                    }
+                    if (model.expressions) {
+                        model.expressions.forEach(function (e) { if (e && e.file) e.file = resolveUrl(e.file, baseAbs); });
+                    }
+                    var texUrls = model.textures.slice();
+                } else {
+                    // 把 model3.json 里所有相对引用改成绝对 URL，保证作为 blob URL 加载时仍能取到资源
+                    fr.Moc = resolveUrl(fr.Moc, baseAbs);
+                    if (fr.Physics) fr.Physics = resolveUrl(fr.Physics, baseAbs);
+                    if (fr.Pose) fr.Pose = resolveUrl(fr.Pose, baseAbs);
+                    if (fr.DisplayInfo) fr.DisplayInfo = resolveUrl(fr.DisplayInfo, baseAbs);
+                    if (Array.isArray(fr.Expressions)) {
+                        fr.Expressions.forEach(function (e) { e.File = resolveUrl(e.File, baseAbs); });
+                    }
+                    if (fr.Motions) {
+                        Object.keys(fr.Motions).forEach(function (group) {
+                            var arr = fr.Motions[group];
+                            if (Array.isArray(arr)) {
+                                arr.forEach(function (m) { if (m && m.File) m.File = resolveUrl(m.File, baseAbs); });
+                            }
+                        });
+                    }
+                    var texUrls = fr.Textures.map(function (t) {
+                        return resolveUrl(t, baseAbs);
+                    });
+                }
+
+                // 顺序处理纹理：优先服务器压缩，失败再客户端降采样，避免同时解码多张大图导致内存爆掉
+                var texResults = [];
+                var chain = Promise.resolve();
+                texUrls.forEach(function (u) {
+                    chain = chain.then(function () {
+                        return prepareTexture(u, texTarget).then(function (result) {
+                            texResults.push(result);
+                        });
+                    });
+                });
+
+                chain.then(function () {
+                    if (isV2) { model.textures = texResults; }
+                    else { fr.Textures = texResults; }
+                    var blob = new Blob([JSON.stringify(model)], { type: 'application/json' });
+                    console.log('[Live2D] 手机端纹理已处理至 ' + texTarget + 'px，修复纯黑问题');
+                    done(URL.createObjectURL(blob));
+                }).catch(fallback);
+            })
+            .catch(fallback);
+    }
+
+    var oml = null; // OML2D 实例，用于表情/动作/拖放
+
+    // 模型表情名列表（后台可选模型各自的 exp3 表情），动态获取失败时按 key 兜底
+    var EXPR_BY_KEY = {
+        shufulei:    ['\u54ed\u54ed', '\u624b\u67c4', '\u661f\u661f', '\u7231\u5fc3', '\u732b\u732b\u624b', '\u751f\u6c14', '\u773c\u7f69', '\u773c\u955c', '\u8138\u7ea2', '\u9ea6\u514b\u98ce', '\u9ed1\u8138'],
+        youxiaomiao: ['\u524d\u503e', '\u54ed\u54ed', '\u6276\u8138', '\u661f\u661f\u773c', '\u6655\u6655\u773c', '\u6d41\u6cea', '\u770b\u624b\u673a', '\u8138\u7ea2', '\u8bb0\u7b14\u8bb0', '\u98de\u5934', '\u9ed1\u8138']
+    };
+
+    // 随机播放一个表情/动作（点击看板娘时触发）
+    function playRandomAction() {
+        try {
+            var model = oml && oml.models && oml.models.model;
+            if (!model || !model.internalModel) return;
+            var im = model.internalModel;
+            var exprNames = null;
+            try {
+                var defs = im.motionManager && im.motionManager.expressionManager && im.motionManager.expressionManager.definitions;
+                if (defs && defs.length) exprNames = defs.map(function (d) { return d.name; });
+            } catch (e) {}
+            if ((!exprNames || !exprNames.length) && EXPR_BY_KEY[modelKey]) {
+                exprNames = EXPR_BY_KEY[modelKey];
+            }
+            if (exprNames && exprNames.length) {
+                model.expression(exprNames[Math.floor(Math.random() * exprNames.length)]);
+            }
+            try {
+                var groups = im.motionManager && im.motionManager.motionGroups ? Object.keys(im.motionManager.motionGroups) : null;
+                if (groups && groups.length) {
+                    model.motion(groups[Math.floor(Math.random() * groups.length)]);
+                }
+            } catch (e2) {}
+        } catch (e3) {}
+    }
+
+    function hideStage() {
+        try {
+            var st = document.getElementById('oml2d-stage');
+            if (st) st.style.display = 'none';
+        } catch (e) {}
+    }
+
+    function initLive2d() {
+        if (typeof OML2D === 'undefined' || typeof OML2D.loadOml2d !== 'function') {
+            console.error('[Live2D] 引擎未就绪');
+            return;
+        }
+        // 一次性关闭 Cubism SDK 原生水印
+        try {
+            if (typeof Live2DCubismCore !== 'undefined' && Live2DCubismCore.csmSetRenderWatermarkFlag) {
+                Live2DCubismCore.csmSetRenderWatermarkFlag(false);
+            }
+        } catch (e) {}
+
+        function doLoad(modelPath) {
+            try {
+                var result = OML2D.loadOml2d({
+                    models: [{
+                        path: modelPath,
+                        scale: scale,
+                        volume: 0,
+                        mobileScale: scale,
+                        showHitAreaFrames: false
+                    }],
+                    dockedPosition: 'right',
+                    primaryColor: cfg.primaryColor,
+                    mobileDisplay: true,
+                    sayHello: false,
+                    transitionTime: 0,
+                    statusBar: { disable: true },
+                    menus: { disable: true },
+                    tips: { disable: true }
+                });
+
+                function onOk() {
+                    oml = result && result.instance ? result.instance : result;
+                    setupStage();
+                }
+                function onFail(err) {
+                    console.error('[Live2D] 模型加载失败，已隐藏看板娘区域：', err);
+                    hideStage();
+                }
+                if (result && typeof result.then === 'function') {
+                    result.then(onOk).catch(onFail);
+                } else {
+                    oml = result;
+                    // 引擎构造时已自动加载模型，这里只需等它加载完（或超时兜底），避免重复 loadModel
+                    var waited = false;
+                    function waitLoad() {
+                        if (waited) return;
+                        waited = true;
+                        setupStage();
+                    }
+                    try {
+                        if (typeof result.onLoad === 'function') {
+                            result.onLoad(function (status) {
+                                if (status === 'fail') { hideStage(); return; }
+                                waitLoad();
+                            });
+                        }
+                    } catch (e) {}
+                    setTimeout(waitLoad, 4000);
+                }
+            } catch (err) {
+                console.error('[Live2D] 引擎初始化异常：', err);
+                hideStage();
+            }
+        }
+
+        if (isMobile) {
+            prepareMobileModel(cfg.modelPath, doLoad);
+        } else {
+            doLoad(cfg.modelPath);
+        }
+    }
+
+    function loadEngine() {
+        var s = document.createElement('script');
+        s.src = cfg.siteRoot + '/static/live2d/oh-my-live2d.min.js';
+        s.async = true;
+        s.onload = initLive2d;
+        s.onerror = function () {
+            console.error('[Live2D] 引擎加载失败：' + s.src);
+        };
+        document.head.appendChild(s);
+    }
+
+    // 页面完全加载后再异步加载引擎，避免阻塞首屏
+    if (document.readyState === 'complete') {
+        loadEngine();
+    } else {
+        window.addEventListener('load', loadEngine);
+    }
+
+    // ---------- 附加气泡与聊天 UI（只做一次，无每帧循环） ----------
+    function setupStage() {
+        var stage = document.getElementById('oml2d-stage');
+        if (!stage) { setTimeout(setupStage, 200); return; }
+
+        stage.style.setProperty('--l2d-primary', cfg.primaryColor || '#FF69B4');
+        stage.style.setProperty('--l2d-primary-2', '#FF85C0');
+
+        var modelName = '舒芙蕾';
+        if (modelKey === 'youxiaomiao') modelName = '悠小喵';
+        else if (modelKey === 'senko') modelName = 'Senko';
+        else if (modelKey === 'shizuku') modelName = 'Shizuku';
+        else if (modelKey === 'pio') modelName = 'Pio';
+        else if (modelKey === 'hk416') modelName = 'HK416';
+        else if (modelKey === 'cat_black') modelName = '黑猫';
+
+        // 气泡
+        var bubble = document.createElement('div');
+        bubble.id = 'l2d-bubble';
+        var bubbleClose = document.createElement('span');
+        bubbleClose.className = 'l2d-close';
+        bubbleClose.textContent = '\u00d7';
+        var bubbleText = document.createElement('div');
+        bubbleText.className = 'l2d-bubble-text';
+        bubble.appendChild(bubbleClose);
+        bubble.appendChild(bubbleText);
+        stage.appendChild(bubble);
+
+        // 聊天面板
+        var panel = document.createElement('div');
+        panel.id = 'l2d-panel';
+        panel.innerHTML =
+            '<div class="l2d-head">' +
+                '<div class="l2d-title"><span>\u2728 ' + modelName + '</span><span class="l2d-badge">AI</span></div>' +
+                '<button class="l2d-close" title="\u5173\u95ed">\u00d7</button>' +
+            '</div>' +
+            '<div id="l2d-msgs"></div>' +
+            '<div id="l2d-quick">' +
+                '<button class="l2d-quick-btn" data-q="\u4f60\u4eec\u6709\u54ea\u4e9b\u4e3b\u673a\u5957\u9910\uff1f">\uD83D\uDCBB \u5957\u9910\u4ecb\u7ecd</button>' +
+                '<button class="l2d-quick-btn" data-q="\u600e\u4e48\u8d2d\u4e70\u4e3b\u673a\uff1f">\uD83D\uDED2 \u8d2d\u4e70\u6d41\u7a0b</button>' +
+                '<button class="l2d-quick-btn" data-q="\u4ef7\u683c\u662f\u591a\u5c11\uff1f">\uD83D\uDCB0 \u4ef7\u683c\u67e5\u8be2</button>' +
+                '<button class="l2d-quick-btn" data-q="\u652f\u6301\u54ea\u4e9b\u652f\u4ed8\u65b9\u5f0f\uff1f">\uD83D\uDCF1 \u652f\u4ed8\u65b9\u5f0f</button>' +
+            '</div>' +
+            '<div id="l2d-input-area">' +
+                '<input type="text" id="l2d-input" placeholder="\u8f93\u5165\u4f60\u7684\u95ee\u9898..." maxlength="500">' +
+                '<button id="l2d-send" title="\u53d1\u9001">\u27A4</button>' +
+            '</div>';
+        stage.appendChild(panel);
+
+        var msgs = document.getElementById('l2d-msgs');
+        var input = document.getElementById('l2d-input');
+        var sendBtn = document.getElementById('l2d-send');
+        var closeBtn = panel.querySelector('.l2d-close');
+
+        var tips = [
+            '虚拟主机价格从<strong>几元/月</strong>起，所有套餐支持免费试用！',
+            '购买流程：<a href="' + cfg.siteRoot + '/register">注册</a>\u2192选套餐\u2192支付\u2192自动开通！',
+            '支持<strong>PHP/MySQL</strong>等环境，多种配置可选！',
+            '有问题通过<a href="' + cfg.siteRoot + '/user/submitticket">工单系统</a>提交，工作日在线客服帮你解决！',
+            '支持<strong>支付宝、微信支付</strong>，安全便捷！',
+            '数据中心覆盖<strong>香港、美国、新加坡、日本</strong>！',
+            '<strong>' + (isMobile ? '\u70b9\u6211' : '\u53cc\u51fb\u6211') + '</strong>' + (isMobile ? '' : '\u53ef\u4ee5\u548c\u7f8e\u5973AI') + '\u804a\u5929\uff0c<strong>\u70b9\u6211</strong>\u4f1a\u8868\u60c5\uff0c\u62d6\u52a8\u53ef\u4ee5\u6362\u4f4d\u7f6e\u54e6~'
+        ];
+        var bubbleTimer = null;
+        function showBubble(html, duration) {
+            if (panel.classList.contains('show')) return;
+            bubbleText.innerHTML = html;
+            bubble.classList.add('show');
+            clearTimeout(bubbleTimer);
+            if (duration) {
+                bubbleTimer = setTimeout(function () { bubble.classList.remove('show'); }, duration);
+            }
+        }
+        function hideBubble() {
+            bubble.classList.remove('show');
+            clearTimeout(bubbleTimer);
+        }
+        bubbleClose.addEventListener('click', function (e) { e.stopPropagation(); hideBubble(); });
+
+        var isAiLoading = false;
+        function showPanel() {
+            hideBubble();
+            panel.classList.add('show');
+            if (msgs.children.length === 0) {
+                addAiMsg('\u54c8\u5566\uff5e\u6211\u662f' + cfg.siteName + '\u7684AI\u52a9\u624b' + modelName + '\uff01\u2705 \u6709\u4ec0\u4e48\u95ee\u9898\u968f\u4fbf\u95ee\u6211\u5427\uff5e');
+            }
+            setTimeout(function () { input.focus(); }, 350);
+        }
+        function hidePanel() { panel.classList.remove('show'); }
+        function togglePanel() {
+            if (panel.classList.contains('show')) hidePanel();
+            else showPanel();
+        }
+        closeBtn.addEventListener('click', function (e) { e.stopPropagation(); hidePanel(); });
+
+        function addAiMsg(text) {
+            var div = document.createElement('div');
+            div.className = 'l2d-msg ai';
+            div.textContent = text;
+            msgs.appendChild(div);
+            msgs.scrollTop = msgs.scrollHeight;
+        }
+        function addUserMsg(text) {
+            var div = document.createElement('div');
+            div.className = 'l2d-msg user';
+            div.textContent = text;
+            msgs.appendChild(div);
+            msgs.scrollTop = msgs.scrollHeight;
+        }
+        function addTyping() {
+            var div = document.createElement('div');
+            div.className = 'l2d-msg ai';
+            div.id = 'l2d-typing';
+            div.innerHTML = '<div class="l2d-dots"><span></span><span></span><span></span></div>';
+            msgs.appendChild(div);
+            msgs.scrollTop = msgs.scrollHeight;
+        }
+        function removeTyping() {
+            var el = document.getElementById('l2d-typing');
+            if (el) el.remove();
+        }
+
+        function localReply(msg) {
+            var q = msg.toLowerCase();
+            if (q.indexOf('\u4ef7\u683c') !== -1 || q.indexOf('\u591a\u5c11\u94b1') !== -1 || q.indexOf('\u8d39\u7528') !== -1)
+                return '\u6211\u4eec\u7684\u865a\u62df\u4e3b\u673a\u4ece\u51e0\u5143/\u6708\u8d77\uff0c\u5177\u4f53\u4ef7\u683c\u8bf7\u67e5\u770b\u4ea7\u54c1\u9875\u9762\u54e6~ \u2601\uFE0F';
+            if (q.indexOf('\u5957\u9910') !== -1 || q.indexOf('\u914d\u7f6e') !== -1 || q.indexOf('\u4e3b\u673a') !== -1)
+                return '\u6211\u4eec\u63d0\u4f9b\u591a\u79cd\u914d\u7f6e\u5957\u9910\uff0c\u652f\u6301PHP/MySQL\u73af\u5883\uff0c\u6ee1\u8db3\u4e0d\u540c\u9700\u6c42\uff01\u8be6\u60c5\u8bf7\u67e5\u770b\u4ea7\u54c1\u9875~ \uD83D\uDE80';
+            if (q.indexOf('\u8d2d\u4e70') !== -1 || q.indexOf('\u6d41\u7a0b') !== -1 || q.indexOf('\u600e\u4e48') !== -1)
+                return '\u8d2d\u4e70\u6d41\u7a0b\u5f88\u7b80\u5355\uff1a\u6ce8\u518c\u8d26\u53f7 \u2192 \u9009\u62e9\u5957\u9910 \u2192 \u652f\u4ed8 \u2192 \u81ea\u52a8\u5f00\u901a\uff01\u6709\u95ee\u9898\u968f\u65f6\u627e\u6211~ \uD83D\uDE0A';
+            if (q.indexOf('\u652f\u4ed8') !== -1 || q.indexOf('\u652f\u4ed8\u5b9d') !== -1 || q.indexOf('\u5fae\u4fe1') !== -1)
+                return '\u6211\u4eec\u652f\u6301\u652f\u4ed8\u5b9d\u3001\u5fae\u4fe1\u652f\u4ed8\uff0c\u5b89\u5168\u4fbf\u6377\uff01\uD83D\uDCB3';
+            if (q.indexOf('\u6570\u636e\u4e2d\u5fc3') !== -1 || q.indexOf('\u670d\u52a1\u5668') !== -1 || q.indexOf('\u673a\u623f') !== -1)
+                return '\u6211\u4eec\u7684\u6570\u636e\u4e2d\u5fc3\u8986\u76d6\u9999\u6e2f\u3001\u7f8e\u56fd\u3001\u65b0\u52a0\u5761\u3001\u65e5\u672c\uff0c\u5168\u7403\u8282\u70b9\u4efb\u4f60\u9009\uff01\uD83C\uDF0D';
+            if (q.indexOf('\u5de5\u5355') !== -1 || q.indexOf('\u5ba2\u670d') !== -1 || q.indexOf('\u5e2e\u52a9') !== -1)
+                return '\u6709\u95ee\u9898\u53ef\u4ee5\u901a\u8fc7\u5de5\u5355\u7cfb\u7edf\u63d0\u4ea4\uff0c\u5de5\u4f5c\u65e5\u5728\u7ebf\u5ba2\u670d\u4f1a\u5e2e\u4f60\u89e3\u51b3\uff01\uD83D\uDCDD';
+            if (q.indexOf('\u4f60\u597d') !== -1 || q.indexOf('\u4f60\u662f\u8c01') !== -1 || q.indexOf('\u4f60\u53eb') !== -1)
+                return '\u4f60\u597d\u5440\uff01\u6211\u662f' + cfg.siteName + '\u7684AI\u52a9\u624b' + modelName + '\uff5e\u6709\u4ec0\u4e48\u53ef\u4ee5\u5e2e\u4f60\u7684\u5417\uff1f\uD83D\uDE0A';
+            return '\u611f\u8c22\u4f60\u7684\u7559\u8a00\uff01\u5982\u679c\u6709\u5177\u4f53\u95ee\u9898\uff0c\u6b22\u8fce\u901a\u8fc7\u5de5\u5355\u7cfb\u7edf\u8054\u7cfb\u6211\u4eec\uff0c\u6216\u8005\u7ee7\u7eed\u5411\u6211\u63d0\u95ee\u54e6~ \uD83D\uDCAC';
+        }
+
+        function sendToAI(message) {
+            if (isAiLoading) return;
+            isAiLoading = true;
+            sendBtn.disabled = true;
+            input.disabled = true;
+            addUserMsg(message);
+            addTyping();
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', cfg.siteRoot + '/live2d/chat', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState !== 4) return;
+                removeTyping();
+                isAiLoading = false;
+                sendBtn.disabled = false;
+                input.disabled = false;
+                input.focus();
+                if (xhr.status === 200) {
+                    try {
+                        var resp = JSON.parse(xhr.responseText);
+                        if (resp.code === 0 && resp.data && resp.data.reply) {
+                            addAiMsg(resp.data.reply);
+                        } else {
+                            addAiMsg(resp.msg || '\u62b1\u6b49\uff0c\u6211\u6682\u65f6\u65e0\u6cd5\u56de\u7b54\uff0c\u8bf7\u7a0d\u540e\u518d\u8bd5~');
+                        }
+                    } catch (e) {
+                        addAiMsg('\u62b1\u6b49\uff0c\u56de\u590d\u89e3\u6790\u5931\u8d25\uff0c\u8bf7\u7a0d\u540e\u518d\u8bd5~');
+                    }
+                } else {
+                    addAiMsg(localReply(message));
+                }
+            };
+            xhr.onerror = function () {
+                removeTyping();
+                isAiLoading = false;
+                sendBtn.disabled = false;
+                input.disabled = false;
+                input.focus();
+                addAiMsg(localReply(message));
+            };
+            xhr.send('message=' + encodeURIComponent(message));
+        }
+
+        function doSend() {
+            var msg = input.value.trim();
+            if (!msg || isAiLoading) return;
+            input.value = '';
+            sendToAI(msg);
+        }
+        sendBtn.addEventListener('click', function (e) { e.stopPropagation(); doSend(); });
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') { e.preventDefault(); doSend(); }
+        });
+        var quickBtns = panel.querySelectorAll('.l2d-quick-btn');
+        for (var i = 0; i < quickBtns.length; i++) {
+            (function (btn) {
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    var q = btn.getAttribute('data-q');
+                    if (q && !isAiLoading) sendToAI(q);
+                });
+            })(quickBtns[i]);
+        }
+        panel.addEventListener('mousedown', function (e) { e.stopPropagation(); });
+        panel.addEventListener('touchstart', function (e) { e.stopPropagation(); });
+
+        // ---------- 随意拖放：按住模型可拖动位置（不触发点击） ----------
+        var isDragging = false, dragMoved = false, dragStartX = 0, dragStartY = 0, dragLeft = 0, dragTop = 0;
+        stage.addEventListener('pointerdown', function (e) {
+            if (e.target.closest && e.target.closest('#l2d-panel')) return;
+            if (e.target.closest && e.target.closest('#l2d-bubble')) return;
+            isDragging = true; dragMoved = false;
+            dragStartX = e.clientX; dragStartY = e.clientY;
+            var r = stage.getBoundingClientRect();
+            dragLeft = r.left; dragTop = r.top;
+            try { stage.setPointerCapture && stage.setPointerCapture(e.pointerId); } catch (err) {}
+        });
+        stage.addEventListener('pointermove', function (e) {
+            if (!isDragging) return;
+            var dx = e.clientX - dragStartX, dy = e.clientY - dragStartY;
+            if (!dragMoved && Math.abs(dx) + Math.abs(dy) < 8) return;
+            dragMoved = true;
+            var nl = dragLeft + dx, nt = dragTop + dy;
+            nl = Math.max(0, Math.min(window.innerWidth - 60, nl));
+            nt = Math.max(0, Math.min(window.innerHeight - 60, nt));
+            stage.style.left = nl + 'px';
+            stage.style.top = nt + 'px';
+            stage.style.right = 'auto';
+            stage.style.bottom = 'auto';
+        });
+        function dragEnd(e) {
+            isDragging = false;
+            try { stage.releasePointerCapture && stage.releasePointerCapture(e.pointerId); } catch (err) {}
+        }
+        stage.addEventListener('pointerup', dragEnd);
+        stage.addEventListener('pointercancel', dragEnd);
+
+        // 交互：手机端单击=打开AI聊天；桌面端单击=气泡+表情动作，双击=AI聊天+表情动作
+        function onStageClick(e) {
+            if (dragMoved) return; // 刚拖动过，不触发点击
+            if (e.target.closest && e.target.closest('#l2d-panel')) return;
+            if (e.target.closest && e.target.closest('#l2d-bubble')) return;
+            playRandomAction();
+            if (isMobile) {
+                if (cfg.aiEnabled) togglePanel();
+                else showBubble(tips[Math.floor(Math.random() * tips.length)], 4000);
+            } else {
+                var t = tips[Math.floor(Math.random() * tips.length)];
+                showBubble(t, 4000);
+            }
+        }
+        stage.addEventListener('click', onStageClick);
+        stage.addEventListener('dblclick', function (e) {
+            if (e.target.closest && e.target.closest('#l2d-panel')) return;
+            if (e.target.closest && e.target.closest('#l2d-bubble')) return;
+            playRandomAction();
+            if (cfg.aiEnabled) togglePanel();
+        });
+
+        // 欢迎气泡（手机端提示单击，桌面端提示双击）
+        setTimeout(function () {
+            var hint = isMobile ? '\u5355\u51fb' : '\u53cc\u51fb';
+            var hint2 = isMobile ? '\u5355\u51fb' : '\u70b9\u51fb';
+            showBubble('\u4f60\u597d\uff01\u6211\u662f' + cfg.siteName + '\u7684AI\u52a9\u624b' + modelName + '~ <strong>' + hint + '</strong>\u5f00\u542fAI\u804a\u5929\uff0c<strong>' + hint2 + '</strong>\u53ef\u4ee5\u4e92\u52a8\u3001\u62d6\u62fd\u53ef\u4ee5\u79fb\u52a8\u4f4d\u7f6e\u54e6\uff01', 6000);
+        }, 2500);
+    }
+})();
+</script>
+{/literal}
+{/if}

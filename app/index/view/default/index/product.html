@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>{$webname} - {$product.name}</title>
+    {include file="default/index/header" /}
+    <style>
+        .product-page { padding: 40px 0 80px; }
+        .product-hero {
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border);
+            border-radius: var(--glass-radius-xl);
+            padding: 48px;
+            margin-bottom: 0;
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 48px;
+            align-items: start;
+            box-shadow: var(--glass-shadow), var(--glass-shadow-inset);
+        }
+        .product-left { min-width: 0; }
+        .product-intro h1 {
+            font-size: 42px; font-weight: 800; color: var(--glass-text);
+            margin: 0 0 20px; letter-spacing: -1px; line-height: 1.2;
+        }
+        .product-intro .subtitle {
+            font-size: 17px; color: var(--glass-text-secondary);
+            line-height: 1.8; margin: 0 0 28px;
+        }
+        .product-intro .desc-content {
+            font-size: 15px; color: var(--glass-text-secondary); line-height: 1.9;
+        }
+        .product-intro .desc-content p { margin-bottom: 12px; }
+        .product-price-card {
+            background: var(--glass-bg-strong);
+            backdrop-filter: blur(var(--glass-blur-strong));
+            -webkit-backdrop-filter: blur(var(--glass-blur-strong));
+            border: 1px solid var(--glass-border-strong);
+            border-radius: var(--glass-radius-lg);
+            padding: 32px;
+            box-shadow: var(--glass-shadow-lg), var(--glass-shadow-inset);
+            position: sticky; top: 90px;
+        }
+        .price-display {
+            text-align: center; margin-bottom: 28px; padding-bottom: 24px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .price-display .label { font-size: 14px; color: var(--glass-text-secondary); margin-bottom: 8px; }
+        .price-display .price { font-size: 52px; font-weight: 800; color: var(--glass-primary); line-height: 1; }
+        .price-display .price small { font-size: 20px; color: var(--glass-text-secondary); font-weight: 500; }
+        .form-group { margin-bottom: 16px; }
+        .form-label { display: block; font-size: 13px; font-weight: 600; color: var(--glass-text-secondary); margin-bottom: 8px; }
+        .input-row {
+            display: flex; border: 1.5px solid var(--glass-border); border-radius: var(--glass-radius-sm);
+            overflow: hidden; transition: all var(--glass-transition);
+            background: var(--glass-bg-input);
+        }
+        .input-row:focus-within { border-color: var(--glass-primary); box-shadow: 0 0 0 4px var(--glass-primary-glow); }
+        .input-prepend {
+            display: flex; align-items: center; padding: 0 14px;
+            background: var(--glass-bg-light); border-right: 1.5px solid var(--glass-border);
+            font-size: 13px; color: var(--glass-text-secondary); white-space: nowrap;
+        }
+        .input-append {
+            display: flex; align-items: center; padding: 0 14px;
+            background: var(--glass-bg-light); border-left: 1.5px solid var(--glass-border);
+            font-size: 13px; color: var(--glass-primary); font-weight: 600; white-space: nowrap;
+        }
+        .form-control {
+            flex: 1; padding: 12px; font-size: 14px; border: none;
+            background: transparent; color: var(--glass-text); outline: none; min-width: 0;
+        }
+        .total-box {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 16px; background: var(--glass-bg-light);
+            backdrop-filter: blur(var(--glass-blur-light));
+            -webkit-backdrop-filter: blur(var(--glass-blur-light));
+            border-radius: var(--glass-radius-sm); margin: 20px 0;
+            border: 1px solid var(--glass-border);
+        }
+        .total-box .total-label { font-size: 14px; color: var(--glass-text-secondary); font-weight: 500; }
+        .total-box .total-value { font-size: 24px; font-weight: 800; color: var(--glass-primary); }
+        .btn-submit {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            width: 100%; padding: 15px;
+            background: linear-gradient(135deg, var(--glass-primary), var(--glass-primary-light));
+            color: #fff; font-size: 16px; font-weight: 700; border: none;
+            border-radius: var(--glass-radius-full); cursor: pointer;
+            transition: all var(--glass-transition);
+            box-shadow: 0 4px 16px var(--glass-primary-glow);
+        }
+        .btn-submit:hover { box-shadow: 0 6px 24px var(--glass-primary-glow); transform: translateY(-1px); }
+        .btn-submit:disabled { background: var(--glass-bg); color: var(--glass-text-muted); cursor: not-allowed; box-shadow: none; border: 1px solid var(--glass-border); }
+        .specs-inline { margin-top: 36px; padding-top: 32px; border-top: 1px solid var(--glass-border); }
+        .specs-inline .section-title { font-size: 18px; font-weight: 800; color: var(--glass-text); margin: 0 0 20px; }
+        .specs-inline .specs-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .spec-card {
+            background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur-light));
+            -webkit-backdrop-filter: blur(var(--glass-blur-light));
+            border: 1px solid var(--glass-border); border-radius: var(--glass-radius-lg);
+            padding: 28px 16px; text-align: center; transition: all var(--glass-transition);
+            box-shadow: var(--glass-shadow-sm), var(--glass-shadow-inset);
+        }
+        .spec-card:hover { box-shadow: var(--glass-shadow-lg), var(--glass-shadow-inset); transform: translateY(-3px); }
+        .spec-card .icon { width: 52px; height: 52px; border-radius: 14px; background: var(--glass-bg-light); color: var(--glass-primary); display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 14px; }
+        .spec-card .value { font-size: 18px; font-weight: 700; color: var(--glass-text); margin-bottom: 6px; }
+        .spec-card .label { font-size: 13px; color: var(--glass-text-secondary); }
+        .features-inline { margin-top: 36px; padding-top: 32px; border-top: 1px solid var(--glass-border); }
+        .features-inline .section-title { font-size: 18px; font-weight: 800; color: var(--glass-text); margin: 0 0 20px; }
+        .features-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
+        .features-list { display: flex; flex-direction: column; gap: 18px; }
+        .feature-item { display: flex; align-items: center; gap: 14px; font-size: 15px; color: var(--glass-text); font-weight: 500; }
+        .feature-item .icon { width: 36px; height: 36px; border-radius: 10px; background: var(--glass-bg-light); color: var(--glass-primary); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+        @media (max-width: 1199px) {
+            .product-hero { grid-template-columns: 1fr; gap: 32px; }
+            .product-price-card { position: static; }
+            .specs-inline .specs-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .product-page { padding: 20px 0 40px; }
+            .product-hero { padding: 24px; border-radius: var(--glass-radius-lg); }
+            .product-intro h1 { font-size: 28px; }
+            .product-intro .subtitle { font-size: 15px; }
+            .price-display .price { font-size: 40px; }
+            .features-grid { grid-template-columns: 1fr; gap: 24px; }
+            .specs-inline .specs-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .spec-card { padding: 20px 12px; }
+        }
+    </style>
+
+    <section class="product-page">
+        <div class="container">
+            <div class="product-hero glass-animate-in">
+                <div class="product-left">
+                    <div class="product-intro">
+                        <h1>{$product.name}</h1>
+                        <p class="subtitle">适合企业网站、电商站点与高流量应用</p>
+                        <div class="desc-content">{$product.content}</div>
+                    </div>
+                    <div class="specs-inline">
+                        <h2 class="section-title">产品规格</h2>
+                        <div class="specs-grid">
+                            <div class="spec-card glass-reveal"><div class="icon"><i class="fas fa-hdd"></i></div><div class="value">{$product.capacity_show}</div><div class="label">网页空间</div></div>
+                            <div class="spec-card glass-reveal"><div class="icon"><i class="fas fa-database"></i></div><div class="value">{$product.db_size_show}</div><div class="label">数据库大小</div></div>
+                            <div class="spec-card glass-reveal"><div class="icon"><i class="fas fa-chart-line"></i></div><div class="value">{$product.traffic_show}</div><div class="label">月流量</div></div>
+                            <div class="spec-card glass-reveal"><div class="icon"><i class="fas fa-link"></i></div><div class="value">{$product.domain_count_show}</div><div class="label">绑定域名</div></div>
+                            <div class="spec-card glass-reveal"><div class="icon"><i class="fas fa-shield-alt"></i></div><div class="value">免费</div><div class="label">SSL 证书</div></div>
+                            <div class="spec-card glass-reveal"><div class="icon"><i class="fas fa-tachometer-alt"></i></div><div class="value">BGP</div><div class="label">网络线路</div></div>
+                            <div class="spec-card glass-reveal"><div class="icon"><i class="fas fa-clock"></i></div><div class="value">24小时</div><div class="label">运维支持</div></div>
+                            <div class="spec-card glass-reveal"><div class="icon"><i class="fas fa-shield-virus"></i></div><div class="value">DDoS</div><div class="label">安全防护</div></div>
+                        </div>
+                    </div>
+                    <div class="features-inline">
+                        <h2 class="section-title">产品优势</h2>
+                        <div class="features-grid">
+                            <div class="features-list">
+                                <div class="feature-item"><div class="icon"><i class="fas fa-lock"></i></div><span>一键 SSL 证书，网站 HTTPS 秒开</span></div>
+                                <div class="feature-item"><div class="icon"><i class="fas fa-history"></i></div><span>每日自动备份，数据安全有保障</span></div>
+                                <div class="feature-item"><div class="icon"><i class="fas fa-user-shield"></i></div><span>DDoS 安全防护，抵御常见网络攻击</span></div>
+                                <div class="feature-item"><div class="icon"><i class="fas fa-headset"></i></div><span>24小时运维支持，快速响应问题</span></div>
+                            </div>
+                            <div class="features-list">
+                                <div class="feature-item"><div class="icon"><i class="fas fa-bolt"></i></div><span>一键部署，快速上线您的网站</span></div>
+                                <div class="feature-item"><div class="icon"><i class="fas fa-chart-line"></i></div><span>稳定 BGP 线路，访问速度快</span></div>
+                                <div class="feature-item"><div class="icon"><i class="fas fa-cogs"></i></div><span>功能强大的控制面板，管理便捷</span></div>
+                                <div class="feature-item"><div class="icon"><i class="fas fa-sync-alt"></i></div><span>弹性续费，随时升级或降级套餐</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-price-card">
+                    <div class="price-display">
+                        <div class="label">产品价格</div>
+                        <div class="price">
+                            {if $product.money=="0"}免费{else}¥{$product.money}<small>/{if $product.cycle=='day'}日{elseif $product.cycle=='month'}月{elseif $product.cycle=='season'}季{elseif $product.cycle=='year'}年{elseif $product.cycle=='unrestricted'}次{else}期{/if}</small>{/if}
+                        </div>
+                    </div>
+                    <form id="buyForm" action="/user/cartAdd" method="post">
+                        <input type="hidden" name="cartid" value="{$product.id}">
+                        <div class="form-group">
+                            <label class="form-label">购买时长</label>
+                            <div class="input-row">
+                                <span class="input-prepend">时长</span>
+                                <input type="number" class="form-control" name="time" value="1" min="1" id="timeInput">
+                                <span class="input-append">{if $product.money=="0"}免费{else}{$product.money}元{/if}/{if $product.cycle=='day'}日{elseif $product.cycle=='month'}月{elseif $product.cycle=='season'}季{elseif $product.cycle=='year'}年{elseif $product.cycle=='unrestricted'}次{else}期{/if}</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">主机账号</label>
+                            <div class="input-row">
+                                <span class="input-prepend">账号</span>
+                                <input type="text" class="form-control" name="user" value="{:userrandom()}" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">主机密码</label>
+                            <div class="input-row">
+                                <span class="input-prepend">密码</span>
+                                <input type="text" class="form-control" name="password" value="{:random()}" readonly>
+                            </div>
+                        </div>
+                        <div class="total-box">
+                            <span class="total-label">应付总额</span>
+                            <span class="total-value" id="totalPrice">{if $product.money=="0"}免费{else}¥{$product.money}{/if}</span>
+                        </div>
+                        {if $product.inventory<'1'}
+                        <button type="submit" class="btn-submit" disabled>已售完</button>
+                        {else}
+                        <button type="submit" class="btn-submit"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                        {/if}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {include file="default/index/footer" /}
+    <script>
+        var price = parseFloat('{$product.money}') || 0;
+        var timeInput = document.getElementById('timeInput');
+        var totalPriceEl = document.getElementById('totalPrice');
+        function updateTotal() {
+            var qty = parseInt(timeInput.value) || 0;
+            if (qty < 1) { totalPriceEl.textContent = '时长错误'; return; }
+            if (price === 0) { totalPriceEl.textContent = '免费'; return; }
+            totalPriceEl.textContent = '¥' + (price * qty);
+        }
+        timeInput.addEventListener('input', updateTotal);
+        updateTotal();
+        document.getElementById('buyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var btn = this.querySelector("button[type='submit']");
+            var user = this.querySelector("input[name='user']").value;
+            var password = this.querySelector("input[name='password']").value;
+            var time = this.querySelector("input[name='time']").value;
+            var cartid = this.querySelector("input[name='cartid']").value;
+            if (!user || !password || !time) { showToast('请确保必填项不为空', 'danger', 2500); return false; }
+            btn.disabled = true;
+            showToast('正在加入购物车...', 'info', 1500);
+            fetch(this.action, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
+                body: 'cartid=' + encodeURIComponent(cartid) + '&user=' + encodeURIComponent(user) + '&password=' + encodeURIComponent(password) + '&time=' + encodeURIComponent(time)
+            })
+            .then(function(res) { return res.text().then(function(text) { try { return JSON.parse(text); } catch (err) { var hint = text ? String(text).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() : ''; if (hint.length > 160) hint = hint.slice(0, 160) + '...'; throw new Error(hint || '响应异常'); } }); })
+            .then(function(data) {
+                if (data.code == 1) { showToast(data.msg || '已加入购物车', 'success', 1500); setTimeout(function() { location.href = '/user/cart'; }, 1500); }
+                else { btn.disabled = false; showToast(data.msg || '加入购物车失败', 'danger', 2500); }
+            })
+            .catch(function(err) { btn.disabled = false; showToast(err.message || '请求失败', 'danger', 2500); });
+            return false;
+        });
+    </script>
+</body>
+</html>

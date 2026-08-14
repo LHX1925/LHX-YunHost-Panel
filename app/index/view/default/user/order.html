@@ -1,0 +1,140 @@
+{include file="default/user/header" title="产品管理" /}
+<main id="main-container">
+    <div class="content">
+        {if $isBanned}
+        <div class="alert alert-warning" style="border-radius:10px;border-left:4px solid #F59E0B;background:#FFFBEB;color:#92400E;padding:14px 18px;margin-bottom:20px;font-size:14px;">
+            <strong><i class="fas fa-exclamation-triangle"></i> 您的账号已被封禁，所有主机已停用</strong><br>
+            封禁至：<strong>{$banEndTime|date="Y-m-d H:i:s",###}</strong><br>
+            封禁原因：{$banReason ?: '管理员未填写原因'}
+        </div>
+        {/if}
+
+        <style>
+            .products-page { max-width: 1100px; margin: 0 auto; }
+            .products-hero { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 24px; flex-wrap: wrap; }
+            .products-hero h1 { font-size: 26px; font-weight: 800; color: var(--glass-text); margin: 0 0 6px; }
+            .products-hero p { font-size: 14px; color: var(--glass-text-secondary); margin: 0; }
+            .products-card { background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--glass-border); border-radius: var(--glass-radius-lg); padding: 8px 8px 16px; box-shadow: var(--glass-shadow), var(--glass-shadow-inset); overflow: hidden; }
+            .products-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+            .products-table th { padding: 16px 18px; font-size: 13px; font-weight: 600; color: var(--glass-text-secondary); background: var(--glass-bg-light); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: 1px solid var(--glass-border); text-align: left; white-space: nowrap; text-transform: uppercase; letter-spacing: 0.04em; }
+            .products-table td { padding: 18px; font-size: 14px; color: var(--glass-text); border-bottom: 1px solid rgba(255,255,255,0.3); vertical-align: middle; }
+            .products-table tbody tr:last-child td { border-bottom: none; }
+            .products-table tbody tr { transition: all var(--glass-transition-fast); }
+            .products-table tbody tr:hover { background: var(--glass-bg-light); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+            .products-table .id { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; color: var(--glass-text-secondary); font-size: 13px; }
+            .products-table .name { font-weight: 600; color: var(--glass-text); }
+            .products-table .name small { display: block; font-size: 12px; color: var(--glass-text-muted); font-weight: 400; margin-top: 2px; }
+            .products-table .date { color: var(--glass-text-secondary); font-size: 13px; white-space: nowrap; }
+            .empty-state { text-align: center; padding: 60px 20px; color: var(--glass-text-muted); }
+            .empty-state i { font-size: 42px; margin-bottom: 14px; display: block; }
+            @media (max-width: 767px) {
+                .products-hero { flex-direction: column; align-items: flex-start; gap: 16px; }
+                .products-hero h1 { font-size: 22px; }
+                .products-card { padding: 0; border-radius: var(--glass-radius); }
+                .table-responsive { display: block; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+                .products-table { min-width: 720px; }
+                .products-table th, .products-table td { white-space: nowrap; padding: 14px 12px; font-size: 13px; }
+                .products-table td:first-child, .products-table th:first-child { padding-left: 12px; }
+                .products-table td:last-child, .products-table th:last-child { padding-right: 12px; }
+            }
+        </style>
+
+        <div class="products-page">
+            <div class="products-hero">
+                <div>
+                    <h1>产品管理</h1>
+                    <p>管理云主机、域名与服务状态</p>
+                </div>
+                <a href="__ROOT__/cart" class="glass-btn glass-btn-primary">
+                    <i class="fas fa-plus"></i> 新增产品
+                </a>
+            </div>
+
+            <div class="products-card">
+                <div class="table-responsive" style="position:relative;">
+                    <button type="button" id="btnRefreshOrders" class="glass-btn glass-btn-sm" style="position:absolute;top:14px;right:14px;z-index:10;" title="刷新列表">
+                        <i class="fas fa-sync-alt"></i> 刷新
+                    </button>
+                    <table class="products-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>订单号</th>
+                                <th>产品名称</th>
+                                <th>账号</th>
+                                <th>开通时间</th>
+                                <th>到期时间</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {if $order}
+                            {foreach $order as $o}
+                            <tr>
+                                <td><span class="id">{$o.id}</span></td>
+                                <td><span class="id" style="font-size:12px;">{$o.ordernumber|default='YH'.date('Ymd',intval($o.atime?:time())).str_pad($o.id,6,'0',STR_PAD_LEFT)}</span></td>
+                                <td>
+                                    <div class="name">
+                                        {$o.cartid}
+                                        <small>云主机 / 管理</small>
+                                    </div>
+                                </td>
+                                <td>{$o.user}</td>
+                                <td class="date">{$o.atime|date="Y-m-d",###}</td>
+                                <td class="date">{$o.ztime|date="Y-m-d",###}</td>
+                                <td>
+                                    {if $o.state=="0"}
+                                    <span class="glass-badge glass-badge-warning"><i class="fas fa-circle" style="font-size:6px;"></i> 待开通</span>
+                                    {elseif $o.state=="1"}
+                                    <span class="glass-badge glass-badge-success"><i class="fas fa-circle" style="font-size:6px;"></i> 运行中</span>
+                                    {elseif $o.state=="2"}
+                                    <span class="glass-badge glass-badge-warning"><i class="fas fa-circle" style="font-size:6px;"></i> 暂停</span>
+                                    {elseif $o.state=="3"}
+                                    <span class="glass-badge glass-badge-danger"><i class="fas fa-circle" style="font-size:6px;"></i> 已过期</span>
+                                    {else}
+                                    <span class="glass-badge glass-badge-primary"><i class="fas fa-circle" style="font-size:6px;"></i> 正常</span>
+                                    {/if}
+                                </td>
+                                <td>
+                                    <a class="glass-btn glass-btn-primary glass-btn-sm" href="__ROOT__/user/order/{$o.id}">管理产品</a>
+                                </td>
+                            </tr>
+                            {/foreach}
+                            {else}
+                            <tr>
+                                <td colspan="8">
+                                    <div class="empty-state">
+                                        <i class="fas fa-server"></i>
+                                        暂无产品，点击右上角新增产品
+                                    </div>
+                                </td>
+                            </tr>
+                            {/if}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<script>
+(function checkJQ(){
+  if (typeof window.jQuery !== 'undefined') {
+    $(function(){
+    // Auto-refresh orders every 5 minutes
+    var orderRefreshTimer = setInterval(function() {
+        location.reload();
+    }, 300000);
+
+    // Manual refresh button handler
+    $('#btnRefreshOrders').on('click', function() {
+        location.reload();
+    });
+    });
+  } else {
+    setTimeout(checkJQ, 50);
+  }
+})();
+</script>
+{include file="default/user/footer" /}

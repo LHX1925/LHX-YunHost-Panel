@@ -1,0 +1,27 @@
+{include file="default/user/header" title="购物车结算" /}
+<main id="main-container">
+    <div class="content">
+        <style>
+            .settle-page { max-width:500px; margin:0 auto; text-align:center; padding:60px 20px; }
+            .settle-icon { font-size:64px; margin-bottom:20px; }
+            .settle-icon.success { color:#10B981; }
+            .settle-icon.fail { color:#F59E0B; }
+            .settle-msg { font-size:16px; color:var(--text); margin-bottom:10px; line-height:1.6; }
+            .settle-total { font-size:24px; font-weight:800; color:var(--primary); margin:16px 0; }
+            .settle-btn { display:inline-flex; align-items:center; gap:8px; padding:12px 28px; background:var(--primary); border:none; border-radius:999px; color:#fff; font-size:15px; font-weight:600; text-decoration:none; margin-top:20px; }
+        </style>
+        <div class="settle-page glass-card glass-reveal" style="max-width:500px;margin:0 auto;text-align:center;padding:60px 20px;">
+            {if $success}
+            <div class="settle-icon success"><i class="fas fa-check-circle"></i></div>
+            {else}
+            <div class="settle-icon fail"><i class="fas fa-exclamation-circle"></i></div>
+            {/if}
+            <div class="settle-msg">{$msg|default=''}</div>
+            <div class="settle-total">支付金额：¥{$total|default='0.00'}</div>
+            <a href="__ROOT__/user/order" class="settle-btn glass-btn glass-btn-primary">
+                <i class="fas fa-server"></i> 查看我的产品
+            </a>
+        </div>
+    </div>
+</main>
+{include file="default/user/footer" /}

@@ -1,0 +1,200 @@
+{include file="default/header" title="授权中心 "/}
+<main class="lyear-layout-content">	
+      <div class="container-fluid glass-animate-in">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="card admin-card">
+              <header class="card-header">
+                <div class="card-title">授权列表</div>
+              </header>
+              <div class="card-body">
+                <div class="search-wrap">
+                  <form method="get" action="">
+                    <div class="input-group">
+                      <input class="form-control col-sm-7" type="text" name="search" placeholder="搜索..." value=""/>
+                      <div class="input-group-append">
+                        <button class="btn-copy btn btn-primary">
+                          <span class="mdi mdi-magnify"></span>搜索
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+
+                <button onclick='add()' class="btn-admin btn-admin-primary me-1">
+                  <span class="mdi mdi-plus" aria-hidden="true"></span>添加授权
+                </button>
+                <button onclick='del()' class="btn-admin btn-admin-danger">
+                  <span class="mdi mdi-window-close" aria-hidden="true"></span>删除
+                </button>
+                <button onclick='qbdel()' class="btn-admin btn-admin-danger">
+                  <span class="mdi mdi-window-close" aria-hidden="true"></span>全部删除
+                </button>
+                <br/><br/>
+
+                <div class="table-responsive-sm">
+                  <table class="table table-hover table-admin">
+                    <thead>
+                      <tr>
+                        <th>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="check-all">
+                            <label class="form-check-label" for="check-all"></label>
+                          </div>
+                        </th>
+                        <th scope="col">ID</th>
+                        <th scope="col">域名</th>
+                        <th scope="col">IP</th>
+                        <th scope="col">QQ</th>
+                        <th scope="col">时间</th>
+                        <th scope="col">操作</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {foreach $sq as $s}
+                      <tr>
+                        <td>
+                          <div class="form-check">
+                            <input type="checkbox" class="form-check-input ids" name="ids" value="{$s.id}">
+                            <label class="form-check-label" for="ids-1"></label>
+                          </div>
+                        </td>
+                        <td>{$s.id}</td>
+                        <td>{$s.domain}</td>
+                        <td>{$s.ip}</td>
+                        <td>{$s.qq}</td>
+                        <td>{$s.time|date="Y-m-d H:i:s",###}</td>
+                        <td>
+                          <a href="/admin/sq/{$s.id}" class="btn-admin btn-admin-success btn-sm me-1"><i class="mdi mdi-pencil"></i>查看</a>
+                        </td>
+                      </tr>
+                      {/foreach}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div style="text-align:center">{$sq->render()}</div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+  {include file="default/footer" /}
+<script>
+function add(){
+layer.open({
+        type: 1,
+        closeBtn: false,
+        shift: 7,
+        shadeClose: true,
+        title:"添加授权",
+        content: '<div style="width:350px;" class="card-body"><div class="tab-content"><div class="mb-3"><label for="web_site_title" class="form-label">域名</label><textarea style="height:120px" class="form-control" type="text" name="domain" value="" placeholder=""></textarea></div><div class="mb-3"><label for="web_site_title" class="form-label">IP</label><input class="form-control" type="text" name="ip" value="" placeholder=""></div><div class="mb-3"><label for="web_site_title" class="form-label">QQ</label><input class="form-control" type="text" name="qq" value="" placeholder=""></div><button type="button" onclick="add1()" class="btn-admin btn-admin-primary me-1">添加</button></div> </div> </div>',
+  });
+
+}
+
+function add1(){
+             var load = layer.msg('添加中，请稍后...',{icon:16,time:false});
+        var domain = $("textarea[name='domain']").val();
+        var ip = $("input[name='ip']").val();
+        var qq = $("input[name='qq']").val();
+        $.ajax({
+            type:'POST',
+            url:'',
+            data:{
+                act:'add',
+domain:domain,
+ip:ip,
+qq:qq,
+            },
+            dataType:'json',
+            success:function (data){
+                layer.close(load)
+                if(data.code == 1){
+                    setTimeout(function (){
+                        location.href = ''
+                    },1000);
+                    layer.alert(data.msg,{icon:1});
+                }else{
+                    layer.msg(data.msg,{icon:2});
+                }
+            }
+        });
+    }
+
+
+function del(){
+var id = [];
+$("input[name='ids']:checked").each(function(i){
+        id[i] =$(this).val();
+      });
+var id = id.join(",");
+if(id==""){
+layer.alert("未选择记录!",{icon:2,shade:0.8});
+}else{
+        layer.confirm('确定要删除ID为<span style="color:#0b5ed7">'+ id +'</span>的记录吗？', function (){
+            del1(id)
+        });
+    }
+}
+
+
+    function del1(id){
+        var load = layer.load('1',{time:false});
+
+        $.ajax({
+            type:'POST',
+            url:'',
+            data:{
+                act:'delete',
+                cid:id
+            },
+            dataType:'json',
+            success:function (data){
+                layer.close(load);
+                if(data.code == 1){
+                    layer.alert(data.msg,{icon:1},function(){
+                        window.location.href = "";
+                    });
+                }else{
+                    layer.alert(data.msg,{icon:2});
+                }
+            }
+        });
+    }
+
+function qbdel(){
+        layer.confirm('确定要删除<span style="color:#0b5ed7">全部</span>的记录吗？', function (){
+            qbdel1()
+        });
+    }
+
+
+    function qbdel1(){
+        var load = layer.load('1',{time:false});
+
+        $.ajax({
+            type:'POST',
+            url:'',
+            data:{
+                act:'qbdelete',
+            },
+            dataType:'json',
+            success:function (data){
+                layer.close(load);
+                if(data.code == 1){
+layer.alert(data.msg,{icon:1},function(){
+                        window.location.href = "";
+                    });
+                }else{
+                    layer.alert(data.msg,{icon:2});
+                }
+            }
+        });
+    }
+
+
+</script>

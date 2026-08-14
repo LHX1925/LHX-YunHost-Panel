@@ -1,0 +1,97 @@
+{include file="default/header" title="授权信息"/}
+<!--页面主要内容-->
+    <main class="lyear-layout-content">
+	
+      <div class="container-fluid glass-animate-in">
+
+        <div class="row">
+
+          <div class="col-lg-12">
+            <div class="card admin-card">
+              <header class="card-header"><div class="card-title">授权信息</div></header>
+              <div class="card-body">
+
+
+                <form action="" method="post" name="edit-form" class="edit-form admin-form">
+                  <div class="tab-content">
+
+
+
+
+
+
+                      <div class="mb-3">
+                        <label for="web_site_title" class="form-label">域名</label>
+                        <textarea style="height:120px" class="form-control" name="domain">{$sq.domain}</textarea>      
+                      </div>
+
+
+                      <div class="mb-3">
+                        <label for="web_site_title" class="form-label">IP</label>
+                        <input class="form-control" type="text" name="ip" value="{$sq.ip}" placeholder="">      
+                      </div>
+
+
+                      <div class="mb-3">
+                        <label for="web_site_title" class="form-label">QQ</label>
+                        <input class="form-control" type="text" name="qq" value="{$sq.qq}" placeholder="">      
+                      </div>
+
+
+
+                       <button type="submit" class="btn-admin btn-admin-primary me-1">修改</button>
+                    </div>
+
+
+
+
+
+                   
+
+
+                  </div>
+
+ 
+                </form>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>    
+	
+	</main>
+    <!--End 页面主要内容-->
+
+
+ {include file="default/footer" /}
+<script>
+    $("form").submit(function (){
+        var load = layer.msg('修改中，请稍后...',{icon:16,shade:0.8,time:false});
+
+        var domain = $("textarea[name='domain']").val();
+        var ip = $("input[name='ip']").val();
+        var qq = $("input[name='qq']").val();
+           $.ajax({
+            type:'POST',
+            url:'',
+            data:{
+domain:domain,
+ip:ip,
+qq:qq,
+            },
+            dataType:'json',
+            success:function (data){
+                layer.close(load);
+                if(data.code == 1){
+                    layer.alert(data.msg,{icon:1,shade:0.8});
+                }else{
+                    layer.alert(data.msg,{icon:2,shade:0.8});
+                }
+            }
+        });
+        return false;
+    });
+</script>

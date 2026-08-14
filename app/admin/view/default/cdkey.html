@@ -1,0 +1,455 @@
+{include file="default/header" title="卡密管理" /}
+<main class="lyear-layout-content">
+  <div class="container-fluid page-wrap">
+
+    <div class="page-bar">
+      <div>
+        <h2>卡密管理</h2>
+        <p>生成与管理兑换卡密 · 支持余额/主机两种类型</p>
+      </div>
+    </div>
+
+    <!-- 生成卡密 -->
+    <div class="ccard">
+      <div class="ccard-hd">生成卡密</div>
+      <div class="ccard-bd">
+        <form id="add-form">
+          <input type="hidden" name="act" value="add">
+          <div class="row">
+            <div class="col-md-3 mb-3">
+              <label class="flbl">卡密类型</label>
+              <select name="type" id="cdkey-type" class="finp">
+                <option value="balance">余额充值</option>
+                <option value="host">主机购买</option>
+              </select>
+              <small class="text-muted" style="font-size:11px;">选择卡密兑换类型</small>
+            </div>
+            <div class="col-md-2 mb-3">
+              <label class="flbl">生成数量</label>
+              <input type="number" name="count" class="finp" value="1" min="1" placeholder="数量">
+              <small class="text-muted" style="font-size:11px;">一次生成多少张</small>
+            </div>
+            <div class="col-md-3 mb-3" id="money-group">
+              <label class="flbl">充值金额（元）</label>
+              <input type="text" name="money" class="finp" value="" placeholder="例如：50">
+              <small class="text-muted" style="font-size:11px;">余额充值卡的面额</small>
+            </div>
+            <div class="col-md-3 mb-3" id="product-group" style="display:none;">
+              <label class="flbl">选择产品</label>
+              <select name="cartid" class="finp">
+                <option value="">请选择产品</option>
+                {foreach $cartList as $cart}
+                <option value="{$cart.id}">{$cart.name}</option>
+                {/foreach}
+              </select>
+              <small class="text-muted" style="font-size:11px;">主机购买卡对应的产品</small>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="flbl">备注</label>
+              <input type="text" name="remark" class="finp" value="" placeholder="可选备注">
+              <small class="text-muted" style="font-size:11px;">卡密批注，仅管理员可见</small>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-3 mb-3">
+              <label class="flbl">可重复使用</label>
+              <label style="cursor:pointer; display:flex; align-items:center; gap:8px;">
+                <input type="checkbox" name="repeatable" value="1" style="margin:0;width:16px;height:16px;accent-color:#667eea;">
+                <span>允许同一用户多次兑换</span>
+              </label>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="flbl">使用限制</label>
+              <select name="restrict_type" id="cdkey-restrict-type" class="finp">
+                <option value="all">通用(所有用户可用)</option>
+                <option value="single">单用户限制</option>
+                <option value="multi">多用户限制</option>
+                <option value="once_per_user">全站通用(每人一次)</option>
+              </select>
+              <small class="text-muted" style="font-size:11px;">控制哪些用户可以兑换</small>
+            </div>
+            <div class="col-md-5 mb-3" id="restrict-users-group" style="display:none;">
+              <label class="flbl">限制用户ID</label>
+              <textarea name="restrict_users" id="cdkey-restrict-users" class="finp" rows="2" placeholder="请输入用户ID，多个用逗号分隔"></textarea>
+              <small class="text-muted" style="font-size:11px;">逗号分隔的用户ID列表</small>
+            </div>
+          </div>
+          <button type="submit" class="nbtn pri"><i class="mdi mdi-key-plus"></i> 生成卡密</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 筛选 & 列表 -->
+    <div class="ccard">
+      <div class="ccard-hd">卡密列表</div>
+      <div class="ccard-bd">
+        <form method="get" action="" id="filter-form" class="mb-3">
+          <div class="row g-2 align-items-end">
+            <div class="col-md-2">
+              <label class="flbl">类型</label>
+              <select name="type" class="finp">
+                <option value="">全部类型</option>
+                <option value="balance" {if $type=='balance'}selected{/if}>余额充值</option>
+                <option value="host" {if $type=='host'}selected{/if}>主机购买</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <label class="flbl">状态</label>
+              <select name="status" class="finp">
+                <option value="">全部状态</option>
+                <option value="0" {if $status==='0'}selected{/if}>未使用</option>
+                <option value="1" {if $status==='1'}selected{/if}>已使用</option>
+                <option value="2" {if $status==='2'}selected{/if}>已停用</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="flbl">关键词</label>
+              <input class="finp" type="text" name="keyword" value="{$keyword|default=''}" placeholder="搜索卡密">
+            </div>
+            <div class="col-md-2">
+              <button class="nbtn pri" type="submit" style="width:100%;justify-content:center;"><i class="mdi mdi-magnify"></i> 搜索</button>
+            </div>
+          </div>
+        </form>
+
+        <div class="mb-3 d-flex gap-2 flex-wrap">
+          <button onclick="batchDisable()" class="nbtn dan"><i class="mdi mdi-block-helper"></i> 追缴选中</button>
+          <button onclick="batchEnable()" class="nbtn suc"><i class="mdi mdi-check-circle"></i> 回收选中</button>
+          <button onclick="batchDelete()" class="nbtn warn"><i class="mdi mdi-delete"></i> 删除选中</button>
+          <button onclick="exportCdkeys()" class="nbtn out"><i class="mdi mdi-file-export"></i> 导出全部</button>
+        </div>
+
+        <div class="table-responsive-sm">
+          <table class="ntable">
+            <thead>
+              <tr>
+                <th width="40">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="check-all">
+                    <label class="form-check-label" for="check-all"></label>
+                  </div>
+                </th>
+                <th>ID</th>
+                <th>卡密</th>
+                <th>类型</th>
+                <th>金额/产品</th>
+                <th>状态</th>
+                <th>可重复</th>
+                <th>使用限制</th>
+                <th>创建时间</th>
+                <th>使用时间</th>
+                <th>使用者ID</th>
+                <th>备注</th>
+              </tr>
+            </thead>
+            <tbody>
+              {foreach $list as $item}
+              <tr>
+                <td data-label="选择">
+                  <div class="form-check">
+                    <input type="checkbox" class="form-check-input ids" name="ids" value="{$item.id}">
+                    <label class="form-check-label"></label>
+                  </div>
+                </td>
+                <td data-label="ID">{$item.id}</td>
+                <td data-label="卡密">
+                  <span class="cdkey-text" title="{$item.cdkey}">{$item.cdkey}</span>
+                  <button type="button" class="nbtn pri copy-btn" data-cdkey="{$item.cdkey}" style="padding:3px 10px;font-size:11px;margin-left:4px;"><i class="mdi mdi-content-copy"></i> 复制</button>
+                </td>
+                <td data-label="类型">
+                  {if $item.type=='balance'}
+                  <span class="nbadge b">余额充值</span>
+                  {elseif $item.type=='host'}
+                  <span class="nbadge b">主机购买</span>
+                  {else}
+                  <span class="nbadge b">{$item.type}</span>
+                  {/if}
+                </td>
+                <td data-label="金额/产品">
+                  {if $item.type=='balance'}
+                  ¥{$item.money}
+                  {else}
+                  {$item.product_name|default='—'}
+                  {/if}
+                </td>
+                <td data-label="状态">
+                  {if $item.status=='0'}
+                  <span class="nbadge b">未使用</span>
+                  {elseif $item.status=='1'}
+                  <span class="nbadge g">已使用</span>
+                  {elseif $item.status=='2'}
+                  <span class="nbadge r">已停用</span>
+                  {/if}
+                </td>
+                <td data-label="可重复">{if $item.repeatable==1}是{else}否{/if}</td>
+                <td data-label="使用限制">
+                  {if $item.restrict_type=='all'}通用
+                  {elseif $item.restrict_type=='single'}单用户
+                  {elseif $item.restrict_type=='multi'}多用户
+                  {elseif $item.restrict_type=='once_per_user'}全站通用(每人一次) {if isset($item.usage_count)}<span class="nbadge b">已用{$item.usage_count}次</span>{/if}
+                  {else}{$item.restrict_type|default='通用'}
+                  {/if}
+                </td>
+                <td data-label="创建时间">{$item.created_at|date="Y-m-d H:i",###}</td>
+                <td data-label="使用时间">{if $item.used_at}{$item.used_at|date="Y-m-d H:i",###}{else}—{/if}</td>
+                <td data-label="使用者ID">{$item.used_userid|default='—'}</td>
+                <td data-label="备注">{$item.remark|default='—'}</td>
+              </tr>
+              {/foreach}
+              {if empty($list)}
+              <tr>
+                <td colspan="12" class="text-center text-muted py-4" data-label="">暂无卡密数据</td>
+              </tr>
+              {/if}
+            </tbody>
+          </table>
+        </div>
+
+        <div style="text-align:center">{$list->render()}</div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<style>
+.page-wrap { --p: #667eea; --p2: #764ba2; --r: 16px; }
+.page-bar {
+  background: linear-gradient(135deg,#667eea,#764ba2); border-radius:16px;
+  padding:18px 22px; margin-bottom:18px; color:#fff;
+  box-shadow:0 4px 20px rgba(102,126,234,0.25);
+  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;
+}
+.page-bar h2 { margin:0; font-size:19px; font-weight:700; }
+.page-bar p { margin:2px 0 0; font-size:12px; opacity:.8; }
+.ccard { background:#fff; border-radius:16px; box-shadow:0 2px 14px rgba(0,0,0,0.04); border:1px solid #e8ecf1; overflow:hidden; margin-bottom:18px; }
+.ccard-hd { padding:13px 18px; border-bottom:1px solid #f1f5f9; font-weight:700; color:#1a1a2e; font-size:14px; display:flex; align-items:center; gap:8px; }
+.ccard-hd::before { content:''; width:4px; height:17px; border-radius:2px; background:linear-gradient(180deg,#667eea,#764ba2); }
+.ccard-bd { padding:16px 18px; }
+.ntable { width:100%; border-collapse:collapse; font-size:13px; }
+.ntable th { background:#f7f8fc; color:#475569; font-weight:600; padding:9px 11px; border-bottom:2px solid #e2e8f0; font-size:11px; text-transform:uppercase; letter-spacing:.03em; white-space:nowrap; }
+.ntable td { padding:9px 11px; border-bottom:1px solid #f1f5f9; color:#334155; vertical-align:middle; }
+.ntable tr:hover td { background:#fafbff; }
+.nbtn { display:inline-flex; align-items:center; gap:5px; padding:7px 16px; border-radius:10px; border:none; font-size:12px; font-weight:600; cursor:pointer; transition:all .2s; text-decoration:none; white-space:nowrap; }
+.nbtn.pri { background:linear-gradient(135deg,#667eea,#764ba2); color:#fff; box-shadow:0 3px 10px rgba(102,126,234,.3); }
+.nbtn.pri:hover { transform:translateY(-1px); box-shadow:0 5px 16px rgba(102,126,234,.4); }
+.nbtn.dan { background:linear-gradient(135deg,#ef4444,#dc2626); color:#fff; }
+.nbtn.suc { background:linear-gradient(135deg,#10b981,#059669); color:#fff; }
+.nbtn.warn { background:linear-gradient(135deg,#f59e0b,#d97706); color:#fff; }
+.nbtn.out { background:#fff; color:#667eea; border:2px solid #e2e8f0; }
+.nbtn.out:hover { border-color:#667eea; background:#eef2ff; }
+.nbadge { display:inline-flex; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600; }
+.nbadge.g { background:#ecfdf5; color:#059669; }
+.nbadge.y { background:#fffbeb; color:#d97706; }
+.nbadge.r { background:#fef2f2; color:#dc2626; }
+.nbadge.b { background:#eff6ff; color:#2563eb; }
+.finp { width:100%; padding:9px 13px; border:2px solid #e2e8f0; border-radius:10px; font-size:13px; transition:.2s; color:#334155; box-sizing:border-box; }
+.finp:focus { border-color:#667eea; box-shadow:0 0 0 3px rgba(102,126,234,.1); outline:none; }
+.finp[type="checkbox"] { width:auto; }
+.flbl { display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:5px; }
+.d-flex { display:flex; }
+.gap-2 { gap:8px; }
+.cdkey-text {
+  font-family:'SF Mono','Cascadia Code','Consolas',monospace;
+  font-size:13px; color:#2563EB; background:#EFF6FF;
+  padding:3px 10px; border-radius:6px; word-break:break-all;
+}
+.copy-btn { vertical-align:middle; cursor:pointer; white-space:nowrap; }
+@media(max-width:768px){
+  .page-bar { padding:14px 16px; border-radius:12px; }
+  .page-bar h2 { font-size:17px; }
+  .ccard-bd { padding:12px 14px; }
+  .ntable thead { display:none; }
+  .ntable td { display:block; text-align:right; padding:6px 10px; }
+  .ntable td::before { content:attr(data-label); float:left; font-weight:600; color:#475569; font-size:11px; text-transform:uppercase; }
+  .ntable tr { display:block; margin-bottom:6px; background:#fafbfc; border-radius:10px; padding:5px 8px; }
+}
+</style>
+{include file="default/footer" /}
+<script>
+$(function(){
+  // 全选
+  $('#check-all').on('change', function(){
+    $('.ids').prop('checked', this.checked);
+  });
+
+  // 类型切换：显示对应字段
+  function toggleTypeFields() {
+    var val = $('#cdkey-type').val();
+    if (val === 'balance') {
+      $('#money-group').show();
+      $('#product-group').hide();
+      $('#product-group').find('select').val('');
+    } else if (val === 'host') {
+      $('#money-group').hide();
+      $('#product-group').show();
+      $('#money-group').find('input').val('');
+    }
+  }
+  toggleTypeFields();
+  $('#cdkey-type').on('change', toggleTypeFields);
+
+  // 使用限制切换
+  $('#cdkey-restrict-type').on('change', function(){
+    var val = $(this).val();
+    if (val === 'single' || val === 'multi') {
+      $('#restrict-users-group').slideDown();
+    } else {
+      $('#restrict-users-group').slideUp();
+    }
+  });
+
+  // 复制卡密
+  $(document).on('click', '.copy-btn', function(){
+    var cdkey = $(this).data('cdkey');
+    var btn = $(this);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(cdkey).then(function(){
+        var origHtml = btn.html();
+        btn.html('<i class="mdi mdi-check"></i> 已复制');
+        setTimeout(function(){ btn.html(origHtml); }, 1500);
+      }).catch(function(){
+        fallbackCopy(cdkey, btn);
+      });
+    } else {
+      fallbackCopy(cdkey, btn);
+    }
+  });
+
+  function fallbackCopy(text, btn) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand('copy');
+      var origHtml = btn.html();
+      btn.html('<i class="mdi mdi-check"></i> 已复制');
+      setTimeout(function(){ btn.html(origHtml); }, 1500);
+    } catch(e) {
+      layer.msg('复制失败，请手动复制', {icon:2});
+    }
+    document.body.removeChild(ta);
+  }
+
+  // 添加卡密
+  $('#add-form').on('submit', function(e){
+    e.preventDefault();
+    var load = layer.load(1, {time: false});
+    $.ajax({
+      type: 'POST',
+      url: '',
+      data: $(this).serialize(),
+      dataType: 'json',
+      success: function(data){
+        layer.close(load);
+        if (data.code == 1) {
+          layer.alert(data.msg, {icon: 1}, function(){
+            window.location.href = '';
+          });
+        } else {
+          layer.msg(data.msg, {icon: 2});
+        }
+      },
+      error: function(){
+        layer.close(load);
+        layer.msg('网络错误，请重试', {icon: 2});
+      }
+    });
+  });
+
+  // 获取选中ID
+  function getSelectedIds(){
+    var ids = [];
+    $('.ids:checked').each(function(){
+      ids.push($(this).val());
+    });
+    return ids.join(',');
+  }
+
+  window.batchDisable = function(){
+    var ids = getSelectedIds();
+    if (!ids) {
+      layer.alert('请先选择需要追缴的卡密！', {icon: 2});
+      return;
+    }
+    layer.confirm('确定要追缴（停用）选中的卡密吗？停用后用户无法兑换。', function(){
+      doAction('disable', ids);
+    });
+  };
+
+  window.batchEnable = function(){
+    var ids = getSelectedIds();
+    if (!ids) {
+      layer.alert('请先选择需要回收的卡密！', {icon: 2});
+      return;
+    }
+    layer.confirm('确定要回收（启用）选中的卡密吗？', function(){
+      doAction('enable', ids);
+    });
+  };
+
+  window.batchDelete = function(){
+    var ids = getSelectedIds();
+    if (!ids) {
+      layer.alert('请先选择需要删除的卡密！', {icon: 2});
+      return;
+    }
+    layer.confirm('确定要删除选中的卡密吗？此操作不可恢复。', function(){
+      doAction('delete', ids);
+    });
+  };
+
+  function doAction(act, ids){
+    var load = layer.load(1, {time: false});
+    $.ajax({
+      type: 'POST',
+      url: '',
+      data: { act: act, ids: ids },
+      dataType: 'json',
+      success: function(data){
+        layer.close(load);
+        if (data.code == 1) {
+          layer.alert(data.msg, {icon: 1}, function(){
+            window.location.href = '';
+          });
+        } else {
+          layer.msg(data.msg, {icon: 2});
+        }
+      },
+      error: function(){
+        layer.close(load);
+        layer.msg('网络错误，请重试', {icon: 2});
+      }
+    });
+  }
+
+  window.exportCdkeys = function(){
+    layer.confirm('确定要导出当前筛选列表中的所有卡密吗？', function(){
+      var load = layer.load(1, {time: false});
+      $.ajax({
+        type: 'POST', url: '', data: { act: 'export', type: $('select[name="type"]').last().val(), status: $('select[name="status"]').val(), keyword: $('input[name="keyword"]').val() },
+        dataType: 'json',
+        success: function(data){
+          layer.close(load);
+          if (data.code == 1 && data.cdkeys) {
+            var text = data.cdkeys.join('\n');
+            var blob = new Blob([text], {type: 'text/plain;charset=utf-8'});
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'cdkeys_export_' + new Date().toISOString().slice(0,10) + '.txt';
+            a.click();
+            URL.revokeObjectURL(a.href);
+            layer.msg('导出成功', {icon: 1});
+          } else {
+            layer.msg(data.msg || '导出失败', {icon: 2});
+          }
+        },
+        error: function(){ layer.close(load); layer.msg('导出失败', {icon: 2}); }
+      });
+    });
+  };
+});
+</script>

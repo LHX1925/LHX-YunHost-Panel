@@ -1,0 +1,260 @@
+{include file="default/user/header" title="实名认证" /}
+<style>
+    .realname-page { background: #f5f7fa; min-height: calc(100vh - 70px); padding: 40px 16px; }
+    .realname-container { max-width: 920px; margin: 0 auto; }
+    .realname-header { text-align: center; margin-bottom: 28px; }
+    .realname-header h2 { font-size: 28px; font-weight: 700; color: #1e293b; margin: 0 0 10px; display: inline-flex; align-items: center; justify-content: center; gap: 12px; }
+    .realname-header .tag { font-size: 13px; font-weight: 500; color: #64748b; background: #f1f5f9; border: 1px solid #e2e8f0; padding: 4px 12px; border-radius: 999px; }
+    .realname-header .subtitle { font-size: 14px; color: #64748b; margin: 0; }
+    .realname-grid { display: grid; grid-template-columns: 1.25fr 0.75fr; gap: 20px; align-items: start; }
+    .realname-card { background: #fff; border-radius: 16px; padding: 32px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+    .realname-status { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-radius: 10px; margin-bottom: 24px; font-size: 14px; }
+    .realname-status.verified { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+    .realname-status.pending { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+    .realname-status.rejected { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+    .realname-status.none { background: #f8fafc; color: #64748b; border: 1px solid #e2e8f0; }
+    .form-row { display: flex; align-items: center; gap: 16px; margin-bottom: 22px; }
+    .form-row label { flex: 0 0 110px; display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 500; color: #1e293b; }
+    .form-row label i { font-size: 20px; color: #64748b; width: 22px; text-align: center; }
+    .form-row .input-wrap { flex: 1; min-width: 0; }
+    .form-row input { width: 100%; padding: 13px 16px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 15px; color: #1e293b; outline: none; transition: all .2s; box-sizing: border-box; background: #fff; }
+    .form-row input::placeholder { color: #94a3b8; }
+    .form-row input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+    .form-row input:disabled { background: #f8fafc; color: #94a3b8; cursor: not-allowed; }
+    .agreement-row { display: flex; align-items: center; gap: 10px; margin: 24px 0 26px; padding-left: 126px; }
+    .agreement-row input[type="checkbox"] { width: 16px; height: 16px; accent-color: #2563eb; cursor: pointer; }
+    .agreement-row label { font-size: 14px; color: #475569; cursor: pointer; margin: 0; }
+    .agreement-row a { color: #2563eb; text-decoration: none; }
+    .agreement-row a:hover { text-decoration: underline; }
+    .btn-submit { width: 100%; padding: 14px; background: #2563eb; color: #fff; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all .2s; }
+    .btn-submit:hover { background: #1d4ed8; box-shadow: 0 6px 18px rgba(37,99,235,0.25); }
+    .btn-submit:disabled { background: #94a3b8; cursor: not-allowed; box-shadow: none; }
+    .safety-card { background: #fff; border-radius: 16px; padding: 28px 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+    .safety-title { display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 17px; font-weight: 700; color: #2563eb; margin: 0 0 24px; }
+    .safety-title::before, .safety-title::after { content: ''; flex: 1; height: 1px; background: #e2e8f0; max-width: 50px; }
+    .safety-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 18px; font-size: 14px; color: #475569; }
+    .safety-item:last-child { margin-bottom: 0; }
+    .safety-item i { color: #2563eb; font-size: 16px; margin-top: 2px; flex-shrink: 0; }
+    .realname-footer { text-align: center; margin-top: 28px; font-size: 13px; color: #94a3b8; }
+
+    /* 液态玻璃主题适配 */
+    body.glass-enabled .realname-page { background: transparent !important; }
+    body.glass-enabled .realname-card,
+    body.glass-enabled .safety-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        -webkit-backdrop-filter: blur(var(--glass-blur));
+        border: 1px solid var(--glass-border);
+        box-shadow: var(--glass-shadow-sm), var(--glass-shadow-inset);
+    }
+    body.glass-enabled.glass-bg-image .realname-card,
+    body.glass-enabled.glass-bg-image .safety-card {
+        background: rgba(255, 255, 255, var(--glass-opacity)) !important;
+        border-color: rgba(255, 255, 255, 0.35) !important;
+    }
+    body.glass-enabled .realname-status.verified { background: rgba(240, 253, 244, 0.75); }
+    body.glass-enabled .realname-status.pending { background: rgba(255, 251, 235, 0.75); }
+    body.glass-enabled .realname-status.rejected { background: rgba(254, 242, 242, 0.75); }
+    body.glass-enabled .realname-status.none { background: rgba(248, 250, 252, 0.75); }
+    body.glass-enabled .form-row input {
+        background: rgba(255, 255, 255, var(--glass-opacity-light));
+        backdrop-filter: blur(var(--glass-blur-light));
+        -webkit-backdrop-filter: blur(var(--glass-blur-light));
+        border-color: rgba(255, 255, 255, 0.4);
+        color: #1E293B;
+    }
+    body.glass-enabled .form-row input:focus {
+        background: rgba(255, 255, 255, var(--glass-opacity-btn));
+        border-color: var(--glass-primary);
+        box-shadow: 0 0 0 4px var(--glass-primary-glow);
+    }
+
+    @media (max-width: 768px) {
+        .realname-page { padding: 24px 12px; }
+        .realname-header h2 { font-size: 22px; flex-wrap: wrap; }
+        .realname-grid { grid-template-columns: 1fr; }
+        .realname-card, .safety-card { padding: 22px 18px; }
+        .form-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+        .form-row label { flex: none; }
+        .form-row .input-wrap { width: 100%; }
+        .agreement-row { padding-left: 0; }
+    }
+</style>
+
+<main id="main-container">
+<div class="content">
+<div class="realname-page">
+    <div class="realname-container">
+        <div class="realname-header glass-user-hero">
+            <h2>实名认证 <span class="tag">身份信息核验</span></h2>
+            <p class="subtitle">填写真实姓名与身份证号码，完成身份一致性核验</p>
+        </div>
+
+        <div class="realname-grid">
+            <div class="realname-card glass-card glass-reveal">
+                {if $user.realname_status == 1}
+                <div class="realname-status verified">
+                    <i class="fas fa-check-circle" style="font-size:18px;"></i>
+                    <div>实名认证已通过</div>
+                </div>
+                <form>
+                    <div class="form-row">
+                        <label><i class="far fa-user"></i> 真实姓名</label>
+                        <div class="input-wrap">
+                            <input type="text" value="{$user.realname|default=''}" disabled>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label><i class="far fa-id-card"></i> 身份证号码</label>
+                        <div class="input-wrap">
+                            <input type="text" value="{if $user.idcard}**** **** **** {:substr($user.idcard,-4)}{/if}" disabled>
+                        </div>
+                    </div>
+                </form>
+
+                {elseif $user.realname_status == 3}
+                <div class="realname-status pending">
+                    <i class="fas fa-clock" style="font-size:18px;"></i>
+                    <div>实名认证审核中，请耐心等待管理员处理</div>
+                </div>
+                <form>
+                    <div class="form-row">
+                        <label><i class="far fa-user"></i> 真实姓名</label>
+                        <div class="input-wrap">
+                            <input type="text" value="{$user.realname|default=''}" disabled>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label><i class="far fa-id-card"></i> 身份证号码</label>
+                        <div class="input-wrap">
+                            <input type="text" value="{if $user.idcard}**** **** **** {:substr($user.idcard,-4)}{/if}" disabled>
+                        </div>
+                    </div>
+                </form>
+
+                {elseif $user.realname_status == 2}
+                <div class="realname-status rejected">
+                    <i class="fas fa-times-circle" style="font-size:18px;"></i>
+                    <div>实名认证已被驳回，请核对信息后重新提交</div>
+                </div>
+                <form id="realnameForm">
+                    <div class="form-row">
+                        <label><i class="far fa-user"></i> 真实姓名</label>
+                        <div class="input-wrap">
+                            <input type="text" name="realname" id="realnameInput" placeholder="请输入真实姓名" maxlength="20" required class="glass-input">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label><i class="far fa-id-card"></i> 身份证号码</label>
+                        <div class="input-wrap">
+                            <input type="text" name="idcard" id="idcardInput" placeholder="请输入18位居民身份证号" maxlength="18" required class="glass-input">
+                        </div>
+                    </div>
+                    <div class="agreement-row">
+                        <input type="checkbox" id="agreement" required>
+                        <label for="agreement">我已阅读并同意<a href="javascript:;">《实名认证服务协议》</a></label>
+                    </div>
+                    <button type="submit" class="btn-submit glass-btn glass-btn-primary glass-btn-lg" id="submitBtn">提交核验</button>
+                </form>
+
+                {else}
+                <div class="realname-status none">
+                    <i class="fas fa-info-circle" style="font-size:18px;"></i>
+                    <div>
+                        {if $realnameMode == '0'}实名认证暂未开启{/if}
+                        {if $realnameMode == '1'}系统将自动核验您的身份信息{if $apiType=='3'}（手机三要素）{/if}{/if}
+                        {if $realnameMode == '2'}提交后将由管理员审核{/if}
+                    </div>
+                </div>
+                {if $realnameMode != '0'}
+                <form id="realnameForm">
+                    <div class="form-row">
+                        <label><i class="far fa-user"></i> 真实姓名</label>
+                        <div class="input-wrap">
+                            <input type="text" name="realname" id="realnameInput" placeholder="请输入真实姓名" maxlength="20" required class="glass-input">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label><i class="far fa-id-card"></i> 身份证号码</label>
+                        <div class="input-wrap">
+                            <input type="text" name="idcard" id="idcardInput" placeholder="请输入18位居民身份证号" maxlength="18" required class="glass-input">
+                        </div>
+                    </div>
+                    {if $apiType == '3'}
+                    <div class="form-row" id="mobileRow">
+                        <label><i class="fas fa-mobile-alt"></i> 手机号码</label>
+                        <div class="input-wrap">
+                            <input type="text" name="mobile" id="mobileInput" placeholder="请输入本人实名手机号" maxlength="11" required class="glass-input">
+                        </div>
+                    </div>
+                    {/if}
+                    <div class="agreement-row">
+                        <input type="checkbox" id="agreement" required>
+                        <label for="agreement">我已阅读并同意<a href="javascript:;">《实名认证服务协议》</a></label>
+                    </div>
+                    <button type="submit" class="btn-submit glass-btn glass-btn-primary glass-btn-lg" id="submitBtn">提交核验</button>
+                </form>
+                {/if}
+                {/if}
+            </div>
+
+            <div class="safety-card glass-card glass-reveal glass-stagger-1">
+                <div class="safety-title">安全说明</div>
+                <div class="safety-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>数据加密传输</span>
+                </div>
+                <div class="safety-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>信息严格保密</span>
+                </div>
+                <div class="safety-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>合规身份核验</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="realname-footer">
+            认证完成后可继续使用平台服务，信息仅用于身份核验
+        </div>
+    </div>
+</div>
+</div>
+</main>
+
+{include file="default/user/footer" /}
+<script>
+$(function(){
+    $('#realnameForm').on('submit', function(e){
+        e.preventDefault();
+        var btn = $('#submitBtn');
+        var realname = $.trim($('#realnameInput').val());
+        var idcard = $.trim($('#idcardInput').val());
+        var mobile = $.trim($('#mobileInput').val());
+        if(!realname || !idcard){ showToast('请填写完整信息','warning',2500); return; }
+        if(!/^([\u4e00-\u9fa5·]{2,20})$/.test(realname)){ showToast('姓名格式错误','warning',2500); return; }
+        if(!/^\d{17}[\dXx]$/.test(idcard)){ showToast('身份证号格式错误','warning',2500); return; }
+        if($('#mobileInput').length && !mobile){ showToast('请填写手机号码','warning',2500); return; }
+        if($('#mobileInput').length && mobile && !/^1[3-9]\d{9}$/.test(mobile)){ showToast('手机号格式错误','warning',2500); return; }
+        if(!$('#agreement').is(':checked')){ showToast('请先阅读并同意实名认证服务协议','warning',2500); return; }
+        btn.prop('disabled', true).text('提交中...');
+        $.ajax({
+            type: 'POST', url: '', data: { act:'submit', realname:realname, idcard:idcard, mobile:mobile }, dataType:'json',
+            success: function(res){
+                if(res.code == 1){
+                    showToast(res.msg || '操作成功','success',1800);
+                    setTimeout(function(){ location.reload(); },1800);
+                }else{
+                    showToast(res.msg,'danger',2500);
+                    btn.prop('disabled', false).text('提交核验');
+                }
+            },
+            error: function(xhr, status, err){
+                showToast('网络错误，请稍后重试','danger',2500);
+                btn.prop('disabled', false).text('提交核验');
+            }
+        });
+    });
+});
+</script>

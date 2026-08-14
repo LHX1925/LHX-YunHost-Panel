@@ -1,0 +1,326 @@
+{include file="default/header" title="产品列表 "/}
+<main class="lyear-layout-content">	
+      <div class="container-fluid glass-animate-in">
+        <div class="row">
+<div class="col-lg-12">
+      <div class="card admin-card">
+        <header class="card-header">
+<div class="card-title">产品列表</div>
+</header>
+        <div class="card-body">
+<form method="get" action="">
+<div class="search-wrap">
+<div class="input-group">
+					<input class="form-control col-sm-7" type="text" name="search" placeholder="搜索..." value=""/>
+					<div class="input-group-append">
+						<button class="btn btn-primary">
+							<span class="mdi mdi-magnify"></span>搜索
+						</button>
+					</div>
+				</div>
+</div>
+</form>
+<div class="mb-3">
+<button onclick='add()' class="btn-admin btn-admin-primary me-1"><span class="mdi mdi-plus" aria-hidden="true"></span>添加产品</button>
+<button onclick='del()' class="btn-admin btn-admin-danger me-1">
+                    <span class="mdi mdi-window-close" aria-hidden="true"></span>删除
+                  </button>
+                  <button onclick='qbdel()' class="btn-admin btn-admin-danger">
+                    <span class="mdi mdi-window-close" aria-hidden="true"></span>全部删除
+                  </button>
+</div>
+<div class="table-responsive-sm">
+          <table class="table table-admin">
+            <thead>
+              <tr>
+<th>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="check-all">
+                            <label class="form-check-label" for="check-all"></label>
+                          </div>
+                        </th>
+                <th scope="col">ID</th>
+                <th scope="col">排序</th>
+                <th scope="col">名称</th>
+                <th scope="col">信息</th>
+                <th scope="col">周期</th>
+                <th scope="col">价格</th>
+                <th scope="col">库存</th>  
+                <th scope="col">是否隐藏</th>
+                <th scope="col">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+{foreach $product as $p}
+              <tr>
+<td>
+                          <div class="form-check">
+                            <input type="checkbox" class="form-check-input ids" name="ids" value="{$p.id}">
+                            <label class="form-check-label" for="ids-1"></label>
+                          </div>
+                        </td>
+                <td scope="row">{$p.id}</td>
+                <td>{$p.sort}</td>
+                <td><strong>{$p.name}</strong></td>
+     <td>{$p.content}</td>
+     <td>
+{if $p.cycle=="day"}<span class="admin-badge admin-badge-primary">日付</span>{/if}
+{if $p.cycle=="month"}<span class="admin-badge admin-badge-primary">月付</span>{/if}
+{if $p.cycle=="season"}<span class="admin-badge admin-badge-warning">季付</span>{/if}
+{if $p.cycle=="year"}<span class="admin-badge admin-badge-secondary">年付</span>{/if}
+{if $p.cycle=="unrestricted"}<span class="admin-badge admin-badge-success">一次性</span>{/if}
+</td>
+     <td>{if $p.money=="0"}<span class="admin-badge admin-badge-success">免费</span>{else}{$p.money}{/if}</td>
+          <td>{$p.inventory}</td>
+          <td>{if $p.hide=="1"}<span class="admin-badge admin-badge-danger">是</span>{else}<span class="admin-badge admin-badge-secondary">否</span>{/if}</td>
+<td>
+<a href="/admin/product/{$p.id}" class="btn-admin btn-admin-success"><i class="mdi mdi-pencil"></i>编辑</a>
+</td>
+              </tr>
+{/foreach}
+            </tbody>
+          </table>
+</div>
+<div style="text-align:center">{$product->render()}</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+  <style>
+/* Glass styling for product page */
+.admin-form-tip {
+  background: var(--glass-bg-light) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--glass-radius-sm) !important;
+  color: var(--glass-text-secondary) !important;
+}
+.admin-field-hint {
+  color: var(--glass-text-muted) !important;
+}
+/* Layer popup glass styling */
+.layer-admin-form .layui-layer-title {
+  background: var(--glass-bg-light) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border-bottom: 1px solid var(--glass-border) !important;
+  color: var(--glass-text) !important;
+}
+.layer-admin-form {
+  background: var(--glass-bg-strong) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid var(--glass-border-strong) !important;
+  border-radius: var(--glass-radius-lg) !important;
+  box-shadow: var(--glass-shadow-lg) !important;
+}
+.layer-admin-form .layui-layer-content {
+  background: transparent !important;
+}
+.layer-admin-form .card-body {
+  background: transparent !important;
+}
+.layer-admin-form .form-control {
+  background: var(--glass-bg-input) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border: 1.5px solid var(--glass-border) !important;
+  border-radius: var(--glass-radius-sm) !important;
+  color: var(--glass-text) !important;
+}
+.layer-admin-form .form-control:focus {
+  background: var(--glass-bg) !important;
+  border-color: var(--glass-primary) !important;
+  box-shadow: 0 0 0 4px var(--glass-primary-glow) !important;
+}
+.layer-admin-form .form-label {
+  color: var(--glass-text) !important;
+  font-weight: 500 !important;
+}
+.layer-admin-form .form-select {
+  background: var(--glass-bg-input) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border: 1.5px solid var(--glass-border) !important;
+  border-radius: var(--glass-radius-sm) !important;
+  color: var(--glass-text) !important;
+}
+.layer-admin-form .form-select:focus {
+  background: var(--glass-bg) !important;
+  border-color: var(--glass-primary) !important;
+  box-shadow: 0 0 0 4px var(--glass-primary-glow) !important;
+}
+.layer-admin-form textarea.form-control {
+  background: var(--glass-bg-input) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border: 1.5px solid var(--glass-border) !important;
+  color: var(--glass-text) !important;
+}
+.lyear-layout-content .form-label {
+  color: var(--glass-text) !important;
+  font-weight: 500 !important;
+}
+</style>
+  {include file="default/footer" /}
+<script>
+function add(){
+layer.open({
+        type: 1,
+        area: ['620px', 'auto'],
+        maxHeight: Math.min(window.innerHeight * 0.9, 760),
+        closeBtn: 1,
+        shift: 7,
+        shadeClose: true,
+        skin: 'layer-admin-form',
+        title: "添加产品",
+        content: ''
+          + '<div class="card-body" style="width:580px;max-width:100%;padding:18px 20px 12px;box-sizing:border-box">'
+          + '<form action="" method="post" id="myform" class="edit-form admin-form">'
+          + '<input type="hidden" name="act" value="add">'
+          + '<div class="admin-form-tip"><strong>产品创建提示</strong>'
+          + '先选好<strong>分类</strong>和<strong>服务器</strong>再保存；服务器决定开通插件（如 mnbt）。<br>'
+          + '添加后可在编辑页配置空间/数据库等扩展参数。</div>'
+          + '<div class="mb-3"><label class="form-label">名称 <span style="color:#de350b">*</span></label>'
+          + '<input class="form-control" type="text" name="name" value="" placeholder="例如：入门型虚拟主机">'
+          + '<span class="admin-field-hint">前台展示的产品名称</span></div>'
+          + '<div class="mb-3"><label class="form-label">信息 / 介绍</label>'
+          + '<textarea style="height:100px" class="form-control" name="content" placeholder="产品说明，支持简单文字"></textarea>'
+          + '<span class="admin-field-hint">展示在产品详情页</span></div>'
+          + '<div class="row">'
+          + '<div class="col-md-6 mb-3"><label class="form-label">计费周期</label>'
+          + '<select name="cycle" class="form-select">'
+          + '<option value="day">日付</option><option value="month" selected>月付</option>'
+          + '<option value="season">季付</option><option value="year">年付</option>'
+          + '<option value="unrestricted">一次性</option></select>'
+          + '<span class="admin-field-hint">一次性产品购买时长只能为 1</span></div>'
+          + '<div class="col-md-6 mb-3"><label class="form-label">价格（元）</label>'
+          + '<input class="form-control" type="text" name="money" value="0" placeholder="0 为免费">'
+          + '<span class="admin-field-hint">按周期单价，总价 = 价格 × 时长</span></div>'
+          + '</div>'
+          + '<div class="row">'
+          + '<div class="col-md-6 mb-3"><label class="form-label">库存</label>'
+          + '<input class="form-control" type="text" name="inventory" value="100" placeholder="可售数量">'
+          + '<span class="admin-field-hint">每开通 1 个减 1，售完不可买</span></div>'
+          + '<div class="col-md-6 mb-3"><label class="form-label">排序</label>'
+          + '<input class="form-control" type="text" name="sort" value="0" placeholder="数值越大越靠前">'
+          + '<span class="admin-field-hint">列表排序权重</span></div>'
+          + '</div>'
+          + '<div class="row">'
+          + '<div class="col-md-6 mb-3"><label class="form-label">分类</label>'
+          + '<select name="product" class="form-select"><option value="">无</option>'
+          + '{volist name="data2" id="d2"}<option value="{$d2.id}">{$d2.name}</option>{/volist}'
+          + '</select><span class="admin-field-hint">前台分类展示用</span></div>'
+          + '<div class="col-md-6 mb-3"><label class="form-label">服务器 <span style="color:#de350b">*</span></label>'
+          + '<select name="serverid" class="form-select"><option value="">请选择</option>'
+          + '{volist name="data3" id="d3"}<option value="{$d3.id}">{$d3.name}</option>{/volist}'
+          + '</select><span class="admin-field-hint">关联开通用的服务器/插件</span></div>'
+          + '</div>'
+          + '<div class="row">'
+          + '<div class="col-md-6 mb-3"><label class="form-label">首次购买免费</label>'
+          + '<select name="firstmo" class="form-select"><option value="0" selected>否</option><option value="1">是</option></select>'
+          + '<span class="admin-field-hint">是则开通不扣余额</span></div>'
+          + '<div class="col-md-6 mb-3"><label class="form-label">是否隐藏</label>'
+          + '<select name="hide" class="form-select"><option value="0" selected>否</option><option value="1">是</option></select>'
+          + '<span class="admin-field-hint">隐藏后前台不显示</span></div>'
+          + '</div>'
+          + '<div class="row">'
+          + '<div class="col-md-4 mb-3"><label class="form-label">限购一个</label>'
+          + '<select name="limits" class="form-select"><option value="0" selected>否</option><option value="1">是</option></select></div>'
+          + '<div class="col-md-4 mb-3"><label class="form-label">禁止购买</label>'
+          + '<select name="buy" class="form-select"><option value="0" selected>否</option><option value="1">是</option></select></div>'
+          + '<div class="col-md-4 mb-3"><label class="form-label">禁止续费</label>'
+          + '<select name="renew" class="form-select"><option value="0" selected>否</option><option value="1">是</option></select></div>'
+          + '</div>'
+          + '<div class="d-flex gap-2" style="padding-bottom:8px">'
+          + '<button type="button" onclick="add1()" class="btn btn-primary">添加产品</button>'
+          + '<button type="button" onclick="layer.closeAll()" class="btn btn-secondary">取消</button>'
+          + '</div></form></div>',
+  });
+}
+function add1(){
+             var load = layer.msg('添加中，请稍后...',{icon:16,time:false});
+          var form = $('#myform').serializeArray();
+    $.ajax({
+            type:'POST',
+            url:'',
+            data:form,
+            dataType:'json',
+            success:function (data){
+                layer.close(load)
+                if(data.code == 1){
+                    setTimeout(function (){
+                        location.href = ''
+                    },1000);
+                    layer.alert(data.msg,{icon:1});
+                }else{
+                    layer.msg(data.msg,{icon:2});
+                }
+            }
+        });
+    }
+function del(id){
+var id = [];
+$("input[name='ids']:checked").each(function(i){
+        id[i] =$(this).val();
+      });
+var id = id.join(",");
+if(id==""){
+layer.alert("未选择产品!",{icon:2,shade:0.8});
+}else{
+        layer.confirm('确定要删除ID为<span style="color:#0b5ed7">'+ id +'</span>的产品吗？', function (){
+            del1(id)
+        });
+    }
+}
+    function del1(id){
+        var load = layer.load('1',{time:false});
+        $.ajax({
+            type:'POST',
+            url:'',
+            data:{
+                act:'delete',
+                cid:id
+            },
+            dataType:'json',
+            success:function (data){
+                layer.close(load);
+                if(data.code == 1){
+layer.alert(data.msg,{icon:1},function(){
+                        window.location.href = "";
+                    });
+                }else{
+                    layer.alert(data.msg,{icon:2});
+                }
+            }
+        });
+    }
+function qbdel(){
+        layer.confirm('确定要删除<span style="color:#0b5ed7">全部</span>的产品吗？', function (){
+            qbdel1()
+        });
+    }
+    function qbdel1(){
+        var load = layer.load('1',{time:false});
+        $.ajax({
+            type:'POST',
+            url:'',
+            data:{
+                act:'qbdelete',
+            },
+            dataType:'json',
+            success:function (data){
+                layer.close(load);
+                if(data.code == 1){
+layer.alert(data.msg,{icon:1},function(){
+                        window.location.href = "";
+                    });
+                }else{
+                    layer.alert(data.msg,{icon:2});
+                }
+            }
+        });
+    }
+</script>

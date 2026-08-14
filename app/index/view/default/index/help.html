@@ -1,0 +1,81 @@
+{include file="default/index/header" title="帮助中心" active="help" /}
+<main id="main-container" class="help-page">
+    <div class="content content-narrow">
+        <div class="help-hero glass-animate-in">
+            <h1>帮助中心</h1>
+            <p>遇到问题？我们提供多种渠道为您答疑解惑。</p>
+        </div>
+        <div class="help-cards">
+            <div class="help-card help-card-primary glass-reveal glass-stagger-1">
+                <div class="help-card-icon"><i class="fab fa-qq"></i></div>
+                <div class="help-card-body">
+                    <h3>官方 QQ 群</h3>
+                    <p class="help-card-value">{$qq_number|default='官方QQ群'}</p>
+                    <p class="help-card-desc">加入官方群，与更多用户交流，获取官方实时公告。</p>
+                    {php}$qqGroupUrl = $qq_group; if (strpos($qqGroupUrl, 'http') !== 0) { $qqGroupUrl = 'https://qm.qq.com/q/' . $qqGroupUrl; }{/php}
+                    <a href="{$qqGroupUrl}" target="_blank" class="glass-btn glass-btn-primary"><i class="fab fa-qq"></i> 一键加入官方群</a>
+                </div>
+            </div>
+            <div class="help-card glass-reveal glass-stagger-2">
+                <div class="help-card-icon" style="background:var(--glass-bg-light);color:var(--glass-primary);"><i class="fas fa-envelope"></i></div>
+                <div class="help-card-body">
+                    <h3>客服邮箱</h3>
+                    <p class="help-card-value">{$email|default='未设置'}</p>
+                    <p class="help-card-desc">发送邮件至客服邮箱，我们将在工作时间内尽快回复。</p>
+                    {if $email}<a href="mailto:{$email}" class="glass-btn glass-btn-outline"><i class="fas fa-paper-plane"></i> 发送邮件</a>{/if}
+                </div>
+            </div>
+            <div class="help-card glass-reveal glass-stagger-3">
+                <div class="help-card-icon" style="background:rgba(245,158,11,0.12);color:var(--glass-warning);"><i class="fas fa-headset"></i></div>
+                <div class="help-card-body">
+                    <h3>工单支持</h3>
+                    <p class="help-card-value">工作日 09:00 - 21:00</p>
+                    <p class="help-card-desc">登录后提交工单，客服团队将一对一为您解决问题。</p>
+                    <a href="__ROOT__/user/supportticket" class="glass-btn glass-btn-outline"><i class="fas fa-ticket-alt"></i> 提交工单</a>
+                </div>
+            </div>
+            <div class="help-card glass-reveal glass-stagger-4">
+                <div class="help-card-icon" style="background:rgba(139,92,246,0.12);color:var(--glass-purple);"><i class="fas fa-book"></i></div>
+                <div class="help-card-body">
+                    <h3>使用文档</h3>
+                    <p class="help-card-value">常见问题与教程</p>
+                    <p class="help-card-desc">查看详细使用文档，快速上手产品功能。</p>
+                    <a href="__ROOT__/announcements" class="glass-btn glass-btn-outline"><i class="fas fa-newspaper"></i> 查看公告</a>
+                </div>
+            </div>
+        </div>
+        <div class="help-faq glass-reveal">
+            <h2>常见问题</h2>
+            <div class="faq-list">
+                <div class="faq-item"><div class="faq-question">如何购买虚拟主机？</div><div class="faq-answer">注册并登录账号后，进入产品页面选择套餐，完成支付即可自动开通。</div></div>
+                <div class="faq-item"><div class="faq-question">支持哪些支付方式？</div><div class="faq-answer">支持账户余额支付以及平台接入的在线支付渠道，具体以支付页面显示为准。</div></div>
+                <div class="faq-item"><div class="faq-question">如何申请退款？</div><div class="faq-answer">请在用户控制台提交工单，说明退款原因，客服人员会在工作时间内处理。</div></div>
+                <div class="faq-item"><div class="faq-question">如何加入官方 QQ 群？</div><div class="faq-answer">点击上方"一键加入官方群"按钮，或搜索群号 {$qq_group} 申请加入。</div></div>
+            </div>
+        </div>
+    </div>
+</main>
+{include file="default/index/footer" /}
+<style>
+    .help-page { background: transparent; min-height: calc(100vh - var(--topbar-height) - 300px); padding: 40px 0; }
+    .help-hero { text-align: center; margin-bottom: 36px; }
+    .help-hero h1 { font-size: 30px; font-weight: 800; color: var(--glass-text); margin: 0 0 10px; }
+    .help-hero p { font-size: 15px; color: var(--glass-text-secondary); margin: 0; }
+    .help-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 40px; }
+    .help-card { background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--glass-border); border-radius: var(--glass-radius-lg); padding: 28px; display: flex; gap: 18px; transition: all var(--glass-transition); box-shadow: var(--glass-shadow-sm), var(--glass-shadow-inset); }
+    .help-card:hover { box-shadow: var(--glass-shadow-lg), var(--glass-shadow-inset); transform: translateY(-2px); border-color: var(--glass-border-strong); }
+    .help-card-primary { border-color: var(--glass-border-strong); background: var(--glass-bg-strong); }
+    .help-card-icon { width: 56px; height: 56px; border-radius: 16px; background: linear-gradient(135deg, var(--glass-primary), var(--glass-primary-light)); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; box-shadow: 0 4px 14px var(--glass-primary-glow); }
+    .help-card-body { flex: 1; }
+    .help-card-body h3 { font-size: 17px; font-weight: 700; color: var(--glass-text); margin: 0 0 8px; }
+    .help-card-value { font-size: 20px; font-weight: 800; color: var(--glass-primary); margin: 0 0 8px; word-break: break-all; }
+    .help-card-desc { font-size: 13px; color: var(--glass-text-secondary); margin: 0 0 16px; line-height: 1.6; }
+    .help-faq { background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--glass-border); border-radius: var(--glass-radius-lg); padding: 32px; box-shadow: var(--glass-shadow-sm), var(--glass-shadow-inset); }
+    .help-faq h2 { font-size: 20px; font-weight: 800; color: var(--glass-text); margin: 0 0 24px; }
+    .faq-item { border-bottom: 1px solid var(--glass-border); padding: 18px 0; }
+    .faq-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .faq-question { font-size: 15px; font-weight: 700; color: var(--glass-text); margin-bottom: 8px; }
+    .faq-answer { font-size: 14px; color: var(--glass-text-secondary); line-height: 1.7; }
+    @media (max-width: 991px) { .help-cards { grid-template-columns: 1fr; } }
+    @media (max-width: 576px) { .help-card { flex-direction: column; text-align: center; } .help-card .glass-btn { width: 100%; justify-content: center; } }
+</style>

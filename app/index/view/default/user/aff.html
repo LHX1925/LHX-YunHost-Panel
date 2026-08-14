@@ -1,0 +1,275 @@
+{include file="default/user/header" title="推广中心" /}
+<main id="main-container">
+    <div class="content content-narrow">
+        <div class="aff-hero">
+            <div class="aff-hero-icon">
+                <i class="fas fa-rocket"></i>
+            </div>
+            <h1>推广中心</h1>
+            <p>邀请好友购买、续费或升级产品，永久获得推广佣金，收益自动到账。</p>
+        </div>
+
+        <div class="aff-benefits">
+            <div class="aff-benefit-card glass-card-sm glass-reveal glass-stagger-1">
+                <div class="aff-benefit-icon" style="background:#EFF6FF;color:#2563EB;">
+                    <i class="fas fa-link"></i>
+                </div>
+                <h3>专属链接</h3>
+                <p>开启后立即获得专属推广链接，一键分享给好友。</p>
+            </div>
+            <div class="aff-benefit-card glass-card-sm glass-reveal glass-stagger-2">
+                <div class="aff-benefit-icon" style="background:#ECFDF5;color:#10B981;">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <h3>永久收益</h3>
+                <p>下级用户购买、续费、升级产品，你都能持续获得佣金。</p>
+            </div>
+            <div class="aff-benefit-card glass-card-sm glass-reveal glass-stagger-3">
+                <div class="aff-benefit-icon" style="background:#FEF3C7;color:#F59E0B;">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <h3>灵活提现</h3>
+                <p>推广余额可随时提现到账户余额或支付宝，方便快捷。</p>
+            </div>
+        </div>
+
+        <div class="aff-steps glass-card glass-reveal">
+            <h2>如何开始</h2>
+            <div class="aff-steps-grid">
+                <div class="aff-step">
+                    <div class="aff-step-num">1</div>
+                    <h4>开启推广</h4>
+                    <p>点击下方按钮，立即开启你的推广权限。</p>
+                </div>
+                <div class="aff-step">
+                    <div class="aff-step-num">2</div>
+                    <h4>分享链接</h4>
+                    <p>将专属推广链接发送给好友或发布到社交平台。</p>
+                </div>
+                <div class="aff-step">
+                    <div class="aff-step-num">3</div>
+                    <h4>获得佣金</h4>
+                    <p>好友通过链接注册并消费，佣金自动计入推广余额。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="aff-cta glass-card glass-reveal glass-stagger-1">
+            <button onclick="affon()" class="aff-cta-btn glass-btn glass-btn-primary glass-btn-xl" id="affOpenBtn">
+                <i class="fas fa-rocket"></i> 开启推广赚钱
+            </button>
+            <p>开启即表示同意推广相关规则</p>
+        </div>
+    </div>
+</main>
+{include file="default/user/footer" /}
+<style>
+    .aff-hero {
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.82) 0%, rgba(29, 78, 216, 0.82) 100%);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        border-radius: 24px;
+        padding: 48px 32px;
+        text-align: center;
+        color: #fff;
+        margin-bottom: 24px;
+        box-shadow: 0 10px 30px rgba(37, 99, 235, 0.25);
+    }
+    .aff-hero-icon {
+        width: 80px;
+        height: 80px;
+        background: rgba(255,255,255,0.22);
+        border: 1px solid rgba(255,255,255,0.25);
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 34px;
+        margin-bottom: 20px;
+        backdrop-filter: blur(4px);
+    }
+    .aff-hero h1 {
+        font-size: 28px;
+        font-weight: 800;
+        margin: 0 0 12px;
+    }
+    .aff-hero p {
+        font-size: 15px;
+        opacity: 0.92;
+        margin: 0 auto;
+        max-width: 480px;
+        line-height: 1.7;
+    }
+    .aff-benefits {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+    .aff-benefit-card {
+        background: rgba(255, 255, 255, var(--glass-opacity));
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        border-radius: 20px;
+        padding: 28px 22px;
+        text-align: center;
+        transition: all 0.2s;
+    }
+    .aff-benefit-card:hover {
+        transform: translateY(-3px);
+        background: rgba(255, 255, 255, 0.82);
+        box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+        border-color: var(--primary-light);
+    }
+    .aff-benefit-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        margin-bottom: 16px;
+    }
+    .aff-benefit-card h3 {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text);
+        margin: 0 0 8px;
+    }
+    .aff-benefit-card p {
+        font-size: 13px;
+        color: var(--text-secondary);
+        margin: 0;
+        line-height: 1.6;
+    }
+    .aff-steps {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 32px;
+        margin-bottom: 24px;
+    }
+    .aff-steps h2 {
+        font-size: 20px;
+        font-weight: 800;
+        color: var(--text);
+        margin: 0 0 24px;
+        text-align: center;
+    }
+    .aff-steps-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+    .aff-step {
+        text-align: center;
+        position: relative;
+    }
+    .aff-step:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        top: 20px;
+        right: -28px;
+        width: 36px;
+        height: 2px;
+        background: var(--border);
+    }
+    .aff-step-num {
+        width: 42px;
+        height: 42px;
+        background: var(--primary-bg);
+        color: var(--primary);
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        margin-bottom: 14px;
+    }
+    .aff-step h4 {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text);
+        margin: 0 0 6px;
+    }
+    .aff-step p {
+        font-size: 13px;
+        color: var(--text-secondary);
+        margin: 0;
+        line-height: 1.6;
+    }
+    .aff-cta {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 32px;
+        text-align: center;
+    }
+    .aff-cta-btn {
+        background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+        color: #fff;
+        border: none;
+        border-radius: 999px;
+        padding: 16px 48px;
+        font-size: 17px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 8px 22px rgba(37, 99, 235, 0.3);
+    }
+    .aff-cta-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 28px rgba(37, 99, 235, 0.35);
+    }
+    .aff-cta-btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none;
+    }
+    .aff-cta p {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin: 14px 0 0;
+    }
+    @media (max-width: 991px) {
+        .aff-benefits,
+        .aff-steps-grid {
+            grid-template-columns: 1fr;
+        }
+        .aff-step:not(:last-child)::after {
+            display: none;
+        }
+        .aff-hero {
+            padding: 36px 24px;
+        }
+    }
+</style>
+<script>
+function affon(){
+    var btn = document.getElementById('affOpenBtn');
+    btn.disabled = true;
+    var load = layer.load(1,{time:false});
+    $.ajax({
+        type:'POST', url:'', data:{}, dataType:'json',
+        success:function (data){
+            layer.close(load);
+            if(data.code == 1){
+                showToast(data.msg || '开启推广成功', 'success', 1800);
+                setTimeout(function (){ location.href = '' },1800);
+            }else{
+                showToast(data.msg || '开启失败', 'danger', 2500);
+                btn.disabled = false;
+            }
+        },
+        error: function(){
+            layer.close(load);
+            showToast('网络错误，请稍后重试', 'danger', 2500);
+            btn.disabled = false;
+        }
+    });
+    return false;
+}
+</script>

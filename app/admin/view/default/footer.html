@@ -1,0 +1,36 @@
+  </div>
+</div>
+
+<link rel="stylesheet" type="text/css" href="__ROOT__/static/css/glass-theme.css">
+<script type="text/javascript" src="__ROOT__/static/js/jquery.min.js"></script>
+<script type="text/javascript" src="__ROOT__/static/js/popper.min.js"></script>
+<script type="text/javascript" src="__ROOT__/static/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="__ROOT__/static/js/perfect-scrollbar.min.js"></script>
+<script type="text/javascript" src="__ROOT__/static/js/jquery.cookie.min.js"></script>
+<script type="text/javascript" src="__ROOT__/static/js/main.min.js"></script>
+
+<script src="__ROOT__/static/assets/vendor/layer/layer.js"></script>
+<script src="__ROOT__/static/js/glass-animations.js"></script>
+<script>
+// 后台统一使用浅色主题，防止旧版深色主题 Cookie 覆盖
+$(function() {
+    $('body').attr('data-theme', 'light');
+    if ($.removeCookie) {
+        $.removeCookie('the_site_theme', { path: '/' });
+    }
+});
+// CSRF防护: 所有AJAX POST请求自动附带Token
+$(document).ajaxSend(function(e, xhr, settings) {
+    if (settings.type && settings.type.toUpperCase() === 'POST' && window._csrfToken) {
+        if (settings.data) {
+            if (typeof settings.data === 'string') {
+                settings.data += '&__token__=' + encodeURIComponent(window._csrfToken);
+            } else if ($.isPlainObject(settings.data)) {
+                settings.data.__token__ = window._csrfToken;
+            }
+        }
+    }
+});
+</script>
+</body>
+</html>

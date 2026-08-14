@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>{$webname} - 注册</title>
+    <style>
+        #mainHeader,
+        #mobileMenu {
+            display: none !important;
+        }
+
+        .auth-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 浮动光球装饰 */
+        .auth-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 0;
+            opacity: 0.3;
+            animation: orbFloat 20s ease-in-out infinite;
+        }
+        .auth-orb-1 {
+            width: 400px; height: 400px;
+            top: -150px; right: -150px;
+            background: linear-gradient(135deg, var(--glass-primary), var(--glass-purple));
+        }
+        .auth-orb-2 {
+            width: 300px; height: 300px;
+            bottom: -100px; left: -100px;
+            background: linear-gradient(135deg, var(--glass-info), var(--glass-primary));
+            animation-delay: -5s;
+        }
+        .auth-orb-3 {
+            width: 200px; height: 200px;
+            top: 60%; right: 20%;
+            background: linear-gradient(135deg, var(--glass-purple), var(--glass-primary));
+            animation-delay: -10s;
+        }
+        .auth-orb-4 {
+            width: 150px; height: 150px;
+            bottom: 30%; left: 25%;
+            background: linear-gradient(135deg, var(--glass-success), var(--glass-info));
+            animation-delay: -15s;
+        }
+        @keyframes orbFloat {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-20px) translateX(10px); }
+            50% { transform: translateY(0) translateX(20px); }
+            75% { transform: translateY(20px) translateX(10px); }
+        }
+
+        .auth-top {
+            position: absolute;
+            top: 28px;
+            left: 40px;
+            z-index: 10;
+        }
+
+        .auth-top .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--glass-text);
+            text-decoration: none;
+        }
+
+        .auth-top .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--glass-primary), var(--glass-primary-light));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 16px;
+            overflow: hidden;
+            flex-shrink: 0;
+            box-shadow: 0 4px 14px var(--glass-primary-glow);
+        }
+
+        .auth-top .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .auth-container {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 80px 40px;
+            gap: 60px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .auth-brand {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-right: 40px;
+        }
+
+        .auth-brand h2 {
+            font-size: 38px;
+            color: var(--glass-text);
+            font-weight: 800;
+            margin-bottom: 16px;
+            line-height: 1.25;
+            letter-spacing: -0.5px;
+        }
+
+        .auth-brand p {
+            font-size: 16px;
+            color: var(--glass-text-secondary);
+            line-height: 1.8;
+            margin-bottom: 32px;
+        }
+
+        .auth-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .auth-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur-light));
+            -webkit-backdrop-filter: blur(var(--glass-blur-light));
+            border: 1px solid var(--glass-border);
+            border-radius: var(--glass-radius-full);
+            color: var(--glass-primary);
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: var(--glass-shadow-sm);
+        }
+
+        .auth-tag i {
+            font-size: 13px;
+        }
+
+        .auth-illustration {
+            margin-top: 48px;
+            width: 100%;
+            max-width: 460px;
+        }
+
+        .auth-illustration img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: var(--glass-radius-lg);
+        }
+
+        @media (max-width: 991px) {
+            .auth-illustration {
+                display: none;
+            }
+        }
+
+        .auth-form-wrap {
+            display: flex;
+            justify-content: center;
+        }
+
+        .auth-form {
+            width: 100%;
+            max-width: 420px;
+            background: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(var(--glass-blur-strong));
+            -webkit-backdrop-filter: blur(var(--glass-blur-strong));
+            border-radius: var(--glass-radius-xl);
+            padding: 44px 40px;
+            box-shadow: var(--glass-shadow-xl), var(--glass-shadow-inset);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+        }
+
+        .auth-form h3 {
+            font-size: 24px;
+            color: var(--glass-text);
+            font-weight: 700;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+
+        .auth-form .form-group {
+            margin-bottom: 16px;
+            width: 100%;
+        }
+
+        .auth-form .input-with-icon {
+            display: block;
+            width: 100%;
+        }
+
+        .auth-form .form-control {
+            width: 100%;
+            display: block;
+            box-sizing: border-box;
+            height: 50px;
+            border-radius: var(--glass-radius-sm);
+            padding: 11px 16px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(var(--glass-blur-light));
+            -webkit-backdrop-filter: blur(var(--glass-blur-light));
+            border: 1.5px solid rgba(255, 255, 255, 0.4);
+            color: #1E293B;
+            transition: all var(--glass-transition);
+            box-shadow: var(--glass-shadow-inset);
+        }
+
+        .auth-form .form-control:focus {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: var(--glass-primary);
+            box-shadow: 0 0 0 4px var(--glass-primary-glow);
+        }
+
+        .auth-form .form-control::placeholder {
+            color: #64748B;
+        }
+
+        .auth-form .btn-primary {
+            width: 100%;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: var(--glass-radius-full);
+            margin-top: 8px;
+            background: linear-gradient(135deg, var(--glass-primary), var(--glass-primary-light));
+            border: none;
+            color: #fff;
+            box-shadow: 0 4px 16px var(--glass-primary-glow);
+            cursor: pointer;
+            transition: all var(--glass-transition);
+        }
+        .auth-form .btn-primary:hover {
+            background: linear-gradient(135deg, var(--glass-primary-dark), var(--glass-primary));
+            box-shadow: 0 6px 24px var(--glass-primary-glow);
+            transform: translateY(-1px);
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 13px;
+            color: var(--glass-text-secondary);
+        }
+
+        .auth-footer a {
+            color: var(--glass-primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .agreement {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--glass-text-secondary);
+            margin: 8px 0 4px;
+        }
+
+        .agreement input {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--glass-primary);
+            cursor: pointer;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--glass-text-muted);
+            font-size: 14px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .input-with-icon .form-control {
+            padding-left: 44px;
+        }
+
+        #slide-captcha-btn {
+            width: 100%;
+            height: 50px;
+            border: 1.5px solid var(--glass-border);
+            border-radius: var(--glass-radius-sm);
+            background: var(--glass-bg-input);
+            backdrop-filter: blur(var(--glass-blur-light));
+            -webkit-backdrop-filter: blur(var(--glass-blur-light));
+            color: var(--glass-text-muted);
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: 400;
+            text-align: left;
+            padding: 0 16px 0 44px;
+            position: relative;
+            transition: all var(--glass-transition);
+            box-shadow: var(--glass-shadow-inset);
+        }
+        #slide-captcha-btn i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            color: var(--glass-text-muted);
+        }
+
+        #slide-captcha-btn:hover {
+            border-color: var(--glass-primary);
+            box-shadow: 0 0 0 4px var(--glass-primary-glow);
+        }
+        #slide-captcha-btn:focus {
+            outline: none;
+            border-color: var(--glass-primary);
+            box-shadow: 0 0 0 4px var(--glass-primary-glow);
+        }
+
+        #captcha-status {
+            margin-top: 5px;
+            font-size: 12px;
+            min-height: 18px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .btn-get-code {
+            position: absolute;
+            right: 6px;
+            top: 6px;
+            height: 38px;
+            padding: 0 14px;
+            background: linear-gradient(135deg, var(--glass-primary), var(--glass-primary-light));
+            border: none;
+            border-radius: var(--glass-radius-sm);
+            color: #fff;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--glass-transition);
+            box-shadow: 0 2px 8px var(--glass-primary-glow);
+        }
+
+        .btn-get-code:hover {
+            background: linear-gradient(135deg, var(--glass-primary-dark), var(--glass-primary));
+            box-shadow: 0 4px 14px var(--glass-primary-glow);
+        }
+
+        .btn-get-code:disabled {
+            background: var(--glass-text-muted);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        @media (max-width: 992px) {
+            .auth-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                padding: 100px 24px 60px;
+            }
+
+            .auth-brand {
+                display: none;
+            }
+
+            .auth-form {
+                max-width: 460px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .auth-top {
+                left: 24px;
+                top: 24px;
+            }
+
+            .auth-form {
+                padding: 32px 24px;
+                border-radius: var(--glass-radius-lg);
+            }
+
+            .auth-form h3 {
+                font-size: 22px;
+                margin-bottom: 24px;
+            }
+        }
+    </style>
+    {include file="default/index/header" /}
+</head>
+<body class="glass-enabled glass-login{if isset($web.bg_image) && $web.bg_image} glass-bg-image{/if}"{if isset($web.bg_image) && $web.bg_image} style="--glass-bg-image: url('{$web.bg_image}');"{/if}>
+    <div class="auth-page">
+        <div class="auth-orb auth-orb-1"></div>
+        <div class="auth-orb auth-orb-2"></div>
+        <div class="auth-orb auth-orb-3"></div>
+        <div class="auth-orb auth-orb-4"></div>
+        <a href="__ROOT__/" class="auth-top logo">
+            <div class="logo-icon">
+                {if isset($web.logo) && $web.logo}
+                <img src="{$web.logo}" alt="logo">
+                {else}
+                <i class="{$web.logo_icon|default='fas fa-server'}"></i>
+                {/if}
+            </div>
+            <span>{$webname}</span>
+        </a>
+
+        <div class="auth-container">
+            <div class="auth-brand">
+                <h2>创建你的云服务账号</h2>
+                <p>选择套餐、开通主机、管理网站都在同一平台完成</p>
+                <div class="auth-features">
+                    <span class="auth-tag"><i class="fas fa-bolt"></i> 极速开通</span>
+                    <span class="auth-tag"><i class="fas fa-shield-alt"></i> 安全防护</span>
+                    <span class="auth-tag"><i class="fas fa-expand-arrows-alt"></i> 弹性扩容</span>
+                </div>
+                <div class="auth-illustration">
+                    <img src="__ROOT__/static/assets/images/hero-illustration.png" alt="云服务插画">
+                </div>
+            </div>
+
+            <div class="auth-form-wrap">
+                <div class="auth-form">
+                    <h3>新用户注册</h3>
+
+                    <form>
+                        <input type="hidden" name="userName" value="">
+
+                        <div class="form-group">
+                            <div class="input-with-icon">
+                                <i class="fas fa-user"></i>
+                                <input type="text" name="userUser" class="form-control" placeholder="用户名" autocomplete="off">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-with-icon">
+                                <i class="fab fa-qq"></i>
+                                <input type="text" name="userQq" class="form-control" placeholder="QQ号码" autocomplete="off">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-with-icon">
+                                <i class="fas fa-envelope"></i>
+                                <input type="text" name="userMail" class="form-control" placeholder="邮箱地址" autocomplete="off">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-with-icon">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" name="userPwd" class="form-control" placeholder="设置密码">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-with-icon">
+                                <i class="fas fa-check-circle"></i>
+                                <input type="password" name="userRepwd" class="form-control" placeholder="确认密码">
+                            </div>
+                        </div>
+
+                        {if $zcyxyz=="1"}
+                        <div class="form-group" id="code-group">
+                            <button type="button" class="btn-get-code" onclick="sendVerifyLink()" style="position:static;display:inline-block;width:100%;padding:12px 0;height:auto;border-radius:8px;font-size:15px;">发送验证链接</button>
+                        </div>
+                        <div id="email-verify-status" style="display:none;"></div>
+                        <div id="backup-code-area" style="display:none;margin-bottom:16px;">
+                            <div class="form-group">
+                                <div class="input-with-icon">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <input type="text" name="code" class="form-control" placeholder="备用邮箱验证码" style="padding-right: 110px;">
+                                </div>
+                            </div>
+                            <div style="text-align:center;font-size:12px;color:#dc2626;margin-top:-8px;">
+                                <i class="fas fa-exclamation-triangle"></i> 链接验证超时，请使用备用验证码
+                            </div>
+                        </div>
+                        {/if}
+
+                        <div class="form-group">
+                            <button type="button" id="slide-captcha-btn">
+                                <i class="fas fa-shield-alt"></i> 点击进行滑块验证
+                            </button>
+                            <input type="hidden" name="captcha" id="captcha-verified" value="">
+                            <div id="captcha-status"></div>
+                        </div>
+
+                        <label class="agreement">
+                            <input type="checkbox" id="agreement">
+                            <span>我已阅读并同意服务协议</span>
+                        </label>
+
+                        <button type="submit" class="btn btn-primary">
+                            提交注册
+                        </button>
+
+                        <div class="auth-footer">
+                            已有账号？<a href="__ROOT__/login">返回登录</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {include file="default/captcha_assets" /}
+    <script>
+        $(function($) {
+            var $btn = $('#slide-captcha-btn');
+            if (typeof window.slideCaptcha !== 'function') {
+                if (typeof console !== 'undefined' && console.error) console.error('SlideCaptcha: 滑动验证组件未加载');
+                $btn.html('<i class="fas fa-exclamation-circle"></i> 验证组件加载失败，请刷新页面');
+                $btn.css({'border-color':'#f44336','background':'#FFEBEE','color':'#f44336'});
+                return;
+            }
+            var captchaVerified = false;
+
+            function resetCaptcha() {
+                captchaVerified = false;
+                $('#captcha-verified').val('');
+                $btn.css({
+                    'border-color': '',
+                    'background': '',
+                    'color': ''
+                }).html('<i class="fas fa-shield-alt"></i> 点击进行滑块验证');
+            }
+
+            // 将用户名同步为昵称，QQ 使用输入值
+            $("input[name='userUser']").on('input', function() {
+                $("input[name='userName']").val($(this).val());
+            });
+
+            {if $zcyxyz=="1"}
+            var linkVerifyTimer = null;
+            var linkVerifyTimeout = null;
+            var linkVerified = false;
+
+            function checkVerificationStatus(mail, callback) {
+                $.ajax({
+                    type:'POST',
+                    url:'',
+                    data:{mail:mail, act:"check_link_verify"},
+                    dataType:'json',
+                    success:function(res) {
+                        if (res.code == 1 && res.verified) {
+                            linkVerified = true;
+                            $('#code-group').hide();
+                            $('#backup-code-area').hide();
+                            if (linkVerifyTimer) { clearInterval(linkVerifyTimer); linkVerifyTimer = null; }
+                            if (linkVerifyTimeout) { clearTimeout(linkVerifyTimeout); linkVerifyTimeout = null; }
+                            $('#email-verify-status').html(
+                                '<div style="text-align:center;padding:10px;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:10px;margin-bottom:16px;">' +
+                                    '<i class="fas fa-check-circle" style="color:#059669;font-size:18px;"></i> ' +
+                                    '<span style="color:#065f46;font-size:14px;font-weight:600;">邮箱已验证通过，请继续完成注册</span>' +
+                                '</div>'
+                            ).show();
+                        }
+                        if (typeof callback === 'function') callback(res.code == 1 && res.verified);
+                    }
+                });
+            }
+
+            var storedMail = localStorage.getItem('lhx_verify_mail');
+            if (storedMail) {
+                $("input[name='userMail']").val(storedMail);
+            }
+
+            function startLinkVerifyPolling(mail) {
+                localStorage.setItem('lhx_verify_mail', mail);
+                if (linkVerifyTimer) clearInterval(linkVerifyTimer);
+                if (linkVerifyTimeout) clearTimeout(linkVerifyTimeout);
+                linkVerifyTimeout = setTimeout(function() {
+                    if (!linkVerified) {
+                        $('#backup-code-area').slideDown(300);
+                        showToast('链接验证超时，请使用备用验证码', 'warning', 3000);
+                    }
+                }, 20000);
+                linkVerifyTimer = setInterval(function() {
+                    $.ajax({
+                        type:'POST',
+                        url:'',
+                        data:{mail:mail, act:"check_link_verify"},
+                        dataType:'json',
+                        success:function(res) {
+                            if (res.code == 1 && res.verified) {
+                                linkVerified = true;
+                                if (linkVerifyTimer) {
+                                    clearInterval(linkVerifyTimer);
+                                    linkVerifyTimer = null;
+                                }
+                                if (linkVerifyTimeout) {
+                                    clearTimeout(linkVerifyTimeout);
+                                    linkVerifyTimeout = null;
+                                }
+                                $('#code-group').hide();
+                                $('#backup-code-area').hide();
+                                $('#email-verify-status').html(
+                                    '<div style="text-align:center;padding:10px;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:10px;margin-bottom:16px;">' +
+                                        '<i class="fas fa-check-circle" style="color:#059669;font-size:18px;"></i> ' +
+                                        '<span style="color:#065f46;font-size:14px;font-weight:600;">邮箱已验证通过，请继续完成注册</span>' +
+                                    '</div>'
+                                ).show();
+                            }
+                        }
+                    });
+                }, 3000);
+            }
+
+            // 邮箱实时检测 — 失焦时后端验证是否国内邮箱
+            $("input[name='userMail']").on('blur', function() {
+                var mail = $.trim($(this).val());
+                if (!mail) return;
+                $.ajax({
+                    type: 'POST',
+                    url: '',
+                    data: { act: 'check_disposable', mail: mail },
+                    dataType: 'json',
+                    success: function(res) {
+                        if (res.code == -1) {
+                            showToast(res.msg || '仅支持国内邮箱注册，请使用真实邮箱', 'warning', 3000);
+                            $("input[name='userMail']").addClass('is-invalid');
+                        } else {
+                            $("input[name='userMail']").removeClass('is-invalid');
+                        }
+                    },
+                    error: function(xhr, status, err) {
+                        // 静默失败，不影响正常使用
+                        if (window.console) console.log('邮箱检测接口异常:', status, err);
+                    }
+                });
+            });
+
+            window.sendVerifyLink = function() {
+                var userMail = $("input[name='userMail']").val();
+                var userUser = $("input[name='userUser']").val();
+                var userQq = $("input[name='userQq']").val();
+                var userPwd = $("input[name='userPwd']").val();
+                var userRepwd = $("input[name='userRepwd']").val();
+                var btn = document.querySelector('.btn-get-code');
+
+                if (!captchaVerified) {
+                    showToast('请先完成滑块验证', 'warning', 2500);
+                    return false;
+                }
+
+                if (!userUser || $.trim(userUser) === '') {
+                    showToast('请先输入用户名', 'warning', 2500);
+                    $("input[name='userUser']").focus();
+                    return false;
+                }
+
+                if (!userQq || $.trim(userQq) === '') {
+                    showToast('请先输入QQ号码', 'warning', 2500);
+                    $("input[name='userQq']").focus();
+                    return false;
+                }
+
+                if (!userPwd || $.trim(userPwd) === '') {
+                    showToast('请先设置密码', 'warning', 2500);
+                    $("input[name='userPwd']").focus();
+                    return false;
+                }
+
+                if (!userRepwd || $.trim(userRepwd) === '') {
+                    showToast('请先确认密码', 'warning', 2500);
+                    $("input[name='userRepwd']").focus();
+                    return false;
+                }
+
+                if(userPwd !== userRepwd){
+                    showToast('两次输入的密码不一致', 'warning', 2500);
+                    return false;
+                }
+
+                if(userMail.length < 1){
+                    showToast('请确保邮箱不为空', 'danger', 2500);
+                    return false;
+                }
+
+                // 前端邮箱格式校验，支持所有常见TLD
+                var emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+                if (!emailRegex.test(userMail)) {
+                    showToast('邮箱格式不正确，请检查', 'warning', 2500);
+                    return false;
+                }
+
+                if (btn && btn.disabled) return false;
+                if (btn) { btn.disabled = true; btn.textContent = '检测中...'; }
+
+                // 先检测邮箱是否允许（国内邮箱白名单），通过后再发送验证链接
+                $.ajax({
+                    type:'POST',
+                    url:'',
+                    data:{ act:'check_disposable', mail: userMail },
+                    dataType:'json',
+                    success: function(checkRes) {
+                        if (checkRes.code == -1) {
+                            // 非国内邮箱被拦截
+                            if (btn) { btn.disabled = false; btn.textContent = '发送验证链接'; }
+                            showToast(checkRes.msg || '仅支持国内邮箱注册，请使用真实邮箱！', 'warning', 3000);
+                            return;
+                        }
+                        // 非临时邮箱，继续发送验证链接
+                        if (btn) { btn.textContent = '发送中...'; }
+                        showToast('正在发送验证链接，请稍后...', 'info', 1500);
+                        doSendYxvalidate(userMail, btn);
+                    },
+                    error: function() {
+                        if (btn) { btn.disabled = false; btn.textContent = '发送验证链接'; }
+                        showToast('检测失败，请稍后重试', 'danger', 3000);
+                    }
+                });
+            }
+
+            // 实际的yxvalidate调用
+            function doSendYxvalidate(userMail, btn) {
+                $.ajax({
+                    type:'POST',
+                    url:'',
+                    data:{
+                        mail:userMail,
+                        act:"yxvalidate",
+                        captcha:$('#captcha-verified').val(),
+                    },
+                    dataType:'json',
+                    success:function (data){
+                        if(data.code == 1){
+                            showToast(data.msg || '验证链接已发送', 'success', 2000);
+                            if (btn) { btn.disabled = true; btn.textContent = '已发送'; }
+                            linkVerified = false;
+                            startLinkVerifyPolling(userMail);
+                            $('#email-verify-status').html(
+                                '<div style="text-align:center;padding:8px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;margin-bottom:16px;font-size:13px;color:#1e40af;">' +
+                                    '<i class="fas fa-spinner fa-pulse"></i> 等待邮件链接验证中...<br>' +
+                                    '<span style="font-size:12px;color:#64748b;">请检查邮箱并点击邮件中的验证链接，页面将自动检测</span>' +
+                                '</div>'
+                            ).show();
+                        }else{
+                            if (btn) { btn.disabled = false; btn.textContent = '发送验证链接'; }
+                            resetCaptcha();
+                            showToast(data.msg || '发送失败', 'danger', 2500);
+                        }
+                    },
+                    error: function(){
+                        if (btn) { btn.disabled = false; btn.textContent = '发送验证链接'; }
+                        resetCaptcha();
+                        showToast('网络错误，请稍后重试', 'danger', 2500);
+                    }
+                });
+                return false;
+            };
+            {/if}
+
+            $btn.on('click', function() {
+                if (typeof window.slideCaptcha !== 'function') {
+                    showToast('验证组件未加载，请刷新页面', 'danger', 2500);
+                    return;
+                }
+                var userMail = $("input[name='userMail']").val().trim();
+                if (!userMail) {
+                    showToast('请先输入邮箱地址', 'warning', 2500);
+                    $("input[name='userMail']").focus();
+                    return;
+                }
+                window.slideCaptcha({
+                    email: userMail,
+                    onSuccess: function(token) {
+                        captchaVerified = true;
+                        $('#captcha-verified').val(token);
+                        $btn.css({
+                            'border-color': '#10b981',
+                            'background': '',
+                            'color': '#10b981'
+                        }).html('<i class="fas fa-check-circle" style="color:#10b981;"></i> 验证通过');
+                    },
+                    onError: function() {
+                        captchaVerified = false;
+                        $('#captcha-verified').val('');
+                        $btn.css({
+                            'border-color': '#ef4444',
+                            'background': '',
+                            'color': '#ef4444'
+                        }).html('<i class="fas fa-times-circle" style="color:#ef4444;"></i> 验证失败，点击重试');
+                    },
+                    onClose: function() {
+                        if (!captchaVerified) {
+                            resetCaptcha();
+                        }
+                    }
+                });
+            });
+
+            {if $zcyxyz=="1"}
+            $("form").submit(function (){
+                var login = $("button[type='submit']");
+                var userUser = $("input[name='userUser']").val();
+                $("input[name='userName']").val(userUser);
+
+                var userName = $("input[name='userName']").val();
+                var userPwd = $("input[name='userPwd']").val();
+                var userRepwd = $("input[name='userRepwd']").val();
+                var userMail = $("input[name='userMail']").val();
+                var userQq = $("input[name='userQq']").val();
+                var userCode = $("input[name='code']").val();
+
+                if(userName.length < 1 || userUser.length < 1 || userPwd.length < 1 || userRepwd.length < 1 || userMail.length < 1 || userQq.length < 1){
+                    showToast('请确保必填项不为空', 'danger', 2500);
+                    return false;
+                }
+                if (!linkVerified && userCode.length < 1) {
+                    showToast('请先完成邮箱验证（点击邮件链接或输入备用验证码）', 'warning', 2500);
+                    return false;
+                }
+
+                if (!$('#agreement').is(':checked')) {
+                    showToast('请阅读并同意服务协议', 'warning', 2500);
+                    return false;
+                }
+
+                if (!captchaVerified) {
+                    showToast('请先完成滑块验证', 'warning', 2500);
+                    return false;
+                }
+
+                login.attr('disabled', 'true');
+                showToast('正在注册，请稍后...', 'info', 1500);
+
+                $.ajax({
+                    type:'POST',
+                    url:'',
+                    data:{
+                        name:userName,
+                        user:userUser,
+                        password:userPwd,
+                        repassword:userRepwd,
+                        mail:userMail,
+                        qq:userQq,
+                        code:userCode,
+                        act:"yxzc",
+                    },
+                    dataType:'json',
+                    success:function (data){
+                        if(data.code == 1){
+                            showToast(data.msg || '注册成功', 'success', 1500);
+                            setTimeout(function (){
+                                location.href = '__ROOT__/login'
+                            },1500);
+                        }else{
+                            resetCaptcha();
+                            login.removeAttr('disabled');
+                            showToast(data.msg || '注册失败', 'danger', 2500);
+                        }
+                    },
+                    error: function(){
+                        resetCaptcha();
+                        login.removeAttr('disabled');
+                        showToast('网络错误，请稍后重试', 'danger', 2500);
+                    }
+                });
+                return false;
+            });
+
+            {else}
+            $("form").submit(function (){
+                var login = $("button[type='submit']");
+                var userUser = $("input[name='userUser']").val();
+                $("input[name='userName']").val(userUser);
+
+                var userName = $("input[name='userName']").val();
+                var userPwd = $("input[name='userPwd']").val();
+                var userRepwd = $("input[name='userRepwd']").val();
+                var userMail = $("input[name='userMail']").val();
+                var userQq = $("input[name='userQq']").val();
+
+                if(userName.length < 1 || userUser.length < 1 || userPwd.length < 1 || userRepwd.length < 1 || userMail.length < 1 || userQq.length < 1){
+                    showToast('请确保必填项不为空', 'danger', 2500);
+                    return false;
+                }
+
+                if (!$('#agreement').is(':checked')) {
+                    showToast('请阅读并同意服务协议', 'warning', 2500);
+                    return false;
+                }
+
+                if (!captchaVerified) {
+                    showToast('请先完成滑块验证', 'warning', 2500);
+                    return false;
+                }
+
+                login.attr('disabled', 'true');
+                showToast('正在注册，请稍后...', 'info', 1500);
+
+                $.ajax({
+                    type:'POST',
+                    url:'',
+                    data:{
+                        name:userName,
+                        user:userUser,
+                        password:userPwd,
+                        repassword:userRepwd,
+                        mail:userMail,
+                        qq:userQq,
+                        captcha:$('#captcha-verified').val(),
+                        act:"ptzc",
+                    },
+                    dataType:'json',
+                    success:function (data){
+                        if(data.code == 1){
+                            showToast(data.msg || '注册成功', 'success', 1500);
+                            setTimeout(function (){
+                                location.href = '__ROOT__/login'
+                            },1500);
+                        }else{
+                            resetCaptcha();
+                            login.removeAttr('disabled');
+                            showToast(data.msg || '注册失败', 'danger', 2500);
+                        }
+                    },
+                    error: function(){
+                        resetCaptcha();
+                        login.removeAttr('disabled');
+                        showToast('网络错误，请稍后重试', 'danger', 2500);
+                    }
+                });
+                return false;
+            });
+            {/if}
+        });
+    </script>

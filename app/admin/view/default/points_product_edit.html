@@ -1,0 +1,107 @@
+{include file="default/header" title="编辑积分产品" /}
+<main class="lyear-layout-content">
+  <div class="container-fluid glass-animate-in">
+    <div class="row">
+      <div class="col-lg-8">
+        <div class="card admin-card">
+          <header class="card-header">
+            <div class="card-title">编辑积分产品 - {$product.name}</div>
+          </header>
+          <div class="card-body">
+            <form id="edit-form" class="admin-form">
+              <input type="hidden" name="csrf_token" value="{:csrf_token()}">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">产品名称</label>
+                  <input type="text" name="name" class="form-control" required value="{$product.name}">
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">产品类型</label>
+                  <select name="type" class="form-select" id="product-type">
+                    <option value="balance" {if $product.type=='balance'}selected{/if}>余额兑换</option>
+                    <option value="host" {if $product.type=='host'}selected{/if}>主机兑换</option>
+                    <option value="renew" {if $product.type=='renew'}selected{/if}>积分续费</option>
+                    <option value="unban" {if $product.type=='unban'}selected{/if}>免除法卡</option>
+                  </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label class="form-label">所需积分</label>
+                  <input type="number" name="points" class="form-control" required min="1" value="{$product.points}">
+                </div>
+                <div class="col-md-4 mb-3" id="value-group-balance" {if $product.type!='balance'}style="display:none;"{/if}>
+                  <label class="form-label">兑换金额（元）</label>
+                  <input type="text" name="value" class="form-control" value="{if $product.type=='balance'}{$product.value}{/if}">
+                </div>
+                <div class="col-md-4 mb-3" id="value-group-host" {if $product.type!='host'}style="display:none;"{/if}>
+                  <label class="form-label">主机产品ID</label>
+                  <input type="number" name="value" class="form-control" value="{if $product.type=='host'}{$product.value}{/if}">
+                </div>
+                <div class="col-md-4 mb-3" id="value-group-renew" {if $product.type!='renew'}style="display:none;"{/if}>
+                  <label class="form-label">续费天数</label>
+                  <input type="number" name="value" class="form-control" value="{if $product.type=='renew'}{$product.value}{/if}">
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label class="form-label">库存（-1=无限）</label>
+                  <input type="number" name="stock" class="form-control" value="{$product.stock}">
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label class="form-label">排序</label>
+                  <input type="number" name="sort" class="form-control" value="{$product.sort}">
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label class="form-label">状态</label>
+                  <select name="status" class="form-select">
+                    <option value="1" {if $product.status==1}selected{/if}>上架</option>
+                    <option value="0" {if $product.status==0}selected{/if}>下架</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12 mb-3">
+                  <label class="form-label">产品描述</label>
+                  <textarea name="description" class="form-control" rows="3">{$product.description}</textarea>
+                </div>
+              </div>
+              <button type="submit" class="btn-admin btn-admin-primary">
+                <span class="mdi mdi-content-save"></span> 保存修改
+              </button>
+              <a href="{:url('admin/index/pointsProducts')}" class="btn-admin">返回列表</a>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{include file="default/footer" /}
+
+<script>
+$(function(){
+  function updateValueFields() {
+    var v = $('#product-type').val();
+    $('#value-group-balance').toggle(v === 'balance').find('[name="value"]').prop('disabled', v !== 'balance');
+    $('#value-group-host').toggle(v === 'host').find('[name="value"]').prop('disabled', v !== 'host');
+    $('#value-group-renew').toggle(v === 'renew').find('[name="value"]').prop('disabled', v !== 'renew');
+    // 免除法卡不需要value字段
+    if (v === 'unban') {
+      $('#value-group-balance, #value-group-host, #value-group-renew').hide();
+      $('[name="value"]').prop('disabled', true);
+    }
+  }
+  // 初始禁用隐藏的value字段，防止空值覆盖
+  updateValueFields();
+  $('#product-type').on('change', updateValueFields);
+
+  $('#edit-form').on('submit', function(e){
+    e.preventDefault();
+    var btn = $(this).find('button[type=submit]').prop('disabled', true);
+    $.post('', $(this).serialize(), function(res){
+      if (res.code == '1') {
+        layer.msg(res.msg, {icon:1}, function(){ location.href = '{:url("admin/index/pointsProducts")}'; });
+      } else {
+        layer.msg(res.msg, {icon:2}); btn.prop('disabled', false);
+      }
+    }, 'json').fail(function(){ layer.msg('请求失败', {icon:2}); btn.prop('disabled', false); });
+  });
+});
+</script>

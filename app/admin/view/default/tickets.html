@@ -1,0 +1,147 @@
+{include file="default/header" title="工单详情"/}
+<style>
+.lyear-layout-content.page-wrap{position:relative!important;height:auto!important;width:100%!important;max-width:1280px!important;margin:0 auto!important;left:auto!important;padding:calc(64px + 24px) 20px 40px 20px!important}
+.page-wrap { --pri: #667eea; --pri2: #764ba2; --radius: 16px; }
+.page-header-bar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px; padding: 20px 24px; margin-bottom: 20px;
+  color: #fff; box-shadow: 0 4px 20px rgba(102,126,234,0.25);
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+.page-header-bar h2 { margin: 0; font-size: 20px; font-weight: 700; }
+.page-header-bar .sub { font-size: 12px; opacity: 0.8; margin-top: 2px; }
+.content-card {
+  background: #fff; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,0,0,0.05);
+  border: 1px solid #e8ecf1; overflow: hidden; margin-bottom: 20px;
+}
+.content-card-body { padding: 18px 20px; }
+.new-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 7px 16px; border-radius: 10px; border: none;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  transition: all 0.2s; text-decoration: none;
+}
+.new-btn.primary { background: linear-gradient(135deg,#667eea,#764ba2); color: #fff; box-shadow: 0 3px 10px rgba(102,126,234,0.3); }
+.new-btn.primary:hover { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(102,126,234,0.4); }
+.new-button { display: inline-flex; align-items: center; gap: 5px; padding: 9px 20px; border-radius: 10px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; color:#fff; }
+.new-button.purple { background: linear-gradient(135deg,#667eea,#764ba2); }
+.new-button.purple:hover { transform: translateY(-1px); }
+.new-badge { display: inline-flex; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.new-badge.success { background: #ecfdf5; color: #059669; }
+.new-badge.warning { background: #fffbeb; color: #d97706; }
+.new-badge.danger { background: #fef2f2; color: #dc2626; }
+.form-textarea { width: 100%; padding: 9px 14px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 13px; background: #fff; color: #334155; transition: all 0.2s; resize: vertical; }
+.form-textarea:focus { border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); outline: none; }
+.form-label { display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 5px; }
+.ticket-title { font-size: 16px; font-weight: 700; color: #1a1a2e; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 2px solid #f1f5f9; display: flex; align-items: center; gap: 8px; }
+.ticket-title::before { content: '#'; color: #667eea; }
+.chat-area { max-height: 550px; overflow-y: auto; padding: 8px 4px; margin-bottom: 20px; }
+.chat-item { display: flex; gap: 12px; margin-bottom: 20px; }
+.chat-item.admin { flex-direction: row-reverse; }
+.chat-avatar { width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0; border: 2px solid #e2e8f0; object-fit: cover; }
+.chat-bubble-wrap { max-width: 75%; }
+.chat-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 12px; }
+.chat-item:not(.admin) .chat-meta { color: #667eea; }
+.chat-item.admin .chat-meta { justify-content: flex-end; color: #059669; }
+.chat-meta .name { font-weight: 700; }
+.chat-meta .time { color: #94a3b8; }
+.chat-bubble { display: inline-block; padding: 10px 16px; border-radius: 14px; font-size: 13px; line-height: 1.6; color: #334155; }
+.chat-item:not(.admin) .chat-bubble { background: #f8fafc; border: 1px solid #e2e8f0; border-top-left-radius: 4px; }
+.chat-item.admin .chat-bubble { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; border-top-right-radius: 4px; text-align: left; }
+.chat-status-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+.chat-status-bar .label { font-size: 12px; font-weight: 600; color: #475569; }
+.chat-form { background: #f8fafc; border-radius: 14px; padding: 18px; border: 1px solid #e2e8f0; }
+@media (max-width: 768px) {
+  .page-header-bar { padding: 14px 16px; border-radius: 12px; }
+  .page-header-bar h2 { font-size: 17px; }
+  .content-card-body { padding: 12px 14px; }
+  .chat-bubble-wrap { max-width: 85%; }
+  .chat-area { max-height: 400px; }
+}
+</style>
+<main class="lyear-layout-content page-wrap">
+  <div class="container-fluid">
+    <div class="page-header-bar">
+      <div>
+        <h2>工单详情</h2>
+        <div class="sub">查看和回复工单</div>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <div class="content-card-body">
+        <div class="ticket-title">{$tickets.title}</div>
+
+        <div class="chat-area" id="chatArea">
+          {foreach $tickets.content as $tc}
+          {if $tc.personnel=="1"}
+          <div class="chat-item admin">
+            <img src="https://q1.qlogo.cn/g?b=qq&nk={$user.qq}&s=100" class="chat-avatar" alt="avatar">
+            <div class="chat-bubble-wrap">
+              <div class="chat-meta"><span class="name">{$user.name}</span><span class="time">{$tc.time|date="Y-m-d H:i:s",###}</span></div>
+              <div class="chat-bubble">{:htmlspecialchars($tc.content)}</div>
+            </div>
+          </div>
+          {elseif $tc.personnel=="2"}
+          <div class="chat-item">
+            <img src="https://q1.qlogo.cn/g?b=qq&nk={$tickets.userqq}&s=100" class="chat-avatar" alt="avatar">
+            <div class="chat-bubble-wrap">
+              <div class="chat-meta"><span class="name">用户ID：{$tickets.userid}，{$tickets.username}</span><span class="time">{$tc.time|date="Y-m-d H:i:s",###}</span></div>
+              <div class="chat-bubble">{:htmlspecialchars($tc.content)}</div>
+            </div>
+          </div>
+          {/if}
+          {/foreach}
+        </div>
+
+        <div class="chat-status-bar">
+          <span class="label">状态：</span>
+          {if $tickets.state=="1"}<span class="new-badge warning">待您回复</span>{/if}
+          {if $tickets.state=="2"}<span class="new-badge warning">等待您回复</span>{/if}
+          {if $tickets.state=="3"}<span class="new-badge success">您已回复</span>{/if}
+          {if $tickets.state=="4"}<span class="new-badge danger">已关闭</span>{/if}
+          <button type="button" onclick="end();" class="new-btn primary">关闭此工单</button>
+        </div>
+
+        <div class="chat-form">
+          <form>
+            <input type="hidden" name="__token__" value="{$csrf_token|default=''}">
+            <div style="margin-bottom:14px;">
+              <label class="form-label">回复内容</label>
+              <textarea class="form-textarea" name="content" rows="6" placeholder="请输入回复内容..."></textarea>
+            </div>
+            <button type="submit" class="new-btn primary">提交回复</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{include file="default/footer" /}
+<script>
+var dialog = document.querySelector('#chatArea'); if(dialog) dialog.scrollTop = dialog.scrollHeight;
+$("form").submit(function(){
+    var load = layer.msg('回复中...', {icon:16, shade:0.3, time:false});
+    var form = $('form').serializeArray();
+    $.ajax({ type:'POST', url:'', data:form, dataType:'json',
+      success:function (data){
+        layer.close(load);
+        if (data.code == 1) { layer.alert(data.msg, {icon: 1}, function(){ location.href = ''; }); }
+        else { layer.alert(data.msg, {icon: 2}); }
+      },
+      error:function(){ layer.close(load); layer.msg('网络错误，请重试',{icon:2}); }
+    });
+    return false;
+});
+function end(){
+    layer.confirm('确定要关闭此工单吗？', function(){
+      $.ajax({ type:'POST', url:'', data:{act:'end'}, dataType:'json',
+        success:function(data){
+          if(data.code==1){ layer.alert(data.msg,{icon:1},function(){ location.href=''; }); }
+          else{ layer.alert(data.msg,{icon:2}); }
+        },
+        error:function(){ layer.msg('网络错误，请重试',{icon:2}); }
+      });
+    });
+}
+</script>

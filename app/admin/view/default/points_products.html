@@ -1,0 +1,184 @@
+{include file="default/header" title="积分商城管理" /}
+<main class="lyear-layout-content">
+  <div class="container-fluid glass-animate-in">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card admin-card">
+          <header class="card-header">
+            <div class="card-title">添加积分产品</div>
+          </header>
+          <div class="card-body">
+            <form id="add-form" class="admin-form">
+              <input type="hidden" name="act" value="add">
+              <input type="hidden" name="csrf_token" value="{:csrf_token()}">
+              <div class="row">
+                <div class="col-md-3 mb-3">
+                  <label class="form-label">产品名称</label>
+                  <input type="text" name="name" class="form-control" required placeholder="例如：100元余额兑换">
+                </div>
+                <div class="col-md-2 mb-3">
+                  <label class="form-label">产品类型</label>
+                  <select name="type" class="form-select" id="product-type">
+                    <option value="balance">余额兑换</option>
+                    <option value="host">主机兑换</option>
+                    <option value="renew">积分续费</option>
+                    <option value="unban">免除法卡</option>
+                  </select>
+                </div>
+                <div class="col-md-2 mb-3">
+                  <label class="form-label">所需积分</label>
+                  <input type="number" name="points" class="form-control" required min="1" placeholder="例如：100">
+                </div>
+                <div class="col-md-2 mb-3" id="value-group-balance">
+                  <label class="form-label">兑换金额（元）</label>
+                  <input type="text" name="value" class="form-control" placeholder="例如：10">
+                </div>
+                <div class="col-md-2 mb-3" id="value-group-host" style="display:none;">
+                  <label class="form-label">选择主机产品</label>
+                  <select name="value" class="form-select">
+                    <option value="">请选择产品</option>
+                    {foreach $cartList as $cart}
+                    <option value="{$cart.id}">{$cart.name}</option>
+                    {/foreach}
+                  </select>
+                </div>
+                <div class="col-md-2 mb-3" id="value-group-renew" style="display:none;">
+                  <label class="form-label">续费天数</label>
+                  <input type="number" name="value" class="form-control" min="1" placeholder="例如：30">
+                </div>
+                <div class="col-md-2 mb-3">
+                  <label class="form-label">库存（-1=无限）</label>
+                  <input type="number" name="stock" class="form-control" value="-1" placeholder="-1">
+                </div>
+                <div class="col-md-2 mb-3">
+                  <label class="form-label">排序</label>
+                  <input type="number" name="sort" class="form-control" value="0" placeholder="0">
+                </div>
+                <div class="col-md-2 mb-3">
+                  <label class="form-label">状态</label>
+                  <select name="status" class="form-select">
+                    <option value="1">上架</option>
+                    <option value="0">下架</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12 mb-3">
+                  <label class="form-label">产品描述</label>
+                  <textarea name="description" class="form-control" rows="2" placeholder="可选描述"></textarea>
+                </div>
+              </div>
+              <button type="submit" class="btn-admin btn-admin-primary">
+                <span class="mdi mdi-plus"></span> 添加产品
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-12">
+        <div class="card admin-card">
+          <header class="card-header">
+            <div class="card-title">积分产品列表</div>
+          </header>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-admin">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>名称</th>
+                    <th>类型</th>
+                    <th>所需积分</th>
+                    <th>价值</th>
+                    <th>库存</th>
+                    <th>排序</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {if !empty($products)}
+                  {foreach $products as $p}
+                  <tr>
+                    <td>{$p.id}</td>
+                    <td><strong>{$p.name}</strong></td>
+                    <td>
+                      {if $p.type == 'balance'}<span class="admin-badge admin-badge-success">余额兑换</span>
+                      {elseif $p.type == 'host'}<span class="admin-badge admin-badge-info">主机兑换</span>
+                      {elseif $p.type == 'renew'}<span class="admin-badge admin-badge-warning">积分续费</span>
+                      {elseif $p.type == 'unban'}<span class="admin-badge admin-badge-danger">免除法卡</span>
+                      {else}<span class="admin-badge">{$p.type}</span>
+                      {/if}
+                    </td>
+                    <td>{$p.points}</td>
+                    <td>{if $p.type=='balance'}¥{$p.value}{elseif $p.type=='renew'}{$p.value}天{elseif $p.type=='unban'}解除封禁{else}产品ID:{$p.value}{/if}</td>
+                    <td>{if $p.stock == -1}无限{else}{$p.stock}{/if}</td>
+                    <td>{$p.sort}</td>
+                    <td>
+                      {if $p.status == 1}<span class="admin-badge admin-badge-success">上架</span>
+                      {else}<span class="admin-badge admin-badge-danger">下架</span>
+                      {/if}
+                    </td>
+                    <td>
+                      <a href="{:url('admin/index/pointsProducts',['id'=>$p.id])}" class="btn btn-sm btn-admin-primary">编辑</a>
+                      <button class="btn btn-sm btn-admin-danger" onclick="delProduct({$p.id})">删除</button>
+                    </td>
+                  </tr>
+                  {/foreach}
+                  {else}
+                  <tr><td colspan="9" class="text-center py-4 text-muted">暂无积分产品，请添加</td></tr>
+                  {/if}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+{include file="default/footer" /}
+<script>
+$(function(){
+  function updateValueFields() {
+    var v = $('#product-type').val();
+    $('#value-group-balance').toggle(v === 'balance').find('[name="value"]').prop('disabled', v !== 'balance');
+    $('#value-group-host').toggle(v === 'host').find('[name="value"]').prop('disabled', v !== 'host');
+    $('#value-group-renew').toggle(v === 'renew').find('[name="value"]').prop('disabled', v !== 'renew');
+    // 免除法卡不需要value字段
+    if (v === 'unban') {
+      $('#value-group-balance, #value-group-host, #value-group-renew').hide();
+      $('[name="value"]').prop('disabled', true);
+    }
+  }
+  // 初始禁用隐藏的value字段，防止空值覆盖
+  updateValueFields();
+  $('#product-type').on('change', updateValueFields);
+
+  $('#add-form').on('submit', function(e){
+    e.preventDefault();
+    var btn = $(this).find('button[type=submit]').prop('disabled', true);
+    $.post('{:url("admin/index/pointsProducts")}', $(this).serialize(), function(res){
+      if (res.code == '1') {
+        alert(res.msg); location.reload();
+      } else {
+        alert(res.msg); btn.prop('disabled', false);
+      }
+    }, 'json').fail(function(xhr){
+      var msg = '请求失败';
+      try { var r = JSON.parse(xhr.responseText); if (r.msg) msg = r.msg; } catch(e) {}
+      alert(msg); btn.prop('disabled', false);
+    });
+  });
+});
+
+function delProduct(id) {
+  if (!confirm('确定删除该产品？')) return;
+  $.post('{:url("admin/index/pointsProducts")}', {act:'delete', del_id:id, csrf_token:'{:csrf_token()}'}, function(res){
+    if (res.code == '1') { alert(res.msg); location.reload(); }
+    else { alert(res.msg); }
+  }, 'json').fail(function(){ alert('请求失败'); });
+}
+</script>

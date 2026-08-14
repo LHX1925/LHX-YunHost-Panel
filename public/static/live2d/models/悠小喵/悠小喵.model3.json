@@ -1,0 +1,45 @@
+{
+	"Version": 3,
+	"FileReferences": {
+		"Moc": "悠小喵.moc3",
+		"Textures": [
+			"悠小喵.8192/texture_00.png",
+			"悠小喵.8192/texture_01.png"
+		],
+		"Physics": "悠小喵.physics3.json",
+		"DisplayInfo": "悠小喵.cdi3.json",
+		"Expressions": [
+			{"Name": "前倾", "File": "exp/前倾.exp3.json"},
+			{"Name": "哭哭", "File": "exp/哭哭.exp3.json"},
+			{"Name": "扶脸", "File": "exp/扶脸.exp3.json"},
+			{"Name": "星星眼", "File": "exp/星星眼.exp3.json"},
+			{"Name": "晕晕眼", "File": "exp/晕晕眼.exp3.json"},
+			{"Name": "流泪", "File": "exp/流泪.exp3.json"},
+			{"Name": "看手机", "File": "exp/看手机.exp3.json"},
+			{"Name": "脸红", "File": "exp/脸红.exp3.json"},
+			{"Name": "记笔记", "File": "exp/记笔记.exp3.json"},
+			{"Name": "飞头", "File": "exp/飞头.exp3.json"},
+			{"Name": "黑脸", "File": "exp/黑脸.exp3.json"}
+		],
+		"Motions": {
+			"Idle": [
+				{"File": "exp/常规.motion3.json", "FadeInTime": 0.5, "FadeOutTime": 0.5}
+			]
+		}
+	},
+	"Groups": [
+		{
+			"Target": "Parameter",
+			"Name": "LipSync",
+			"Ids": []
+		},
+		{
+			"Target": "Parameter",
+			"Name": "EyeBlink",
+			"Ids": [
+				"ParamEyeLOpen",
+				"ParamEyeROpen"
+			]
+		}
+	]
+}

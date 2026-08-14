@@ -1,0 +1,220 @@
+{include file="default/header" title="订单管理"/}
+<style>
+.lyear-layout-content.page-wrap{position:relative!important;height:auto!important;width:100%!important;max-width:1280px!important;margin:0 auto!important;left:auto!important;padding:calc(64px + 24px) 20px 40px 20px!important}
+.page-wrap { --pri: #667eea; --pri2: #764ba2; --radius: 16px; }
+.page-header-bar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px; padding: 20px 24px; margin-bottom: 20px;
+  color: #fff; box-shadow: 0 4px 20px rgba(102,126,234,0.25);
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+.page-header-bar h2 { margin: 0; font-size: 20px; font-weight: 700; }
+.page-header-bar .sub { font-size: 12px; opacity: 0.8; margin-top: 2px; }
+.content-card {
+  background: #fff; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,0,0,0.05);
+  border: 1px solid #e8ecf1; overflow: hidden; margin-bottom: 20px;
+}
+.content-card-header {
+  padding: 14px 20px; border-bottom: 1px solid #f1f5f9;
+  font-weight: 700; color: #1a1a2e; font-size: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.content-card-header::before {
+  content: ''; width: 4px; height: 18px; border-radius: 2px;
+  background: linear-gradient(180deg, #667eea, #764ba2);
+}
+.content-card-body { padding: 18px 20px; }
+.new-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.new-table thead th {
+  background: #f8fafc; color: #475569; font-weight: 600;
+  padding: 10px 12px; border-bottom: 2px solid #e2e8f0;
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap;
+}
+.new-table tbody td {
+  padding: 10px 12px; border-bottom: 1px solid #f1f5f9; color: #334155; vertical-align: middle;
+}
+.new-table tbody tr:hover { background: #fafbfc; }
+.new-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 7px 16px; border-radius: 10px; border: none;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  transition: all 0.2s; text-decoration: none;
+}
+.new-btn.primary { background: linear-gradient(135deg,#667eea,#764ba2); color: #fff; box-shadow: 0 3px 10px rgba(102,126,234,0.3); }
+.new-btn.primary:hover { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(102,126,234,0.4); }
+.new-btn.danger { background: linear-gradient(135deg,#ef4444,#dc2626); color: #fff; }
+.new-btn.danger:hover { transform: translateY(-1px); }
+.new-btn.outline { background: #fff; color: #667eea; border: 2px solid #e2e8f0; }
+.new-btn.outline:hover { border-color: #667eea; background: #eef2ff; }
+.new-badge { display: inline-flex; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.new-badge.success { background: #ecfdf5; color: #059669; }
+.new-badge.warning { background: #fffbeb; color: #d97706; }
+.new-badge.danger { background: #fef2f2; color: #dc2626; }
+.new-badge.info { background: #eff6ff; color: #2563eb; }
+.form-input { width: 100%; padding: 9px 14px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 13px; transition: all 0.2s; background: #fff; color: #334155; }
+.form-input:focus { border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); outline: none; }
+.form-label { display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 5px; }
+.search-box { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.search-box .form-input { width: auto; min-width: 260px; }
+.toolbar { display: flex; gap: 8px; flex-wrap: wrap; }
+.mono { font-family: 'SF Mono','Fira Code','Consolas',monospace; font-size: 12px; color: #64748b; }
+@media (max-width: 768px) {
+  .page-header-bar { padding: 14px 16px; border-radius: 12px; }
+  .page-header-bar h2 { font-size: 17px; }
+  .content-card-body { padding: 12px 14px; }
+  .new-table thead { display: none; }
+  .new-table tbody td { display: block; text-align: right; padding: 7px 10px; }
+  .new-table tbody td::before { content: attr(data-label); float: left; font-weight: 600; color: #475569; font-size: 11px; text-transform: uppercase; }
+  .new-table tbody tr { display: block; margin-bottom: 8px; background: #fafbfc; border-radius: 10px; padding: 6px 10px; }
+  .search-box { flex-direction: column; align-items: stretch; }
+  .search-box .form-input { min-width: auto; width: 100%; }
+  .toolbar { flex-direction: column; }
+}
+</style>
+<main class="lyear-layout-content page-wrap">
+  <div class="container-fluid">
+    <div class="page-header-bar">
+      <div>
+        <h2>订单管理</h2>
+        <div class="sub">管理所有用户订单</div>
+      </div>
+      <div class="toolbar">
+        <button onclick="del()" class="new-btn danger">删除选中</button>
+        <button onclick="qbdel()" class="new-btn danger">全部删除</button>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <div class="content-card-body">
+        <form method="get" action="">
+          <div class="search-box" style="margin-bottom:16px;">
+            <input class="form-input" type="text" name="search" placeholder="搜索订单号/账号/产品ID..." value=""/>
+            <button class="new-btn primary">搜索</button>
+          </div>
+        </form>
+        <div class="table-responsive-sm">
+          <table class="new-table">
+            <thead>
+              <tr>
+                <th>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="check-all">
+                    <label class="form-check-label" for="check-all"></label>
+                  </div>
+                </th>
+                <th>ID</th>
+                <th>订单号</th>
+                <th>产品ID</th>
+                <th>用户ID</th>
+                <th>账号</th>
+                <th>开通时间</th>
+                <th>到期时间</th>
+                <th>状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+{foreach $order as $o}
+              <tr>
+                <td data-label="选择">
+                  <div class="form-check">
+                    <input type="checkbox" class="form-check-input ids" name="ids" value="{$o.id}">
+                    <label class="form-check-label" for="ids-1"></label>
+                  </div>
+                </td>
+                <td data-label="ID">{$o.id}</td>
+                <td data-label="订单号"><span class="mono">{$o.ordernumber|default='YH'.date('Ymd',intval($o.atime?:time())).str_pad($o.id,6,'0',STR_PAD_LEFT)}</span></td>
+                <td data-label="产品ID">{$o.cartid}</td>
+                <td data-label="用户ID">{$o.userid}</td>
+                <td data-label="账号">{$o.user}</td>
+                <td data-label="开通时间">{$o.atime|date="Y-m-d H:i:s",###}</td>
+                <td data-label="到期时间">{$o.ztime|date="Y-m-d H:i:s",###}</td>
+                <td data-label="状态">
+{if $o.state=="1"}
+                  <span class="new-badge success">正常</span>
+{/if}
+{if $o.state=="2"}
+                  <span class="new-badge warning">暂停</span>
+{/if}
+{if $o.state=="3"}
+                  <span class="new-badge danger">终止</span>
+{/if}
+                </td>
+                <td data-label="操作">
+                  <a href="/admin/order/{$o.id}" class="new-btn outline">查看</a>
+                </td>
+              </tr>
+{/foreach}
+            </tbody>
+          </table>
+        </div>
+        <div style="text-align:center;margin-top:16px;">{$order->render()}</div>
+      </div>
+    </div>
+  </div>
+</main>
+{include file="default/footer" /}
+<script>
+function del(id){
+var id = [];
+$("input[name='ids']:checked").each(function(i){
+        id[i] =$(this).val();
+      });
+var id = id.join(",");
+if(id==""){
+layer.alert("未选择订单!",{icon:2,shade:0.8});
+}else{
+        layer.confirm('确定要删除ID为<span style="color:#0b5ed7">'+ id +'</span>的订单吗？', function (){
+            del1(id)
+        });
+    }
+}
+    function del1(id){
+        var load = layer.load('1',{time:false});
+        $.ajax({
+            type:'POST',
+            url:'',
+            data:{
+                act:'delete',
+                cid:id
+            },
+            dataType:'json',
+            success:function (data){
+                layer.close(load);
+                if(data.code == 1){
+layer.alert(data.msg,{icon:1},function(){
+                        window.location.href = "";
+                    });
+                }else{
+                    layer.alert(data.msg,{icon:2});
+                }
+            }
+        });
+    }
+function qbdel(){
+        layer.confirm('确定要删除<span style="color:#0b5ed7">全部</span>的订单吗？', function (){
+            qbdel1()
+        });
+    }
+    function qbdel1(){
+        var load = layer.load('1',{time:false});
+        $.ajax({
+            type:'POST',
+            url:'',
+            data:{
+                act:'qbdelete',
+            },
+            dataType:'json',
+            success:function (data){
+                layer.close(load);
+                if(data.code == 1){
+layer.alert(data.msg,{icon:1},function(){
+                        window.location.href = "";
+                    });
+                }else{
+                    layer.alert(data.msg,{icon:2});
+                }
+            }
+        });
+    }
+</script>

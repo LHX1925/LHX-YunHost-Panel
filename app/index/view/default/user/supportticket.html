@@ -1,0 +1,98 @@
+{include file="default/user/header" title="查看工单" /}
+<style>
+    /* 液态玻璃主题适配 */
+    body.glass-enabled .roll > div {
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        -webkit-backdrop-filter: blur(var(--glass-blur));
+        border-color: var(--glass-border);
+        box-shadow: var(--glass-shadow-sm), var(--glass-shadow-inset);
+    }
+    body.glass-enabled.glass-bg-image .roll > div {
+        background: rgba(255, 255, 255, var(--glass-opacity)) !important;
+        border-color: rgba(255, 255, 255, 0.35) !important;
+    }
+</style>
+<main id="main-container">
+    <div class="content content-narrow">
+        <div class="block glass-card glass-reveal">
+            <div class="block-header glass-user-card-header">
+                <h3 class="block-title glass-user-card-title">查看工单</h3>
+            </div>
+            <div class="block-content">
+                <h3 style="font-size:18px;color:var(--primary);margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border-light);">标题: {$ticket.title}</h3>
+                <div class="roll" style="height:500px;overflow:auto;padding:5px;">
+                    {foreach $ticket.content as $tc}
+                    {if $tc.personnel=="1"}
+                    <div style="display:flex;flex-direction:column;padding:20px;background:#fff;border-radius:12px;border:1px solid var(--border);margin-bottom:16px;">
+                        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                            <img src="https://q1.qlogo.cn/g?b=qq&nk={$admin.qq}&s=100" style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--primary-light);">
+                            <div>
+                                <div style="font-size:12px;color:var(--text-muted);">{$tc.time|date="Y-m-d H:i:s",###}</div>
+                                <div style="font-weight:600;color:var(--primary);">站长: {$admin.name}</div>
+                            </div>
+                        </div>
+                        <div style="background:var(--primary-bg);padding:16px;border-radius:10px;font-size:14px;color:var(--text);line-height:1.7;">{:htmlspecialchars($tc.content)}</div>
+                    </div>
+                    {elseif $tc.personnel=="2"}
+                    <div style="display:flex;flex-direction:column;padding:20px;background:#fff;border-radius:12px;border:1px solid var(--border);margin-bottom:16px;">
+                        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                            <img src="https://q1.qlogo.cn/g?b=qq&nk={$user.qq}&s=100" style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid #D1FAE5;">
+                            <div>
+                                <div style="font-size:12px;color:var(--text-muted);">{$tc.time|date="Y-m-d H:i:s",###}</div>
+                                <div style="font-weight:600;color:var(--success);">你: {$user.name}</div>
+                            </div>
+                        </div>
+                        <div style="background:#F0FDF4;padding:16px;border-radius:10px;font-size:14px;color:var(--text);line-height:1.7;">{:htmlspecialchars($tc.content)}</div>
+                    </div>
+                    {/if}
+                    {/foreach}
+                </div>
+
+                <div style="display:flex;align-items:center;gap:16px;margin-top:16px;padding:12px 0;border-top:1px solid var(--border-light);">
+                    <div style="font-size:14px;color:var(--text-secondary);">状态:</div>
+                    {if $ticket.state=="1"}<span class="badge badge-warning glass-badge glass-badge-warning">待回复</span>{/if}
+                    {if $ticket.state=="2"}<span class="badge badge-warning glass-badge glass-badge-warning">等待回复</span>{/if}
+                    {if $ticket.state=="3"}<span class="badge badge-success glass-badge glass-badge-success">已回复</span>{/if}
+                    {if $ticket.state=="4"}<span class="badge badge-danger glass-badge glass-badge-danger">已关闭</span>{/if}
+                    <button type="button" onclick="end();" class="btn btn-sm btn-danger glass-btn glass-btn-danger glass-btn-sm" style="margin-left:auto;">关闭此工单</button>
+                </div>
+
+                <form style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border-light);">
+                    <div class="form-group">
+                        <label style="display:block;margin-bottom:6px;font-size:14px;font-weight:500;color:var(--text);">回复</label>
+                        <textarea class="form-control glass-textarea" name="content" rows="5" placeholder="请输入回复内容"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block glass-btn glass-btn-primary glass-btn-lg" style="width:100%;padding:12px;font-size:15px;font-weight:600;">
+                        <i class="fas fa-reply"></i> 提交回复
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+{include file="default/user/footer" /}
+<script>
+    const dialog = document.querySelector('.roll');
+    dialog.scrollTop = dialog.scrollHeight;
+    $("form").submit(function (){
+        var load = layer.load(1,{time:false});
+        var content = $("textarea[name='content']").val();
+        if( content.length < 1 ){ layer.close(load); showToast('提交的信息不可为空','danger',2500); return false; }
+        $.ajax({
+            type:'POST', url:'', data:{ act:"reply", content:content }, dataType:'json',
+            success:function (data){ layer.close(load); if(data.code == "1"){ showToast(data.msg || '操作成功','success',1800); setTimeout(function (){ location.href = '' },1800); }else{ showToast(data.msg,'danger',2500); } }
+        });
+        return false;
+    });
+    function end(){
+        layer.confirm('确定要关闭此工单吗！',{icon:3}, function (){ end1(); });
+    }
+    function end1(){
+        var load = layer.load(1,{time:false});
+        $.ajax({
+            type:'POST', url:'', data:{ act:"end" }, dataType:'json',
+            success:function (data){ layer.close(load); if(data.code == "1"){ showToast(data.msg || '操作成功','success',1800); setTimeout(function (){ location.href = '' },1800); }else{ showToast(data.msg,'danger',2500); } }
+        });
+    }
+</script>

@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+<title>{$webname} - 后台登录</title>
+<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-touch-fullscreen" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="stylesheet" type="text/css" href="__ROOT__/static/css/materialdesignicons.min.css">
+<link rel="stylesheet" type="text/css" href="__ROOT__/static/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="__ROOT__/static/css/animate.min.css">
+<link rel="stylesheet" type="text/css" href="__ROOT__/static/css/style.min.css">
+<link rel="stylesheet" type="text/css" href="__ROOT__/static/css/glass-theme.css?v=3">
+<style>
+/* ===== 登录页专用补充样式（依赖 glass-theme.css 变量） ===== */
+
+/* 页面居中布局 */
+body.glass-login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  margin: 0;
+  min-height: 100vh;
+}
+
+/* ===== 悬浮装饰光球 ===== */
+.glass-login-orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(100px);
+  pointer-events: none;
+  z-index: -1;
+  animation: orbFloat 10s ease-in-out infinite;
+  will-change: transform;
+}
+.glass-login-orb-1 {
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, rgba(79, 124, 255, 0.18) 0%, transparent 70%);
+  top: -12%;
+  left: -8%;
+  animation-delay: 0s;
+  animation-duration: 12s;
+}
+.glass-login-orb-2 {
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.14) 0%, transparent 70%);
+  bottom: -10%;
+  right: -6%;
+  animation-delay: -4s;
+  animation-duration: 14s;
+}
+.glass-login-orb-3 {
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, transparent 70%);
+  top: 45%;
+  left: 55%;
+  animation-delay: -7s;
+  animation-duration: 11s;
+}
+.glass-login-orb-4 {
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, transparent 70%);
+  top: 15%;
+  right: 20%;
+  animation-delay: -2s;
+  animation-duration: 9s;
+}
+
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25%  { transform: translate(40px, -35px) scale(1.12); }
+  50%  { transform: translate(-15px, -50px) scale(0.92); }
+  75%  { transform: translate(-30px, 20px) scale(1.08); }
+}
+
+/* ===== 登录卡片 ===== */
+.glass-login-card {
+  position: relative;
+  z-index: 1;
+}
+
+/* 品牌区 */
+.login-brand {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.login-brand h1 {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--glass-text);
+  letter-spacing: -0.02em;
+}
+.login-brand p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--glass-text-secondary);
+}
+
+/* 表单 */
+.signin-form .form-group {
+  margin-bottom: 18px;
+}
+.signin-form .form-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--glass-text-secondary);
+}
+.signin-form .input-wrap {
+  position: relative;
+}
+.signin-form .input-wrap .mdi {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  text-align: center;
+  color: var(--glass-text-muted);
+  font-size: 18px;
+  pointer-events: none;
+  z-index: 2;
+}
+.signin-form .glass-input {
+  padding-left: 40px;
+  height: 44px;
+}
+
+/* 验证码区域 */
+.captcha-row {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+}
+.captcha-row .input-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 滑块验证按钮 */
+.btn-slide-captcha {
+  flex: 1;
+  height: 44px;
+  border: 1.5px dashed var(--glass-primary);
+  border-radius: var(--glass-radius-sm);
+  background: var(--glass-bg-light);
+  color: var(--glass-primary);
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all var(--glass-transition);
+  backdrop-filter: blur(var(--glass-blur-light));
+  -webkit-backdrop-filter: blur(var(--glass-blur-light));
+}
+.btn-slide-captcha:hover {
+  background: var(--glass-bg);
+  border-color: var(--glass-primary-light);
+  box-shadow: 0 0 0 3px var(--glass-primary-glow);
+}
+.btn-slide-captcha.verified {
+  border-color: var(--glass-success) !important;
+  background: rgba(16, 185, 129, 0.1) !important;
+  color: var(--glass-success) !important;
+}
+.btn-slide-captcha.failed {
+  border-color: var(--glass-danger) !important;
+  background: rgba(239, 68, 68, 0.1) !important;
+  color: var(--glass-danger) !important;
+}
+.btn-slide-captcha.error {
+  border-color: var(--glass-danger) !important;
+  background: rgba(239, 68, 68, 0.08) !important;
+  color: var(--glass-danger) !important;
+}
+
+#captcha-status {
+  margin-top: 6px;
+  font-size: 12px;
+  min-height: 18px;
+}
+
+/* 提交按钮 */
+.btn-login {
+  width: 100%;
+  height: 44px;
+  margin-top: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* 页脚 */
+.login-footer {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--glass-text-muted);
+}
+
+/* ===== Toast 通知（玻璃态） ===== */
+.global-toast {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur-strong));
+  -webkit-backdrop-filter: blur(var(--glass-blur-strong));
+  border-radius: var(--glass-radius);
+  box-shadow: var(--glass-shadow-lg);
+  border: 1px solid var(--glass-border);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--glass-text);
+  min-width: 220px;
+  max-width: 360px;
+  opacity: 0;
+  transform: translateX(120%);
+  transition: all 0.35s var(--glass-ease-out);
+  pointer-events: none;
+}
+.global-toast.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+.global-toast.success { border-left: 4px solid var(--glass-success); }
+.global-toast.warning { border-left: 4px solid var(--glass-warning); }
+.global-toast.danger  { border-left: 4px solid var(--glass-danger); }
+.global-toast.info    { border-left: 4px solid var(--glass-primary); }
+.global-toast-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.global-toast.success .global-toast-icon { background: rgba(16, 185, 129, 0.12); color: var(--glass-success); }
+.global-toast.warning .global-toast-icon { background: rgba(245, 158, 11, 0.12); color: var(--glass-warning); }
+.global-toast.danger  .global-toast-icon { background: rgba(239, 68, 68, 0.12);  color: var(--glass-danger); }
+.global-toast.info    .global-toast-icon { background: rgba(79, 124, 255, 0.12);  color: var(--glass-primary); }
+
+/* ===== 响应式 ===== */
+@media (max-width: 480px) {
+  .glass-login-card {
+    padding: 32px 22px 28px;
+  }
+  .glass-login-orb-1 { width: 200px; height: 200px; }
+  .glass-login-orb-2 { width: 180px; height: 180px; }
+  .glass-login-orb-3 { width: 140px; height: 140px; }
+  .glass-login-orb-4 { width: 120px; height: 120px; }
+}
+@media (max-width: 576px) {
+  .global-toast {
+    top: 16px;
+    right: 16px;
+    left: 16px;
+    max-width: none;
+  }
+}
+</style>
+</head>
+
+<body class="glass-enabled glass-login{notempty name='$web.bg_image'} glass-bg-image{/notempty}{if isset($web.bg_blur) && intval($web.bg_blur) > 0} glass-bg-blurred{/if}"{notempty name='$web.bg_image'} style="--glass-bg-image: url('{$web.bg_image}');{if isset($web.bg_blur) && intval($web.bg_blur) > 0}--glass-bg-blur: {$web.bg_blur}px;{/if}"{/notempty}{if isset($web.bg_gradient) && $web.bg_gradient != 'default'} data-bg-gradient="{$web.bg_gradient}"{/if}{if isset($web.bg_images) && $web.bg_images} data-bg-images="{$web.bg_images|raw}"{/if}{if isset($web.bg_switch_interval) && $web.bg_switch_interval > 0} data-bg-switch-interval="{$web.bg_switch_interval}"{/if}>
+
+<!-- 悬浮装饰光球 -->
+<div class="glass-login-orb glass-login-orb-1"></div>
+<div class="glass-login-orb glass-login-orb-2"></div>
+<div class="glass-login-orb glass-login-orb-3"></div>
+<div class="glass-login-orb glass-login-orb-4"></div>
+
+<div class="glass-login-card glass-animate-in glass-stagger-1">
+  <div class="login-brand">
+    <div class="glass-login-brand-icon glass-animate-in glass-stagger-2">
+      <span class="mdi mdi-shield-account" aria-hidden="true"></span>
+    </div>
+    <h1 class="glass-animate-in glass-stagger-3">管理后台</h1>
+    <p class="glass-animate-in glass-stagger-4">{$webname}</p>
+  </div>
+
+  <form action="" method="post" class="signin-form needs-validation" novalidate>
+    <input type="hidden" name="__token__" value="{:csrf_token()}">
+    <div class="form-group glass-animate-in glass-stagger-4">
+      <label class="form-label" for="username">用户名</label>
+      <div class="input-wrap">
+        <span class="mdi mdi-account" aria-hidden="true"></span>
+        <input type="text" class="glass-input" name="user" id="username" placeholder="请输入用户名" required autocomplete="username">
+      </div>
+    </div>
+
+    <div class="form-group glass-animate-in glass-stagger-5">
+      <label class="form-label" for="password">密码</label>
+      <div class="input-wrap">
+        <span class="mdi mdi-lock" aria-hidden="true"></span>
+        <input type="password" class="glass-input" name="password" id="password" placeholder="请输入密码" required autocomplete="current-password">
+      </div>
+    </div>
+
+    <!-- 蜜罐字段：对用户不可见，Burp Suite等自动化工具会自动填充 -->
+    <div style="position:absolute;left:-9999px;top:-9999px;opacity:0;" aria-hidden="true">
+      <input type="text" name="_hp" tabindex="-1" autocomplete="off">
+    </div>
+
+    <div class="form-group glass-animate-in glass-stagger-6">
+      <label class="form-label">安全验证</label>
+      <div class="captcha-row">
+        <button type="button" id="slide-captcha-btn" class="btn-slide-captcha">
+          <span class="mdi mdi-arrow-right-bold-circle" style="font-size:18px;"></span> 点击进行滑块验证
+        </button>
+        <input type="hidden" name="captcha" id="captcha-verified" value="">
+      </div>
+      <div id="captcha-status"></div>
+    </div>
+
+    <button class="glass-btn glass-btn-primary btn-login glass-animate-in glass-stagger-7" type="submit">立即登录</button>
+  </form>
+
+  <div class="login-footer glass-animate-in glass-stagger-8">仅限授权管理员访问</div>
+</div>
+
+<script type="text/javascript" src="__ROOT__/static/js/jquery.min.js"></script>
+<script type="text/javascript" src="__ROOT__/static/js/popper.min.js"></script>
+<script type="text/javascript" src="__ROOT__/static/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="__ROOT__/static/js/lyear-loading.js"></script>
+{include file="index@default/captcha_assets" /}
+<script type="text/javascript">
+    function showToast(message, type, delay) {
+        type = type || 'info';
+        delay = delay || 2000;
+        var icons = {
+            success: 'mdi-check',
+            warning: 'mdi-alert',
+            danger: 'mdi-close',
+            info: 'mdi-information'
+        };
+        var $toast = $('<div class="global-toast ' + type + '">' +
+            '<div class="global-toast-icon"><span class="mdi ' + (icons[type] || icons.info) + '"></span></div>' +
+            '<div class="global-toast-message">' + (message || '') + '</div>' +
+            '</div>');
+        $('body').append($toast);
+        setTimeout(function() { $toast.addClass('show'); }, 10);
+        setTimeout(function() {
+            $toast.removeClass('show');
+            setTimeout(function() { $toast.remove(); }, 350);
+        }, delay);
+    }
+$(function() {
+    var captchaVerified = false;
+    var loader;
+    var loginFailCount = 0;
+    var cooldownTimer = null;
+    var cooldownRemaining = 0;
+
+    function startCooldown() {
+        loginFailCount++;
+        cooldownRemaining = Math.min(Math.pow(2, loginFailCount), 30);
+        var $btn = $('.btn-login');
+        $btn.prop('disabled', true);
+
+        function tick() {
+            if (cooldownRemaining <= 0) {
+                $btn.html('立即登录').prop('disabled', false);
+                clearInterval(cooldownTimer);
+                cooldownTimer = null;
+                return;
+            }
+            $btn.html('请等待 ' + cooldownRemaining + ' 秒后重试');
+            cooldownRemaining--;
+        }
+
+        tick();
+        cooldownTimer = setInterval(tick, 1000);
+    }
+
+    if (typeof window.slideCaptcha !== 'function') {
+        if (typeof console !== 'undefined' && console.error) console.error('SlideCaptcha: 滑动验证组件未加载');
+        $('#slide-captcha-btn').addClass('error').html('<span class="mdi mdi-alert-circle" style="font-size:18px;"></span> 验证组件加载失败，请刷新');
+        return;
+    }
+
+$(document).ajaxStart(function(){
+    $("button:submit").html('登录中...').attr("disabled", true);
+    loader = $('button:submit').lyearloading({
+        opacity: 0.2,
+        spinnerSize: 'nm'
+    });
+}).ajaxStop(function(){
+    loader.destroy();
+    $("button:submit").html('立即登录').attr("disabled", false);
+});
+
+// Slide captcha button
+$('#slide-captcha-btn').on('click', function() {
+    window.slideCaptcha({
+        onSuccess: function(token) {
+            captchaVerified = true;
+            $('#captcha-verified').val(token);
+            $('#slide-captcha-btn').addClass('verified').removeClass('failed error')
+                .html('<span class="mdi mdi-check-circle" style="font-size:18px;"></span> 验证通过');
+            $('#captcha-status').text('').removeClass('error');
+        },
+        onError: function() {
+            captchaVerified = false;
+            $('#captcha-verified').val('');
+            $('#slide-captcha-btn').addClass('failed').removeClass('verified error')
+                .html('<span class="mdi mdi-close-circle" style="font-size:18px;"></span> 验证失败，点击重试');
+            $('#captcha-status').text('').removeClass('success');
+        },
+        onClose: function() {
+            if (!captchaVerified) {
+                $('#slide-captcha-btn').removeClass('verified failed error')
+                    .html('<span class="mdi mdi-arrow-right-bold-circle" style="font-size:18px;"></span> 点击进行滑块验证');
+            }
+        }
+    });
+});
+
+$('.signin-form').on('submit', function(event) {
+    if ($(this)[0].checkValidity() === false) {
+        event.preventDefault();
+        event.stopPropagation();
+        $(this).addClass('was-validated');
+        return false;
+    }
+    if (cooldownRemaining > 0) {
+        showToast('请等待 ' + cooldownRemaining + ' 秒后再试', 'warning', 2000);
+        return false;
+    }
+    if (!captchaVerified) {
+        showToast('请先完成滑块验证', 'warning', 2000);
+        return false;
+    }
+
+    var $data  = $(this).serialize();
+
+    $.post($(this).attr('action'), $data, function(res) {
+        if (res.code=="1") {
+            loginFailCount = 0;
+            showToast('登录成功，页面即将跳转~', 'success', 1800);
+            setTimeout(function () {
+                location.href = '__ROOT__/admin/index';
+            }, 1800);
+        } else {
+            showToast('登录失败，错误原因：' + res.msg, 'danger', 2500);
+            $('#password').val('');
+            captchaVerified = false;
+            $('#captcha-verified').val('');
+            $('#slide-captcha-btn').removeClass('verified failed error')
+                .html('<span class="mdi mdi-arrow-right-bold-circle" style="font-size:18px;"></span> 点击进行滑块验证');
+            startCooldown();
+        }
+    }).fail(function () {
+        showToast('服务器错误', 'danger', 2500);
+        startCooldown();
+    });
+
+    return false;
+});
+});
+</script>
+</body>
+</html>

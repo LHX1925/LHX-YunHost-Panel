@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>{$webname} - 绑定账号</title>
+    <style>
+        #mainHeader,
+        #mobileMenu {
+            display: none !important;
+        }
+
+        .auth-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 0;
+            opacity: 0.3;
+            animation: orbFloat 20s ease-in-out infinite;
+        }
+        .auth-orb-1 {
+            width: 400px; height: 400px;
+            top: -150px; right: -150px;
+            background: linear-gradient(135deg, var(--glass-primary), var(--glass-purple));
+        }
+        .auth-orb-2 {
+            width: 300px; height: 300px;
+            bottom: -100px; left: -100px;
+            background: linear-gradient(135deg, var(--glass-info), var(--glass-primary));
+        }
+        @keyframes orbFloat {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-20px) translateX(10px); }
+            50% { transform: translateY(0) translateX(20px); }
+            75% { transform: translateY(20px) translateX(10px); }
+        }
+
+        .auth-top {
+            position: absolute;
+            top: 28px;
+            left: 40px;
+            z-index: 10;
+        }
+
+        .auth-top .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--glass-text);
+            text-decoration: none;
+        }
+
+        .auth-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .auth-form {
+            width: 100%;
+            max-width: 420px;
+            background: var(--glass-bg-strong);
+            backdrop-filter: blur(var(--glass-blur-strong));
+            -webkit-backdrop-filter: blur(var(--glass-blur-strong));
+            border-radius: var(--glass-radius-xl);
+            padding: 44px 40px;
+            box-shadow: var(--glass-shadow-xl), var(--glass-shadow-inset);
+            border: 1px solid var(--glass-border-strong);
+        }
+
+        .auth-form h3 {
+            font-size: 24px;
+            color: var(--glass-text);
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .auth-form .oauth-hint {
+            text-align: center;
+            color: var(--glass-text-secondary);
+            font-size: 14px;
+            margin-bottom: 28px;
+            line-height: 1.6;
+        }
+
+        .auth-form .form-group {
+            margin-bottom: 18px;
+            position: relative;
+            width: 100%;
+        }
+
+        .auth-form .form-control {
+            width: 100%;
+            display: block;
+            box-sizing: border-box;
+            height: 50px;
+            border-radius: var(--glass-radius-sm);
+            padding: 11px 16px;
+            font-size: 14px;
+            background: var(--glass-bg-input);
+            backdrop-filter: blur(var(--glass-blur-light));
+            -webkit-backdrop-filter: blur(var(--glass-blur-light));
+            border: 1.5px solid var(--glass-border);
+            color: var(--glass-text);
+            transition: all var(--glass-transition);
+            box-shadow: var(--glass-shadow-inset);
+        }
+
+        .auth-form .form-control:focus {
+            background: var(--glass-bg);
+            border-color: var(--glass-primary);
+            box-shadow: 0 0 0 4px var(--glass-primary-glow);
+        }
+
+        .auth-form .form-control::placeholder {
+            color: var(--glass-text-muted);
+        }
+
+        .auth-form .btn-primary {
+            width: 100%;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: var(--glass-radius-full);
+            margin-top: 8px;
+            background: linear-gradient(135deg, var(--glass-primary), var(--glass-primary-light));
+            border: none;
+            color: #fff;
+            box-shadow: 0 4px 16px var(--glass-primary-glow);
+            cursor: pointer;
+            transition: all var(--glass-transition);
+        }
+        .auth-form .btn-primary:hover {
+            background: linear-gradient(135deg, var(--glass-primary-dark), var(--glass-primary));
+            box-shadow: 0 6px 24px var(--glass-primary-glow);
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 480px) {
+            .auth-top {
+                left: 24px;
+                top: 24px;
+            }
+            .auth-form {
+                padding: 32px 24px;
+                border-radius: var(--glass-radius-lg);
+            }
+            .auth-form h3 {
+                font-size: 22px;
+            }
+        }
+    </style>
+    {include file="default/index/header" /}
+</head>
+<body class="glass-enabled glass-login{if isset($web.bg_image) && $web.bg_image} glass-bg-image{/if}"{if isset($web.bg_image) && $web.bg_image} style="--glass-bg-image: url('{$web.bg_image}');"{/if}>
+    <div class="auth-page">
+        <div class="auth-orb auth-orb-1"></div>
+        <div class="auth-orb auth-orb-2"></div>
+        <a href="__ROOT__/" class="auth-top logo">
+            <span>{$webname}</span>
+        </a>
+
+        <div class="auth-container">
+            <div class="auth-form">
+                <h3>绑定账号</h3>
+                <p class="oauth-hint">
+                    您正在使用{if $oauthData.type == 'qq'}QQ{else}微信{/if}快捷登录，请设置账号信息完成绑定
+                </p>
+                <form id="bindForm">
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="username" placeholder="请输入用户名" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" name="password" placeholder="请设置登录密码（至少6位）">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" name="password2" placeholder="请再次输入密码">
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        绑定并登录
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {include file="default/captcha_assets" /}
+    <script>
+        $(function($) {
+            $("#bindForm").submit(function() {
+                var btn = $(this).find("button[type='submit']");
+                var username = $(this).find("input[name='username']").val().trim();
+                var password = $(this).find("input[name='password']").val();
+                var password2 = $(this).find("input[name='password2']").val();
+
+                if (!username) {
+                    showToast('请输入用户名', 'warning', 2500);
+                    return false;
+                }
+                if (!password) {
+                    showToast('请设置登录密码', 'warning', 2500);
+                    return false;
+                }
+                if (password.length < 6) {
+                    showToast('密码长度不能少于6位', 'warning', 2500);
+                    return false;
+                }
+                if (password !== password2) {
+                    showToast('两次密码不一致', 'warning', 2500);
+                    return false;
+                }
+
+                btn.attr('disabled', 'true');
+                showToast('正在绑定，请稍后...', 'info', 1500);
+
+                $.ajax({
+                    type: 'POST', url: '',
+                    data: { username: username, password: password, password2: password2 },
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.code == 1) {
+                            showToast(data.msg || '绑定成功', 'success', 1500);
+                            setTimeout(function() { location.href = data.url || '__ROOT__/user/index'; }, 1500);
+                        } else {
+                            btn.removeAttr('disabled');
+                            showToast(data.msg || '绑定失败', 'danger', 2500);
+                        }
+                    },
+                    error: function() {
+                        btn.removeAttr('disabled');
+                        showToast('网络错误，请稍后重试', 'danger', 2500);
+                    }
+                });
+                return false;
+            });
+        });
+    </script>
+    {include file="default/index/footer" /}
+</body>
+</html>

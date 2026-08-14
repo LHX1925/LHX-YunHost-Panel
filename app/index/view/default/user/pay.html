@@ -1,0 +1,455 @@
+{include file="default/user/header" title="账户充值" /}
+<main id="main-container">
+    <div class="content content-narrow">
+        {if $isBanned}
+        <div class="glass-alert glass-alert-warning">
+            <strong><i class="fas fa-exclamation-triangle"></i> 您的账号已被封禁，无法充值</strong><br>
+            封禁至：<strong>{$banEndTime|date="Y-m-d H:i:s",###}</strong><br>
+            封禁原因：{$banReason ?: '管理员未填写原因'}<br>
+            <small>到期后自动解封。</small>
+        </div>
+        {else}
+        <style>
+            .recharge-page {
+                display: grid;
+                grid-template-columns: 1.2fr 1fr;
+                gap: 20px;
+                align-items: start;
+            }
+
+            .recharge-card {
+                background: #fff;
+                border: 1px solid var(--border);
+                border-radius: 20px;
+                padding: 32px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04);
+            }
+
+            .recharge-card h2 {
+                font-size: 22px;
+                font-weight: 800;
+                color: var(--text);
+                margin: 0 0 8px;
+            }
+
+            .recharge-balance {
+                font-size: 48px;
+                font-weight: 800;
+                color: var(--primary);
+                margin: 24px 0 8px;
+                line-height: 1;
+            }
+
+            .recharge-balance small {
+                font-size: 32px;
+                font-weight: 700;
+            }
+
+            .current-balance {
+                font-size: 15px;
+                color: var(--text-secondary);
+                margin-bottom: 28px;
+            }
+
+            .amount-label {
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--text);
+                margin-bottom: 14px;
+            }
+
+            .amount-options {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 12px;
+                margin-bottom: 16px;
+            }
+
+            .amount-option {
+                position: relative;
+            }
+
+            .amount-option input {
+                position: absolute;
+                opacity: 0;
+                width: 100%;
+                height: 100%;
+                cursor: pointer;
+            }
+
+            .amount-option label {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 14px 8px;
+                background: #fff;
+                border: 1.5px solid var(--border);
+                border-radius: 12px;
+                font-size: 15px;
+                font-weight: 600;
+                color: var(--text);
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .amount-option input:checked + label {
+                border-color: var(--primary);
+                background: var(--primary-bg);
+                color: var(--primary);
+            }
+
+            .amount-option label:hover {
+                border-color: var(--primary-light);
+            }
+
+            .custom-amount {
+                margin-bottom: 20px;
+            }
+
+            .custom-amount input {
+                width: 100%;
+                padding: 14px 18px;
+                border: 1.5px solid var(--border);
+                border-radius: 12px;
+                font-size: 15px;
+                color: var(--text);
+                outline: none;
+                transition: all 0.2s;
+            }
+
+            .custom-amount input:focus {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+            }
+
+            .pay-methods {
+                margin-bottom: 20px;
+            }
+
+            .pay-methods-label {
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--text);
+                margin-bottom: 12px;
+            }
+
+            .pay-method-options {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .pay-method {
+                position: relative;
+            }
+
+            .pay-method input {
+                position: absolute;
+                opacity: 0;
+            }
+
+            .pay-method label {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 14px 16px;
+                border: 1.5px solid var(--border);
+                border-radius: 12px;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .pay-method label:hover {
+                border-color: var(--primary-light);
+            }
+
+            .pay-method input:checked + label {
+                border-color: var(--primary);
+                background: var(--primary-bg);
+            }
+
+            .pay-method .radio-dot {
+                width: 20px;
+                height: 20px;
+                border: 2px solid var(--border);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                transition: all 0.2s;
+            }
+
+            .pay-method input:checked + label .radio-dot {
+                border-color: var(--primary);
+                background: var(--primary);
+            }
+
+            .pay-method .radio-dot i {
+                color: #fff;
+                font-size: 10px;
+                opacity: 0;
+            }
+
+            .pay-method input:checked + label .radio-dot i {
+                opacity: 1;
+            }
+
+            .pay-method .method-name {
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--text);
+            }
+
+            .btn-recharge {
+                width: 100%;
+                padding: 14px;
+                background: var(--primary);
+                border: none;
+                border-radius: 999px;
+                color: #fff;
+                font-size: 16px;
+                font-weight: 700;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .btn-recharge:hover {
+                background: var(--primary-dark);
+                box-shadow: 0 6px 20px rgba(37,99,235,0.3);
+            }
+
+            /* Right side */
+            .info-card {
+                background: #fff;
+                border: 1px solid var(--border);
+                border-radius: 20px;
+                padding: 28px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04);
+            }
+
+            .info-card-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 20px;
+            }
+
+            .info-card h3 {
+                font-size: 18px;
+                font-weight: 800;
+                color: var(--text);
+                margin: 0;
+            }
+
+            .info-card-header i {
+                color: var(--text-muted);
+                font-size: 14px;
+            }
+
+            .info-list {
+                list-style: none;
+                padding: 0;
+                margin: 0 0 24px;
+            }
+
+            .info-list li {
+                position: relative;
+                padding-left: 18px;
+                margin-bottom: 14px;
+                font-size: 14px;
+                color: var(--text-secondary);
+                line-height: 1.6;
+            }
+
+            .info-list li::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 8px;
+                width: 7px;
+                height: 7px;
+                border-radius: 50%;
+                background: var(--primary);
+            }
+
+            .security-notice {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 16px;
+                background: #F8FAFC;
+                border: 1px solid var(--border-light);
+                border-radius: 14px;
+                margin-top: 20px;
+            }
+
+            .security-notice i {
+                font-size: 22px;
+                color: var(--primary);
+            }
+
+            .security-notice span {
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--text);
+            }
+
+            /* 液态玻璃主题适配 */
+            body.glass-enabled .recharge-card,
+            body.glass-enabled .info-card,
+            body.glass-enabled .security-notice {
+                background: var(--glass-bg);
+                backdrop-filter: blur(var(--glass-blur));
+                -webkit-backdrop-filter: blur(var(--glass-blur));
+                border-color: var(--glass-border);
+                box-shadow: var(--glass-shadow-sm), var(--glass-shadow-inset);
+            }
+
+            body.glass-enabled.glass-bg-image .recharge-card,
+            body.glass-enabled.glass-bg-image .info-card,
+            body.glass-enabled.glass-bg-image .security-notice {
+                background: rgba(255, 255, 255, var(--glass-opacity)) !important;
+                border-color: rgba(255, 255, 255, 0.35) !important;
+            }
+
+            body.glass-enabled .amount-option label,
+            body.glass-enabled .pay-method label,
+            body.glass-enabled .custom-amount input {
+                background: rgba(255, 255, 255, var(--glass-opacity-light));
+                backdrop-filter: blur(var(--glass-blur-light));
+                -webkit-backdrop-filter: blur(var(--glass-blur-light));
+                border-color: rgba(255, 255, 255, 0.4);
+                color: #1E293B;
+            }
+
+            body.glass-enabled .amount-option input:checked + label,
+            body.glass-enabled .pay-method input:checked + label {
+                background: var(--primary-bg);
+                border-color: var(--primary);
+            }
+
+            body.glass-enabled .custom-amount input:focus {
+                background: rgba(255, 255, 255, var(--glass-opacity-btn));
+                border-color: var(--glass-primary);
+                box-shadow: 0 0 0 4px var(--glass-primary-glow);
+            }
+
+            @media (max-width: 991px) {
+                .recharge-page {
+                    grid-template-columns: 1fr;
+                }
+
+                .amount-options {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+        </style>
+
+        <form method="POST">
+            <div class="recharge-page">
+                <div class="recharge-card glass-card glass-reveal">
+                    <h2>账户余额充值</h2>
+                    <div class="recharge-balance"><small>¥</small>{$user.money|default='0.00'}</div>
+                    <div class="current-balance">当前余额：¥{$user.money|default='0.00'}</div>
+
+                    {if $cartAmount}
+                    <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:14px;padding:18px;margin-bottom:20px;text-align:center;">
+                        <div style="font-size:13px;color:#64748B;margin-bottom:6px;">购物车待支付金额</div>
+                        <div style="font-size:32px;font-weight:800;color:#2563EB;">¥{$cartAmount}</div>
+                        <div style="font-size:12px;color:#94A3B8;margin-top:4px;">支付成功后自动开通产品</div>
+                    </div>
+                    <input type="hidden" name="money" value="{$cartAmount}">
+                    {else}
+                    <div class="amount-label">充值金额</div>
+                    <div class="amount-options">
+                        <div class="amount-option">
+                            <input type="radio" name="preset_amount" id="amt50" value="50" onchange="setAmount(50)">
+                            <label for="amt50">¥50</label>
+                        </div>
+                        <div class="amount-option">
+                            <input type="radio" name="preset_amount" id="amt100" value="100" onchange="setAmount(100)">
+                            <label for="amt100">¥100</label>
+                        </div>
+                        <div class="amount-option">
+                            <input type="radio" name="preset_amount" id="amt200" value="200" onchange="setAmount(200)">
+                            <label for="amt200">¥200</label>
+                        </div>
+                        <div class="amount-option">
+                            <input type="radio" name="preset_amount" id="amt500" value="500" onchange="setAmount(500)">
+                            <label for="amt500">¥500</label>
+                        </div>
+                    </div>
+
+                    <div class="custom-amount">
+                        <input type="number" name="money" id="moneyInput" step="0.01" min="0.01" placeholder="输入其他金额" class="glass-input">
+                    </div>
+                    {/if}
+
+                    <div class="pay-methods">
+                        <div class="pay-methods-label">支付方式</div>
+                        <div class="pay-method-options">
+                            {volist name="pay" id="p" key="k"}
+                            <div class="pay-method">
+                                <input type="radio" name="payid" id="pay{$p.id}" value="{$p.id}" {if $k==1}checked{/if}>
+                                <label for="pay{$p.id}">
+                                    <span class="radio-dot"><i class="fas fa-check"></i></span>
+                                    <span class="method-name">{$p.name}</span>
+                                </label>
+                            </div>
+                            {/volist}
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-recharge glass-btn glass-btn-primary glass-btn-lg">{if $cartAmount}立即支付 ¥{$cartAmount} 并开通产品{else}立即充值{/if}</button>
+                </div>
+
+                <div class="info-card glass-card glass-reveal glass-stagger-1">
+                    <div class="info-card-header">
+                        <h3>充值说明</h3>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    <ul class="info-list">
+                        <li>充值余额可用于购买主机、续费服务、购买流量包</li>
+                        <li>支付成功后余额实时到账</li>
+                        <li>支持发票申请</li>
+                        <li>{$paycron}分钟未支付会自动删除订单，请注意时间</li>
+                    </ul>
+                    <div class="security-notice glass-notice-bar">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>全程加密支付，保障资金安全</span>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <script>
+            var realnameRequired = {if isset($realnameRequired) && $realnameRequired}true{else}false{/if};
+            var realnameMsg = '{if isset($realnameMsg)}{:$realnameMsg}{else}请先完成实名认证{/if}';
+
+            function setAmount(val) {
+                var inp = document.getElementById('moneyInput');
+                if(inp) inp.value = val;
+            }
+
+            document.querySelector('form').addEventListener('submit', function(e) {
+                // 未实名认证通过时，点击立即充值弹出实名认证提醒
+                if (realnameRequired) {
+                    e.preventDefault();
+                    showRealnamePopup(realnameMsg, '__ROOT__/user/realname', '__ROOT__/user/index');
+                    return false;
+                }
+                var inp = document.getElementById('moneyInput');
+                if(!inp) return; // 购物车结算模式，金额已通过hidden字段固定
+                var money = inp.value;
+                if (!money || parseFloat(money) <= 0) {
+                    e.preventDefault();
+                    showToast('请输入充值金额', 'warning', 2500);
+                    return false;
+                }
+            });
+        </script>
+        {/if}
+    </div>
+</main>
+{include file="default/user/footer" /}

@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>{$webname} - 专业虚拟主机服务</title>
+    {include file="default/index/header" /}
+    <style>
+        /* ========== Hero Section ========== */
+        .hero {
+            padding: 80px 0 64px;
+            background: transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content {
+            max-width: 100%;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            background: var(--glass-bg-light);
+            color: var(--glass-primary);
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 20px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .hero-content h1 {
+            font-size: 46px;
+            margin-bottom: 18px;
+            color: var(--glass-text);
+            font-weight: 800;
+            line-height: 1.2;
+            letter-spacing: -1px;
+        }
+
+        .hero-content > p {
+            font-size: 17px;
+            color: var(--glass-text-secondary);
+            margin: 0 0 36px;
+            line-height: 1.8;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .hero-actions .btn {
+            padding: 13px 32px;
+            font-size: 15px;
+            border-radius: var(--glass-radius-sm);
+        }
+
+        .hero-actions .btn-primary {
+            box-shadow: var(--glass-shadow);
+        }
+
+        .hero-actions .btn-outline {
+            border: 1.5px solid rgba(255, 255, 255, 0.35);
+            color: var(--glass-text);
+            background: var(--glass-bg);
+        }
+
+        .hero-actions .btn-outline:hover {
+            border-color: var(--glass-primary);
+            color: var(--glass-primary);
+            background: var(--glass-bg-light);
+        }
+
+        .hero-visual {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+
+
+        .hero-visual img {
+            width: 100%;
+            max-width: 340px;
+            height: auto;
+        }
+
+        .hero-illustration {
+            width: 100%;
+            max-width: 340px;
+            height: auto;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* Feature Cards */
+        .hero-features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 56px;
+        }
+
+        .feature-card {
+            background: var(--glass-bg);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: var(--glass-radius-lg);
+            padding: 22px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: all var(--glass-transition);
+            box-shadow: var(--glass-shadow-sm);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+        }
+
+        .feature-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--glass-shadow);
+            border-color: rgba(255, 255, 255, 0.35);
+        }
+
+        
+
+        .feature-icon {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--glass-bg-light);
+            color: var(--glass-primary);
+            border-radius: 12px;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .feature-card h3 {
+            font-size: 16px;
+            color: var(--glass-text);
+            margin: 0 0 2px;
+            font-weight: 600;
+        }
+
+        .feature-card p {
+            font-size: 13px;
+            color: var(--glass-text-secondary);
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* ========== Products Section ========== */
+        .products {
+            padding: 64px 0 80px;
+            background: transparent;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .product-card {
+            background: var(--glass-bg);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: var(--glass-radius-lg);
+            padding: 28px;
+            transition: all var(--glass-transition);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            box-shadow: var(--glass-shadow-sm);
+        }
+
+        .product-card.featured {
+            background: linear-gradient(135deg, var(--glass-primary) 0%, var(--glass-primary-dark) 100%);
+            border-color: transparent;
+            color: #fff;
+            box-shadow: 0 12px 30px var(--glass-primary-glow);
+        }
+
+        .product-card:hover {
+            box-shadow: var(--glass-shadow-lg);
+            transform: translateY(-4px);
+        }
+
+        .product-card.featured:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 36px var(--glass-primary-glow);
+        }
+
+        .product-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .product-card-name {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .product-card.featured .product-card-name {
+            color: #fff;
+        }
+
+        .product-card-desc {
+            font-size: 13px;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+
+        .product-card-arrow {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(79, 124, 255, 0.1);
+            color: var(--glass-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .product-card.featured .product-card-arrow {
+            background: rgba(255,255,255,0.2);
+            color: #fff;
+        }
+
+        .product-card-body {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .product-card-capacity {
+            font-size: 36px;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .product-card.featured .product-card-capacity {
+            color: #fff;
+        }
+
+        .product-card-illustration {
+            width: 64px;
+            height: 64px;
+            flex-shrink: 0;
+        }
+
+        .product-card-illustration svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .product-card-specs {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .product-card-spec {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--glass-text-secondary);
+        }
+
+        .product-card.featured .product-card-spec {
+            color: rgba(255,255,255,0.85);
+        }
+
+        .product-card-spec i {
+            width: 28px;
+            height: 28px;
+            background: var(--glass-bg-light);
+            color: var(--glass-primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        .product-card.featured .product-card-spec i {
+            background: rgba(255,255,255,0.2);
+            color: #fff;
+        }
+
+        .products-empty {
+            text-align: center;
+            padding: 60px 20px;
+            grid-column: 1 / -1;
+            color: var(--glass-text-secondary);
+        }
+
+        /* ========== Data Centers ========== */
+        .datacenters {
+            padding: 80px 0;
+            background: transparent;
+        }
+
+        .dc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .dc-item {
+            background: var(--glass-bg);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: var(--glass-radius-lg);
+            padding: 24px;
+            text-align: center;
+            transition: all var(--glass-transition);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            box-shadow: var(--glass-shadow-sm);
+        }
+
+        .dc-item:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--glass-shadow);
+            border-color: rgba(255, 255, 255, 0.35);
+        }
+
+        .dc-flag {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--glass-bg-light);
+            color: var(--glass-primary);
+            border-radius: 12px;
+            font-size: 18px;
+            margin: 0 auto 14px;
+        }
+
+        .dc-item h4 {
+            font-size: 15px;
+            color: var(--glass-text);
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .dc-item p {
+            font-size: 12px;
+            color: var(--glass-text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .dc-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--glass-success);
+            background: rgba(16,185,129,0.1);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+
+        .dc-status::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--glass-success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* ========== Announcements ========== */
+        .announcements {
+            padding: 80px 0;
+            background: transparent;
+        }
+
+        .announcement-list {
+            margin: 0 auto;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: var(--glass-radius-lg);
+            overflow: hidden;
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            box-shadow: var(--glass-shadow-sm);
+        }
+
+        .announcement-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            transition: background var(--glass-transition);
+        }
+
+        .announcement-item:last-child {
+            border-bottom: none;
+        }
+
+        .announcement-item:hover {
+            background: var(--glass-bg-light);
+        }
+
+        .announcement-title {
+            font-size: 14px;
+            color: var(--glass-text);
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin-right: 20px;
+            font-weight: 500;
+        }
+
+        .announcement-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-shrink: 0;
+        }
+
+        .announcement-date {
+            font-size: 12px;
+            color: var(--glass-text-muted);
+        }
+
+        .announcement-link {
+            font-size: 13px;
+            color: var(--glass-primary);
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: gap var(--glass-transition);
+        }
+
+        .announcement-link:hover {
+            gap: 8px;
+        }
+
+        .announcement-empty {
+            text-align: center;
+            padding: 48px;
+            color: var(--glass-text-secondary);
+            font-size: 14px;
+        }
+
+        .announcement-empty i {
+            font-size: 32px;
+            color: var(--glass-text-muted);
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        /* Mobile-only stats bar */
+        .mobile-stats {
+            display: none;
+            background: var(--glass-bg-strong);
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .mobile-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            padding: 16px 0;
+        }
+
+        .mobile-stat-item {
+            text-align: center;
+            padding: 8px 4px;
+        }
+
+        .mobile-stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--glass-primary);
+            line-height: 1.2;
+            margin-bottom: 4px;
+        }
+
+        .mobile-stat-label {
+            font-size: 11px;
+            color: var(--glass-text-secondary);
+        }
+
+        /* ========== Responsive ========== */
+        @media (max-width: 992px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-content {
+                max-width: 600px;
+                margin: 0 auto;
+                order: 1;
+            }
+
+            .hero-actions {
+                justify-content: center;
+            }
+
+            .hero-visual {
+                order: 0;
+            }
+
+            .hero-visual svg,
+            .hero-illustration {
+                max-width: 360px;
+            }
+
+            .hero-features {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 14px;
+            }
+
+            .feature-card {
+                padding: 18px 14px;
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-stats {
+                display: block;
+                background: var(--glass-bg-strong);
+                border-top: 1px solid rgba(255, 255, 255, 0.12);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+                margin-top: 0;
+            }
+
+            .mobile-stats-grid {
+                gap: 4px;
+                padding: 18px 0;
+            }
+
+            .mobile-stat-value {
+                font-size: 20px;
+                font-weight: 800;
+            }
+
+            .mobile-stat-label {
+                font-size: 12px;
+            }
+
+            .hero {
+                padding: 36px 0 32px;
+                background: transparent;
+                text-align: center;
+            }
+
+            .hero-grid {
+                gap: 28px;
+            }
+
+            .hero-content {
+                max-width: 100%;
+            }
+
+            .hero-badge {
+                font-size: 13px;
+                padding: 6px 14px;
+                margin-bottom: 18px;
+            }
+
+            .hero-content h1 {
+                font-size: 30px;
+                line-height: 1.25;
+                margin-bottom: 14px;
+                letter-spacing: -0.5px;
+            }
+
+            .hero-content > p {
+                font-size: 15px;
+                margin: 0 auto 28px;
+                color: var(--glass-text-secondary);
+                max-width: 92%;
+            }
+
+            .hero-actions {
+                flex-direction: column;
+                gap: 12px;
+                margin-bottom: 32px;
+            }
+
+            .hero-actions .btn {
+                width: 100%;
+                justify-content: center;
+                padding: 14px 20px;
+                font-size: 15px;
+                border-radius: var(--glass-radius);
+                max-width: none;
+            }
+
+            .hero-actions .btn-primary {
+                background: var(--glass-primary);
+                border-color: var(--glass-primary);
+                box-shadow: var(--glass-shadow);
+            }
+
+            .hero-actions .btn-outline {
+                background: var(--glass-bg);
+                border: 1.5px solid rgba(255, 255, 255, 0.35);
+                color: var(--glass-text);
+            }
+
+            .hero-visual {
+                order: 0;
+                margin: 0 auto;
+            }
+
+            .hero-visual svg,
+            .hero-illustration {
+                max-width: 260px;
+            }
+
+            .hero-features {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                max-width: 100%;
+                margin-top: 0;
+            }
+
+            .feature-card {
+                flex-direction: row;
+                text-align: left;
+                padding: 16px 18px;
+                gap: 14px;
+                border-radius: var(--glass-radius-lg);
+                background: var(--glass-bg);
+                box-shadow: var(--glass-shadow-sm);
+                border: 1px solid rgba(255, 255, 255, 0.18);
+            }
+
+            .feature-icon {
+                width: 44px;
+                height: 44px;
+                font-size: 18px;
+                border-radius: 12px;
+            }
+
+            .feature-card h3 {
+                font-size: 15px;
+                margin-bottom: 4px;
+            }
+
+            .feature-card p {
+                font-size: 13px;
+                line-height: 1.5;
+            }
+
+            .products {
+                padding: 52px 0 60px;
+                background: transparent;
+            }
+
+            .products .section-header {
+                margin-bottom: 28px;
+            }
+
+            .products .section-header h2 {
+                font-size: 24px;
+            }
+
+            .products .section-header p {
+                font-size: 14px;
+            }
+
+            .products-grid {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 16px;
+                overflow-x: visible;
+                padding: 0;
+                max-width: 100%;
+            }
+
+            .product-card {
+                min-width: auto;
+                max-width: none;
+                flex-shrink: 0;
+                scroll-snap-align: none;
+                padding: 18px;
+                border-radius: var(--glass-radius);
+                background: var(--glass-bg);
+                box-shadow: var(--glass-shadow-sm);
+            }
+
+            .product-card.featured {
+                background: linear-gradient(135deg, var(--glass-primary) 0%, var(--glass-primary-dark) 100%);
+                box-shadow: 0 8px 24px var(--glass-primary-glow);
+            }
+
+            .product-card-name {
+                font-size: 18px;
+            }
+
+            .product-card-desc {
+                font-size: 13px;
+            }
+
+            .product-card-capacity {
+                font-size: 24px;
+            }
+
+            .product-card-illustration {
+                width: 48px;
+                height: 48px;
+            }
+
+            .product-card-specs {
+                margin-top: 20px;
+            }
+
+            .datacenters {
+                padding: 48px 0;
+            }
+
+            .dc-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 14px;
+            }
+
+            .dc-item {
+                padding: 20px 14px;
+            }
+
+            .dc-flag {
+                width: 44px;
+                height: 44px;
+                font-size: 20px;
+            }
+
+            .dc-item h4 {
+                font-size: 14px;
+            }
+
+            .announcements {
+                padding: 48px 0 80px;
+            }
+
+            .announcement-list {
+                border-radius: var(--glass-radius-lg);
+            }
+
+            .announcement-item {
+                padding: 16px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .announcement-title {
+                font-size: 14px;
+                white-space: normal;
+                margin-right: 0;
+            }
+
+            .announcement-meta {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .announcement-date {
+                font-size: 12px;
+            }
+
+            .announcement-link {
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero {
+                padding: 28px 0 24px;
+            }
+
+            .hero-content h1 {
+                font-size: 26px;
+            }
+
+            .hero-content > p {
+                font-size: 14px;
+            }
+
+            .hero-actions .btn {
+                padding: 13px 18px;
+                font-size: 14px;
+            }
+
+            .hero-visual svg,
+            .hero-illustration {
+                max-width: 220px;
+            }
+
+            .feature-card {
+                padding: 14px 16px;
+            }
+
+            .feature-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+
+            .feature-card h3 {
+                font-size: 14px;
+            }
+
+            .feature-card p {
+                font-size: 12px;
+            }
+
+            .mobile-stat-value {
+                font-size: 17px;
+            }
+
+            .mobile-stat-label {
+                font-size: 11px;
+            }
+
+            .product-card {
+                padding: 16px;
+            }
+
+            .product-card-capacity {
+                font-size: 22px;
+            }
+
+            .dc-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <i class="fas fa-bolt"></i> 即开即用，分钟级部署
+                    </div>
+                    <h1>高速稳定的虚拟主机服务</h1>
+                    <p>一键部署网站，畅享稳定云端算力</p>
+                    <div class="hero-actions">
+                        <a href="__ROOT__/register" class="glass-btn glass-btn-primary glass-btn-lg">立即注册</a>
+                        <a href="__ROOT__/cart" class="glass-btn glass-btn-outline glass-btn-lg">查看套餐</a>
+                    </div>
+
+                    <div class="hero-features">
+                        <div class="feature-card glass-card glass-reveal glass-stagger-1">
+                            <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+                            <div>
+                                <h3>极速开通</h3>
+                                <p>支付完成后自动开通</p>
+                            </div>
+                        </div>
+                        <div class="feature-card glass-card glass-reveal glass-stagger-2">
+                            <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                            <div>
+                                <h3>安全防护</h3>
+                                <p>多层安全体系防护</p>
+                            </div>
+                        </div>
+                        <div class="feature-card glass-card glass-reveal glass-stagger-3">
+                            <div class="feature-icon"><i class="fas fa-expand-arrows-alt"></i></div>
+                            <div>
+                                <h3>弹性扩容</h3>
+                                <p>按需升级灵活扩展</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-visual glass-float">
+                    <img src="__ROOT__/static/assets/images/hero-illustration.png?v=9" alt="高速稳定虚拟主机" class="hero-illustration">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="mobile-stats">
+        <div class="container">
+            <div class="mobile-stats-grid">
+                <div class="mobile-stat-item glass-stat-card">
+                    <div class="mobile-stat-value glass-count-up" data-target="{$countserver|default='0'}">{$countserver|default='0'}</div>
+                    <div class="mobile-stat-label">运行服务器</div>
+                </div>
+                <div class="mobile-stat-item glass-stat-card">
+                    <div class="mobile-stat-value glass-count-up" data-target="{$countuser|default='0'}">{$countuser|default='0'}</div>
+                    <div class="mobile-stat-label">注册用户</div>
+                </div>
+                <div class="mobile-stat-item glass-stat-card">
+                    <div class="mobile-stat-value glass-count-up" data-target="{$countorder|default='0'}">{$countorder|default='0'}</div>
+                    <div class="mobile-stat-label">累计订单</div>
+                </div>
+                <div class="mobile-stat-item glass-stat-card">
+                    <div class="mobile-stat-value glass-count-up" data-target="{$sumpay|default='0'}">{$sumpay|default='0'}</div>
+                    <div class="mobile-stat-label">交易金额</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="products">
+        <div class="container">
+            <div class="section-header">
+                <span class="badge"><i class="fas fa-cubes"></i> 产品套餐</span>
+                <h2>选择适合你的方案</h2>
+                <p>多种规格可选，按需付费，灵活升级</p>
+            </div>
+            <div class="products-grid">
+                {if !empty($cart)}
+                {foreach $cart as $i=>$c}
+                <a href="__ROOT__/cart" class="product-card glass-card{if $i==0} featured{/if}">
+                    <div class="product-card-header">
+                        <div>
+                            <div class="product-card-name">{$c.name}</div>
+                            <div class="product-card-desc">{$c.content|default='高性能虚拟主机'}</div>
+                        </div>
+                        <div class="product-card-arrow"><i class="fas fa-chevron-right"></i></div>
+                    </div>
+                    <div class="product-card-body">
+                        <div class="product-card-capacity">{$c.capacity_show|default='10GB'}</div>
+                        <div class="product-card-illustration">
+                            <svg viewBox="0 0 64 64" fill="none">
+                                {if $i==0}
+                                <rect x="12" y="36" width="40" height="22" rx="4" fill="rgba(255,255,255,0.2)" stroke="#fff" stroke-width="2"/>
+                                <rect x="20" y="22" width="40" height="22" rx="4" fill="rgba(255,255,255,0.35)" stroke="#fff" stroke-width="2"/>
+                                <rect x="28" y="8" width="40" height="22" rx="4" fill="#fff" stroke="#fff" stroke-width="2"/>
+                                <circle cx="24" cy="47" r="3" fill="#fff"/>
+                                <rect x="32" y="44" width="14" height="6" rx="3" fill="rgba(255,255,255,0.5)"/>
+                                {elseif $i==1}
+                                <rect x="10" y="16" width="44" height="36" rx="6" fill="#EFF6FF" stroke="#DBEAFE" stroke-width="2"/>
+                                <rect x="18" y="24" width="28" height="8" rx="2" fill="#BFDBFE"/>
+                                <rect x="18" y="36" width="20" height="8" rx="2" fill="#DBEAFE"/>
+                                <path d="M46 10 L58 10 L58 48" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" fill="none"/>
+                                <circle cx="58" cy="48" r="4" fill="#3B82F6"/>
+                                {else}
+                                <circle cx="32" cy="32" r="22" fill="#EFF6FF" stroke="#DBEAFE" stroke-width="2"/>
+                                <path d="M32 16 L32 22" stroke="#3B82F6" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M32 42 L32 48" stroke="#3B82F6" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M16 32 L22 32" stroke="#3B82F6" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M42 32 L48 32" stroke="#3B82F6" stroke-width="2" stroke-linecap="round"/>
+                                <circle cx="32" cy="32" r="8" fill="#3B82F6"/>
+                                <path d="M28 32 L31 35 L36 29" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                                {/if}
+                            </svg>
+                        </div>
+                    </div>
+                    {if !empty($c.money)}
+                    <div class="product-card-specs">
+                        <div class="product-card-spec"><i class="fas fa-tag"></i> ¥{$c.money}/月</div>
+                        <div class="product-card-spec"><i class="fas fa-hdd"></i> {$c.capacity_show|default='10GB'}</div>
+                    </div>
+                    {/if}
+                </a>
+                {/foreach}
+                {else}
+                <div class="products-empty">
+                    <i class="fas fa-box-open" style="font-size:48px;color:var(--glass-text-muted);margin-bottom:16px;display:block;"></i>
+                    暂无产品套餐，请联系管理员
+                </div>
+                {/if}
+            </div>
+        </div>
+    </section>
+
+    <section class="datacenters">
+        <div class="container">
+            <div class="section-header">
+                <span class="badge"><i class="fas fa-globe-asia"></i> 全球节点</span>
+                <h2>全球数据中心</h2>
+                <p>多地域节点部署，就近访问，低延迟高可用</p>
+            </div>
+
+            <div class="dc-grid">
+                {foreach $global_datacenters as $k=>$dc}
+                <div class="dc-item glass-card glass-reveal glass-stagger-{$k+1}">
+                    <div class="dc-flag"><i class="{$dc.icon|default='fas fa-map-marker-alt'}"></i></div>
+                    <h4>{$dc.name}</h4>
+                    <p>{$dc.region}</p>
+                    <span class="dc-status">{$dc.status|default='运行正常'}</span>
+                </div>
+                {/foreach}
+            </div>
+        </div>
+    </section>
+
+    <section class="announcements">
+        <div class="container">
+            <div class="section-header">
+                <span class="badge"><i class="fas fa-bullhorn"></i> 最新动态</span>
+                <h2>网站公告</h2>
+                <p>及时了解平台最新动态与维护通知</p>
+            </div>
+
+            <div class="announcement-list glass-content-wrapper">
+                {if $announcement}
+                {foreach $announcement as $a}
+                <div class="announcement-item">
+                    <span class="announcement-title">{$a.title}</span>
+                    <div class="announcement-meta">
+                        <span class="announcement-date">{$a.created_at|date="m-d",###}</span>
+                        <a href="__ROOT__/announcement/{$a.id}" class="announcement-link">查看详情 <i class="fas fa-chevron-right"></i></a>
+                    </div>
+                </div>
+                {/foreach}
+                {else}
+                <div class="announcement-empty">
+                    <i class="fas fa-bullhorn"></i>
+                    暂无公告
+                </div>
+                {/if}
+            </div>
+        </div>
+    </section>
+
+    {include file="default/index/footer" /}

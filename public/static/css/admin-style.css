@@ -1,0 +1,285 @@
+/* ==================== MNBT Admin 统一样式 ==================== */
+/* 主色: #2563EB  |  背景: #f1f5f9  |  卡片: #fff 圆角14px */
+
+/* --- 卡片 --- */
+.admin-card {
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(23, 43, 77, 0.05);
+  border: 1px solid rgba(223, 225, 230, 0.9);
+  margin-bottom: 20px;
+}
+.admin-card .card-header {
+  background: #fff;
+  border-bottom: 1px solid #ebecf0;
+  padding: 16px 20px;
+}
+.admin-card .card-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #172b4d;
+}
+
+/* --- 徽章 --- */
+.admin-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.admin-badge-success  { background: #D1FAE5; color: #065F46; }
+.admin-badge-warning  { background: #FEF3C7; color: #92400E; }
+.admin-badge-danger   { background: #FEE2E2; color: #991B1B; }
+.admin-badge-primary  { background: #DBEAFE; color: #1E40AF; }
+.admin-badge-secondary{ background: #F1F5F9; color: #475569; }
+
+/* --- 按钮 --- */
+.btn-admin {
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  padding: 8px 18px;
+  transition: all 0.15s;
+  border: 1px solid transparent;
+}
+.btn-admin-primary {
+  background: #2563EB;
+  border-color: #2563EB;
+  color: #fff;
+}
+.btn-admin-primary:hover {
+  background: #1D4ED8;
+  border-color: #1D4ED8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+.btn-admin-danger {
+  background: #EF4444;
+  border-color: #EF4444;
+  color: #fff;
+}
+.btn-admin-danger:hover {
+  background: #DC2626;
+  border-color: #DC2626;
+}
+.btn-admin-warning {
+  background: #F59E0B;
+  border-color: #F59E0B;
+  color: #fff;
+}
+.btn-admin-warning:hover {
+  background: #D97706;
+  border-color: #D97706;
+}
+.btn-admin-success {
+  background: #10B981;
+  border-color: #10B981;
+  color: #fff;
+}
+.btn-admin-success:hover {
+  background: #059669;
+  border-color: #059669;
+}
+.btn-admin-sm {
+  font-size: 13px;
+  padding: 6px 14px;
+}
+
+/* --- 表格 --- */
+.table-admin {
+  margin-bottom: 0;
+}
+.table-admin th {
+  border-top: none;
+  border-bottom: 2px solid #e8ecf1;
+  color: #6b778c;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 12px 16px;
+  background: #fafbfc;
+  white-space: nowrap;
+}
+.table-admin td {
+  vertical-align: middle;
+  padding: 12px 16px;
+  color: #172b4d;
+  border-bottom: 1px solid #f4f5f7;
+  font-size: 14px;
+}
+
+/* --- 搜索栏 --- */
+.search-wrap {
+  margin-bottom: 16px;
+}
+.search-wrap .input-group {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+.search-wrap .form-control {
+  border: 1px solid #dfe1e6;
+  border-right: none;
+  height: 42px;
+  font-size: 14px;
+}
+.search-wrap .form-control:focus {
+  border-color: #2563EB;
+  box-shadow: none;
+}
+.search-wrap .btn {
+  border-radius: 0 10px 10px 0;
+  height: 42px;
+  padding: 0 18px;
+  background: #2563EB;
+  border-color: #2563EB;
+}
+
+/* --- 表单 --- */
+.admin-form .form-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #42526e;
+  margin-bottom: 6px;
+}
+.admin-form .form-control {
+  border: 1px solid #dfe1e6;
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 14px;
+  color: #172b4d;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.admin-form .form-control:focus {
+  border-color: #2563EB;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+.admin-form .form-select {
+  border: 1px solid #dfe1e6;
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 14px;
+}
+.admin-form .form-select:focus {
+  border-color: #2563EB;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+.admin-form textarea.form-control {
+  min-height: 120px;
+}
+
+/* --- 提示信息 --- */
+.admin-form-tip {
+  background: #deebff;
+  border: 1px solid #b3d4ff;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  font-size: 12.5px;
+  color: #0747a6;
+  line-height: 1.55;
+}
+.admin-form-tip strong {
+  display: block;
+  margin-bottom: 4px;
+}
+.admin-field-hint {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #6b778c;
+  line-height: 1.45;
+}
+
+/* --- Layer 弹窗内表单滚动 --- */
+.layer-admin-form .layui-layer-content,
+.layer-server-add .layui-layer-content {
+  max-height: 78vh !important;
+  overflow-y: auto !important;
+}
+
+/* --- 分页（统一蓝色主题） --- */
+.pagination {
+  display: inline-block;
+  padding-left: 0;
+  margin: 20px 0;
+  border-radius: 4px;
+}
+.pagination > li {
+  display: inline;
+}
+.pagination > li > a,
+.pagination > li > span {
+  position: relative;
+  float: left;
+  padding: 6px 12px;
+  margin-left: -1px;
+  line-height: 1.42857143;
+  color: #2563EB;
+  text-decoration: none;
+  background-color: #fff;
+  border: 1px solid #ddd;
+}
+.pagination > li:first-child > a,
+.pagination > li:first-child > span {
+  margin-left: 0;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+.pagination > li:last-child > a,
+.pagination > li:last-child > span {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+.pagination > li > a:hover,
+.pagination > li > span:hover {
+  background-color: #EFF6FF;
+  border-color: #BFDBFE;
+  color: #1D4ED8;
+}
+.pagination > .active > a,
+.pagination > .active > span {
+  background-color: #2563EB;
+  border-color: #2563EB;
+  color: #fff;
+}
+.pagination > .disabled > a,
+.pagination > .disabled > span {
+  color: #9ca3af;
+  cursor: not-allowed;
+  background-color: #fff;
+  border-color: #e5e7eb;
+}
+
+/* --- 导航标签页 --- */
+.nav-tabs {
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 20px;
+}
+.nav-tabs .nav-link {
+  border: none;
+  color: #6b778c;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 18px;
+  border-radius: 8px 8px 0 0;
+  margin-right: 4px;
+}
+.nav-tabs .nav-link.active {
+  color: #2563EB;
+  background: #fff;
+  border-bottom: 2px solid #2563EB;
+}
+.nav-tabs .nav-link:hover:not(.active) {
+  color: #1E40AF;
+  background: #f8fafc;
+}
+
+/* 响应式 */
+@media (max-width: 767px) {
+  .table-admin th,
+  .table-admin td {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+}

@@ -1,0 +1,428 @@
+{include file="default/header" title="用户管理"/}
+<main class="lyear-layout-content">
+  <div class="container-fluid page-wrap">
+
+    <div class="page-bar">
+      <div>
+        <h2>用户管理</h2>
+        <p>管理所有前台用户 · 支持批量封禁/删除</p>
+      </div>
+      <div class="d-flex gap-2">
+        <button onclick="adduser()" class="nbtn pri"><i class="mdi mdi-plus"></i> 添加用户</button>
+        <button onclick="batchDel()" class="nbtn dan"><i class="mdi mdi-delete"></i> 批量删除</button>
+        <button onclick="batchBan()" class="nbtn warn"><i class="mdi mdi-block-helper"></i> 批量封禁</button>
+      </div>
+    </div>
+
+    <div class="ccard">
+      <div class="ccard-hd">用户列表</div>
+      <div class="ccard-bd">
+        <form method="get" action="">
+          <div class="row g-2 align-items-end mb-3">
+            <div class="col-md-3">
+              <input class="finp" type="text" name="search" placeholder="搜索ID/账号/名称/邮箱/QQ..." value="{$search|default=''}">
+            </div>
+            <div class="col-md-2">
+              <select class="finp" name="realname_filter" style="width:100%">
+                <option value="">实名状态</option>
+                <option value="1" {if $realnameFilter==='1'}selected{/if}>已实名</option>
+                <option value="0" {if $realnameFilter==='0'}selected{/if}>未实名</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <select class="finp" name="vip_filter" style="width:100%">
+                <option value="">VIP等级</option>
+                {foreach $levelMap as $lv=>$info}
+                <option value="{$lv}" {if (string)$vipFilter===(string)$lv}selected{/if}>{$info.name}</option>
+                {/foreach}
+              </select>
+            </div>
+            <div class="col-md-2">
+              <select class="finp" name="oauth_filter" style="width:100%">
+                <option value="">登录方式</option>
+                <option value="1" {if $oauthFilter==='1'}selected{/if}>QQ快捷登录</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <select class="finp" name="state_filter" style="width:100%">
+                <option value="">用户状态</option>
+                <option value="1" {if $stateFilter==='1'}selected{/if}>正常</option>
+                <option value="0" {if $stateFilter==='0'}selected{/if}>冻结</option>
+              </select>
+            </div>
+            <div class="col-md-1">
+              <button class="nbtn pri w-100" type="submit"><i class="mdi mdi-magnify"></i></button>
+            </div>
+          </div>
+        </form>
+
+        <div class="table-responsive-sm">
+          <table class="ntable">
+            <thead>
+              <tr>
+                <th width="40">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="check-all">
+                    <label class="form-check-label" for="check-all"></label>
+                  </div>
+                </th>
+                <th>ID</th>
+                <th>名称</th>
+                <th>账号</th>
+                <th>邮箱</th>
+                <th>QQ</th>
+                <th>余额</th>
+                <th>VIP等级</th>
+                <th>积分</th>
+                <th>登录IP</th>
+                <th>注册时间</th>
+                <th>状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              {foreach $users as $u}
+              <tr>
+                <td data-label="选择">
+                  <div class="form-check">
+                    <input type="checkbox" class="form-check-input ids" name="ids" value="{$u.id}">
+                    <label class="form-check-label"></label>
+                  </div>
+                </td>
+                <td data-label="ID">{$u.id}</td>
+                <td data-label="名称">{$u.name}</td>
+                <td data-label="账号">{$u.user}</td>
+                <td data-label="邮箱">{$u.mail|default='--'}</td>
+                <td data-label="QQ">{$u.qq|default='--'}</td>
+                <td data-label="余额">{$u.money}</td>
+                <td data-label="VIP等级">
+                  {if isset($u['level']) && $u['level'] > 0}
+                    {if isset($levelMap[$u['level']])}
+                      <span class="nbadge b">VIP{$u.level} {$levelMap[$u['level']]['name']}</span>
+                    {else}
+                      <span class="nbadge b">VIP{$u.level}</span>
+                    {/if}
+                  {else}
+                    <span class="text-muted">普通用户</span>
+                  {/if}
+                </td>
+                <td data-label="积分">{$u.points|default=0}</td>
+                <td data-label="登录IP">
+                  {if $u.last_login_ip}
+                  <span title="{$u.last_login_ip}">{$u.last_login_ip}</span>
+                  {else}
+                  <span class="text-muted">--</span>
+                  {/if}
+                </td>
+                <td data-label="注册时间">{$u.time|date="Y-m-d",###}</td>
+                <td data-label="状态">
+                  {if $u.state=="1"}
+                  <span class="nbadge g">正常</span>
+                  {else}
+                  <span class="nbadge r">冻结</span>
+                  {/if}
+                  {if $u.ban_time > time()}
+                  <span class="nbadge y" title="封禁至: {$u.ban_time|date='Y-m-d H:i:s',###} 原因: {$u.ban_reason}">封禁</span>
+                  {/if}
+                  {if $u.realname_status=="1"}
+                  <span class="nbadge b">已实名</span>
+                  {elseif $u.realname_status=="3"}
+                  <span class="nbadge y">待审核</span>
+                  {/if}
+                </td>
+                <td data-label="操作">
+                  <form method="POST" action="" style="display:inline;">
+                    <input type="hidden" value="login" name="act">
+                    <input type="hidden" value="{$u.id}" name="userid">
+                    <button class="nbtn out" title="登录用户中心"><i class="mdi mdi-login"></i></button>
+                  </form>
+                  <a href="/admin/user/{$u.id}" class="nbtn out" title="查看详情"><i class="mdi mdi-eye"></i></a>
+                  {if $u.ban_time > time()}
+                  <button class="nbtn out" onclick="unbanUser({$u.id})" title="解封"><i class="mdi mdi-lock-open-outline"></i></button>
+                  {else}
+                  <button class="nbtn out" onclick="banUser({$u.id})" title="封禁"><i class="mdi mdi-lock-outline"></i></button>
+                  {/if}
+                  <button class="nbtn out" onclick="delUser({$u.id})" title="删除" style="color:#dc3545;"><i class="mdi mdi-delete"></i></button>
+                </td>
+              </tr>
+              {/foreach}
+            </tbody>
+          </table>
+        </div>
+
+        <div style="text-align:center;margin-top:20px;">{$users->render()}</div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<style>
+.page-wrap { --p: #667eea; --p2: #764ba2; --r: 16px; }
+.page-bar {
+  background: linear-gradient(135deg,#667eea,#764ba2); border-radius:16px;
+  padding:18px 22px; margin-bottom:18px; color:#fff;
+  box-shadow:0 4px 20px rgba(102,126,234,0.25);
+  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;
+}
+.page-bar h2 { margin:0; font-size:19px; font-weight:700; }
+.page-bar p { margin:2px 0 0; font-size:12px; opacity:.8; }
+.ccard { background:#fff; border-radius:16px; box-shadow:0 2px 14px rgba(0,0,0,0.04); border:1px solid #e8ecf1; overflow:hidden; margin-bottom:18px; }
+.ccard-hd { padding:13px 18px; border-bottom:1px solid #f1f5f9; font-weight:700; color:#1a1a2e; font-size:14px; display:flex; align-items:center; gap:8px; }
+.ccard-hd::before { content:''; width:4px; height:17px; border-radius:2px; background:linear-gradient(180deg,#667eea,#764ba2); }
+.ccard-bd { padding:16px 18px; }
+.ntable { width:100%; border-collapse:collapse; font-size:13px; }
+.ntable th { background:#f7f8fc; color:#475569; font-weight:600; padding:9px 11px; border-bottom:2px solid #e2e8f0; font-size:11px; text-transform:uppercase; letter-spacing:.03em; white-space:nowrap; }
+.ntable td { padding:9px 11px; border-bottom:1px solid #f1f5f9; color:#334155; vertical-align:middle; }
+.ntable tr:hover td { background:#fafbff; }
+.nbtn { display:inline-flex; align-items:center; gap:5px; padding:7px 16px; border-radius:10px; border:none; font-size:12px; font-weight:600; cursor:pointer; transition:all .2s; text-decoration:none; white-space:nowrap; }
+.nbtn.pri { background:linear-gradient(135deg,#667eea,#764ba2); color:#fff; box-shadow:0 3px 10px rgba(102,126,234,.3); }
+.nbtn.pri:hover { transform:translateY(-1px); box-shadow:0 5px 16px rgba(102,126,234,.4); }
+.nbtn.dan { background:linear-gradient(135deg,#ef4444,#dc2626); color:#fff; }
+.nbtn.suc { background:linear-gradient(135deg,#10b981,#059669); color:#fff; }
+.nbtn.warn { background:linear-gradient(135deg,#f59e0b,#d97706); color:#fff; }
+.nbtn.out { background:#fff; color:#667eea; border:2px solid #e2e8f0; }
+.nbtn.out:hover { border-color:#667eea; background:#eef2ff; }
+.nbadge { display:inline-flex; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600; }
+.nbadge.g { background:#ecfdf5; color:#059669; }
+.nbadge.y { background:#fffbeb; color:#d97706; }
+.nbadge.r { background:#fef2f2; color:#dc2626; }
+.nbadge.b { background:#eff6ff; color:#2563eb; }
+.finp { width:100%; padding:9px 13px; border:2px solid #e2e8f0; border-radius:10px; font-size:13px; transition:.2s; color:#334155; }
+.finp:focus { border-color:#667eea; box-shadow:0 0 0 3px rgba(102,126,234,.1); outline:none; }
+.flbl { display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:5px; }
+.d-flex { display:flex; }
+.gap-2 { gap:8px; }
+@media(max-width:768px){
+  .page-bar { padding:14px 16px; border-radius:12px; }
+  .page-bar h2 { font-size:17px; }
+  .ccard-bd { padding:12px 14px; }
+  .ntable thead { display:none; }
+  .ntable td { display:block; text-align:right; padding:6px 10px; }
+  .ntable td::before { content:attr(data-label); float:left; font-weight:600; color:#475569; font-size:11px; text-transform:uppercase; }
+  .ntable tr { display:block; margin-bottom:6px; background:#fafbfc; border-radius:10px; padding:5px 8px; }
+}
+</style>
+
+<script>
+// 全选
+$('#check-all').on('change', function() {
+    $('.ids').prop('checked', this.checked);
+});
+
+// 批量删除
+function batchDel(){
+    var id = [];
+    $("input[name='ids']:checked").each(function(i){
+        id[i] = $(this).val();
+    });
+    var id = id.join(",");
+    if(id==""){
+        layer.msg('请先选择用户', {icon:2});
+    }else{
+        layer.confirm('确定要删除所选 <span style="color:#ef4444">' + $("input[name='ids']:checked").length + '</span> 个用户吗？<br>用户下有未删除产品的将无法删除。', {icon:3, title:'批量删除确认'}, function(){
+            delSubmit(id);
+        });
+    }
+}
+
+// 批量封禁
+function batchBan(){
+    var id = [];
+    $("input[name='ids']:checked").each(function(i){
+        id[i] = $(this).val();
+    });
+    if(id.length == 0){
+        layer.msg('请先选择用户', {icon:2});
+        return;
+    }
+    layer.open({
+        type: 1,
+        area: ['460px', 'auto'],
+        closeBtn: 1,
+        shift: 7,
+        shadeClose: true,
+        skin: 'layer-admin-form',
+        title: '批量封禁 (' + id.length + ' 个用户)',
+        content: '<div class="card-body" style="width:420px;max-width:100%;padding:18px 20px 12px;box-sizing:border-box">'
+          + '<div class="admin-form-tip"><strong>批量封禁设置</strong>将对所选用户统一设置封禁时长和原因。</div>'
+          + '<div class="mb-3"><label class="form-label">封禁时长(小时) <span style="color:#de350b">*</span></label>'
+          + '<input class="form-control" type="number" id="batch_ban_duration" value="24" min="1" max="87600" placeholder="例如：24=1天，168=7天">'
+          + '<span class="admin-field-hint">1小时到87600小时(约10年)</span></div>'
+          + '<div class="mb-3"><label class="form-label">封禁原因</label>'
+          + '<textarea class="form-control" id="batch_ban_reason" rows="2" placeholder="选填"></textarea></div>'
+          + '<div class="d-flex gap-2" style="padding-bottom:8px">'
+          + '<button type="button" onclick="batchBanSubmit(' + JSON.stringify(id) + ')" class="btn-admin btn-admin-danger">确认封禁</button>'
+          + '<button type="button" onclick="layer.closeAll()" class="btn btn-secondary">取消</button>'
+          + '</div></div>'
+    });
+}
+
+function batchBanSubmit(ids){
+    var duration = $('#batch_ban_duration').val();
+    var reason = $('#batch_ban_reason').val();
+    if(!duration || duration < 1){
+        layer.msg('请填写有效的封禁时长', {icon:2});
+        return;
+    }
+    var load = layer.msg('封禁中...', {icon:16, time:false});
+    var promises = ids.map(function(id){
+        return $.ajax({
+            type:'POST', url:'', data:{act:'banUser', userid:id, ban_duration:duration, ban_reason:reason},
+            dataType:'json'
+        });
+    });
+    Promise.all(promises).then(function(){
+        layer.close(load);
+        layer.msg('批量封禁完成', {icon:1}, function(){ window.location.reload(); });
+    }).catch(function(){
+        layer.close(load);
+        layer.msg('部分封禁失败', {icon:2});
+    });
+}
+
+function delSubmit(id){
+    var load = layer.load('1', {time:false});
+    $.ajax({
+        type:'POST', url:'', data:{act:'delete', userid:id}, dataType:'json',
+        success:function(data){
+            layer.close(load);
+            if(data.code == 1){
+                layer.alert(data.msg, {icon:1}, function(){ window.location.reload(); });
+            }else{
+                layer.alert(data.msg, {icon:2});
+            }
+        }
+    });
+}
+
+function adduser(){
+    layer.open({
+        type: 1,
+        area: ['520px', 'auto'],
+        maxHeight: Math.min(window.innerHeight * 0.88, 640),
+        closeBtn: 1,
+        shift: 7,
+        shadeClose: true,
+        skin: 'layer-admin-form',
+        title: '添加用户',
+        content: '<div class="card-body" style="width:480px;max-width:100%;padding:18px 20px 12px;box-sizing:border-box">'
+          + '<div class="admin-form-tip"><strong>添加前台用户</strong>名称、账号、QQ、密码为必填；邮箱选填。</div>'
+          + '<div class="mb-3"><label class="form-label">名称 <span style="color:#de350b">*</span></label>'
+          + '<input class="form-control" type="text" id="add_name" placeholder="显示昵称">'
+          + '<span class="admin-field-hint">用户昵称/显示名</span></div>'
+          + '<div class="mb-3"><label class="form-label">账号 <span style="color:#de350b">*</span></label>'
+          + '<input class="form-control" type="text" id="add_user" placeholder="登录账号，需唯一">'
+          + '<span class="admin-field-hint">登录用，不可与已有账号重复</span></div>'
+          + '<div class="row">'
+          + '<div class="col-md-6 mb-3"><label class="form-label">QQ <span style="color:#de350b">*</span></label>'
+          + '<input class="form-control" type="text" id="add_qq" placeholder="QQ号">'
+          + '<span class="admin-field-hint">用于头像展示</span></div>'
+          + '<div class="col-md-6 mb-3"><label class="form-label">邮箱</label>'
+          + '<input class="form-control" type="text" id="add_mail" placeholder="可选，需合法邮箱">'
+          + '<span class="admin-field-hint">选填；填写则不可重复</span></div>'
+          + '</div>'
+          + '<div class="mb-3"><label class="form-label">密码 <span style="color:#de350b">*</span></label>'
+          + '<input class="form-control" type="text" id="add_password" placeholder="初始登录密码">'
+          + '<span class="admin-field-hint">初始密码，用户登录后可自行修改</span></div>'
+          + '<div class="d-flex gap-2" style="padding-bottom:8px">'
+          + '<button type="button" onclick="addUserSubmit()" class="btn-admin btn-admin-primary">添加用户</button>'
+          + '<button type="button" onclick="layer.closeAll()" class="btn btn-secondary">取消</button>'
+          + '</div></div>'
+    });
+}
+
+function addUserSubmit(){
+    var load = layer.msg('添加中...', {icon:16, time:false});
+    $.ajax({
+        type:'POST', url:'',
+        data:{
+            act:'adduser',
+            name: $('#add_name').val(),
+            user: $('#add_user').val(),
+            qq: $('#add_qq').val(),
+            mail: $('#add_mail').val(),
+            password: $('#add_password').val(),
+        },
+        dataType:'json',
+        success:function(data){
+            layer.close(load);
+            if(data.code == 1){
+                layer.alert(data.msg, {icon:1}, function(){ window.location.reload(); });
+            }else{
+                layer.msg(data.msg, {icon:2});
+            }
+        }
+    });
+}
+
+function banUser(userid){
+    layer.open({
+        type: 1, area: ['460px', 'auto'], closeBtn: 1, shift: 7, shadeClose: true,
+        skin: 'layer-admin-form', title: '封禁用户 (ID: '+userid+')',
+        content: '<div class="card-body" style="width:420px;max-width:100%;padding:18px 20px 12px;box-sizing:border-box">'
+          + '<div class="admin-form-tip"><strong>设置封禁时长和原因</strong>封禁后用户所有主机将被停用。</div>'
+          + '<div class="mb-3"><label class="form-label">封禁时长(小时) <span style="color:#de350b">*</span></label>'
+          + '<input class="form-control" type="number" id="ban_duration" value="24" min="1" max="87600" placeholder="例如：24=1天，168=7天">'
+          + '<span class="admin-field-hint">1小时到87600小时(约10年)</span></div>'
+          + '<div class="mb-3"><label class="form-label">封禁原因</label>'
+          + '<textarea class="form-control" id="ban_reason" rows="2" placeholder="选填"></textarea></div>'
+          + '<div class="d-flex gap-2" style="padding-bottom:8px">'
+          + '<button type="button" onclick="banSubmit('+userid+')" class="btn-admin btn-admin-danger">确认封禁</button>'
+          + '<button type="button" onclick="layer.closeAll()" class="btn btn-secondary">取消</button>'
+          + '</div></div>'
+    });
+}
+
+function banSubmit(userid){
+    var load = layer.msg('封禁中...', {icon:16, time:false});
+    $.ajax({
+        type:'POST', url:'',
+        data:{act:'banUser', userid:userid, ban_duration: $('#ban_duration').val(), ban_reason: $('#ban_reason').val()},
+        dataType:'json',
+        success:function(data){
+            layer.close(load);
+            if(data.code == 1){
+                layer.alert(data.msg, {icon:1}, function(){ window.location.reload(); });
+            }else{
+                layer.alert(data.msg, {icon:2});
+            }
+        }
+    });
+}
+
+function unbanUser(userid){
+    layer.confirm('确定要解封用户 <span style="color:#10b981">#'+ userid +'</span> 吗？<br>解封后主机需手动恢复。', {icon:3}, function(){
+        var load = layer.msg('解封中...', {icon:16, time:false});
+        $.ajax({
+            type:'POST', url:'', data:{act:'unbanUser', userid:userid}, dataType:'json',
+            success:function(data){
+                layer.close(load);
+                if(data.code == 1){
+                    layer.alert(data.msg, {icon:1}, function(){ window.location.reload(); });
+                }else{
+                    layer.alert(data.msg, {icon:2});
+                }
+            }
+        });
+    });
+}
+
+function delUser(userid){
+    layer.confirm('确定要删除用户 <span style="color:#ef4444">#'+ userid +'</span> 吗？<br>该用户下有未删除的产品将无法删除。', {icon:3}, function(){
+        var load = layer.msg('删除中...', {icon:16, time:false});
+        $.ajax({
+            type:'POST', url:'', data:{act:'delete', userid:userid}, dataType:'json',
+            success:function(data){
+                layer.close(load);
+                if(data.code == 1){
+                    layer.alert(data.msg, {icon:1}, function(){ window.location.reload(); });
+                }else{
+                    layer.alert(data.msg, {icon:2});
+                }
+            }
+        });
+    });
+}
+</script>
+{include file="default/footer" /}

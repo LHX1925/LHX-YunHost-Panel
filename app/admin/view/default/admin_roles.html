@@ -1,0 +1,89 @@
+{include file="default/header" title="角色管理"/}
+<script>document.title = '{$webname} - 角色管理';</script>
+<style>
+.btn-admin-info { background: #0EA5E9; border-color: #0EA5E9; color: #fff; }
+.btn-admin-info:hover { background: #0284C7; border-color: #0284C7; }
+.btn-admin-outline { background: #fff; border: 1px solid #d1d5db; color: #374151; }
+.btn-admin-outline:hover { background: #f9fafb; border-color: #9ca3af; }
+</style>
+    <main class="lyear-layout-content">
+      <div class="container-fluid glass-animate-in">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h4 class="mb-0" style="font-weight:600;color:#172b4d;">角色管理</h4>
+          <a href="/admin/admin_manager/add_role" class="btn-admin btn-admin-primary">添加角色</a>
+        </div>
+        <div class="card admin-card">
+          <div class="card-body">
+            <table class="table table-admin">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>角色名称</th>
+                  <th>描述</th>
+                  <th>权限</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                {foreach $roles as $role}
+                <tr>
+                  <td>{$role.id}</td>
+                  <td><strong>{$role.name}</strong></td>
+                  <td>{$role.description}</td>
+                  <td>
+                    {php}
+                    $perms = json_decode($role['permissions'], true);
+                    $permLabels = [
+                      'all' => '所有权限',
+                      'user' => '用户管理',
+                      'product' => '产品管理',
+                      'order' => '订单管理',
+                      'ticket' => '工单管理',
+                      'announcement' => '公告管理',
+                      'pay' => '支付配置',
+                      'aff' => '推广管理',
+                      'set' => '网站设置',
+                      'server' => '服务器管理',
+                      'classification' => '分类管理',
+                    ];
+                    $labels = [];
+                    if (is_array($perms)) {
+                      foreach ($perms as $p) {
+                        $labels[] = '<span class="admin-badge admin-badge-primary" style="margin:2px;">' . ($permLabels[$p] ?? $p) . '</span>';
+                      }
+                    }
+                    echo implode(' ', $labels);
+                    {/php}
+                  </td>
+                  <td>
+                    {if $role.id != 1}
+                    <a href="/admin/admin_manager/edit_role/{$role.id}" class="btn-admin btn-admin-info">编辑</a>
+                    <button class="btn-admin btn-admin-danger" onclick="deleteRole({$role.id})">删除</button>
+                    {else}
+                    <span class="admin-badge admin-badge-secondary">系统内置</span>
+                    {/if}
+                  </td>
+                </tr>
+                {/foreach}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="mt-3">
+          <a href="/admin/admin_manager" class="btn-admin btn-admin-outline">返回管理员列表</a>
+        </div>
+      </div>
+    </main>
+<script>
+function deleteRole(id) {
+  if (!confirm('确定要删除此角色吗？')) return;
+  $.post('/admin/admin_manager/delete_role', {id: id}, function(res) {
+    if (res.code == 1) {
+      location.reload();
+    } else {
+      alert(res.msg);
+    }
+  });
+}
+</script>
+{include file="default/footer" /}

@@ -1,0 +1,244 @@
+{include file="default/header" title="支付通道"/}
+<main class="lyear-layout-content">
+  <div class="container-fluid page-wrap">
+
+    <div class="page-bar">
+      <div>
+        <h2>支付通道</h2>
+        <p>管理支付插件配置 · 支持多种支付方式</p>
+      </div>
+      <div class="d-flex gap-2">
+        <button onclick='add()' class="nbtn pri"><i class="mdi mdi-plus"></i> 添加支付通道</button>
+        <button onclick='del()' class="nbtn dan"><i class="mdi mdi-window-close"></i> 删除</button>
+        <button onclick='qbdel()' class="nbtn warn"><i class="mdi mdi-window-close"></i> 全部删除</button>
+      </div>
+    </div>
+
+    <div class="ccard">
+      <div class="ccard-hd">支付通道列表</div>
+      <div class="ccard-bd">
+        <form method="get" action="" class="mb-3">
+          <div class="row g-2 align-items-end">
+            <div class="col-md-8">
+              <input class="finp" type="text" name="search" placeholder="搜索..." value=""/>
+            </div>
+            <div class="col-md-4">
+              <button class="nbtn pri" type="submit"><i class="mdi mdi-magnify"></i> 搜索</button>
+            </div>
+          </div>
+        </form>
+
+        <div class="table-responsive-sm">
+          <table class="ntable">
+            <thead>
+              <tr>
+                <th width="40">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="check-all">
+                    <label class="form-check-label" for="check-all"></label>
+                  </div>
+                </th>
+                <th>ID</th>
+                <th>名称</th>
+                <th>插件</th>
+                <th>开关</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              {foreach $pays as $p}
+              <tr>
+                <td data-label="选择">
+                  <div class="form-check">
+                    <input type="checkbox" class="form-check-input ids" name="ids" value="{$p.id}">
+                    <label class="form-check-label" for="ids-1"></label>
+                  </div>
+                </td>
+                <td data-label="ID">{$p.id}</td>
+                <td data-label="名称">{$p.name}</td>
+                <td data-label="插件">{$p.plugins}</td>
+                <td data-label="开关">
+                  {if $p.state=="1"}
+                  <span class="nbadge g">开启</span>
+                  {else}
+                  <span class="nbadge r">关闭</span>
+                  {/if}
+                </td>
+                <td data-label="操作">
+                  <a href="/admin/pays/{$p.id}" class="nbtn suc"><i class="mdi mdi-pencil"></i> 配置参数</a>
+                </td>
+              </tr>
+              {/foreach}
+            </tbody>
+          </table>
+        </div>
+        <div style="text-align:center">{$pays->render()}</div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<style>
+.page-wrap { --p: #667eea; --p2: #764ba2; --r: 16px; }
+.page-bar {
+  background: linear-gradient(135deg,#667eea,#764ba2); border-radius:16px;
+  padding:18px 22px; margin-bottom:18px; color:#fff;
+  box-shadow:0 4px 20px rgba(102,126,234,0.25);
+  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;
+}
+.page-bar h2 { margin:0; font-size:19px; font-weight:700; }
+.page-bar p { margin:2px 0 0; font-size:12px; opacity:.8; }
+.ccard { background:#fff; border-radius:16px; box-shadow:0 2px 14px rgba(0,0,0,0.04); border:1px solid #e8ecf1; overflow:hidden; margin-bottom:18px; }
+.ccard-hd { padding:13px 18px; border-bottom:1px solid #f1f5f9; font-weight:700; color:#1a1a2e; font-size:14px; display:flex; align-items:center; gap:8px; }
+.ccard-hd::before { content:''; width:4px; height:17px; border-radius:2px; background:linear-gradient(180deg,#667eea,#764ba2); }
+.ccard-bd { padding:16px 18px; }
+.ntable { width:100%; border-collapse:collapse; font-size:13px; }
+.ntable th { background:#f7f8fc; color:#475569; font-weight:600; padding:9px 11px; border-bottom:2px solid #e2e8f0; font-size:11px; text-transform:uppercase; letter-spacing:.03em; white-space:nowrap; }
+.ntable td { padding:9px 11px; border-bottom:1px solid #f1f5f9; color:#334155; vertical-align:middle; }
+.ntable tr:hover td { background:#fafbff; }
+.nbtn { display:inline-flex; align-items:center; gap:5px; padding:7px 16px; border-radius:10px; border:none; font-size:12px; font-weight:600; cursor:pointer; transition:all .2s; text-decoration:none; white-space:nowrap; }
+.nbtn.pri { background:linear-gradient(135deg,#667eea,#764ba2); color:#fff; box-shadow:0 3px 10px rgba(102,126,234,.3); }
+.nbtn.pri:hover { transform:translateY(-1px); box-shadow:0 5px 16px rgba(102,126,234,.4); }
+.nbtn.dan { background:linear-gradient(135deg,#ef4444,#dc2626); color:#fff; }
+.nbtn.suc { background:linear-gradient(135deg,#10b981,#059669); color:#fff; }
+.nbtn.warn { background:linear-gradient(135deg,#f59e0b,#d97706); color:#fff; }
+.nbtn.out { background:#fff; color:#667eea; border:2px solid #e2e8f0; }
+.nbtn.out:hover { border-color:#667eea; background:#eef2ff; }
+.nbadge { display:inline-flex; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600; }
+.nbadge.g { background:#ecfdf5; color:#059669; }
+.nbadge.y { background:#fffbeb; color:#d97706; }
+.nbadge.r { background:#fef2f2; color:#dc2626; }
+.nbadge.b { background:#eff6ff; color:#2563eb; }
+.finp { width:100%; padding:9px 13px; border:2px solid #e2e8f0; border-radius:10px; font-size:13px; transition:.2s; color:#334155; box-sizing:border-box; }
+.finp:focus { border-color:#667eea; box-shadow:0 0 0 3px rgba(102,126,234,.1); outline:none; }
+.flbl { display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:5px; }
+.d-flex { display:flex; }
+.gap-2 { gap:8px; }
+@media(max-width:768px){
+  .page-bar { padding:14px 16px; border-radius:12px; }
+  .page-bar h2 { font-size:17px; }
+  .ccard-bd { padding:12px 14px; }
+  .ntable thead { display:none; }
+  .ntable td { display:block; text-align:right; padding:6px 10px; }
+  .ntable td::before { content:attr(data-label); float:left; font-weight:600; color:#475569; font-size:11px; text-transform:uppercase; }
+  .ntable tr { display:block; margin-bottom:6px; background:#fafbfc; border-radius:10px; padding:5px 8px; }
+}
+</style>
+
+<script>
+$(function(){
+  // 全选
+  $('#check-all').on('change', function(){
+    $('.ids').prop('checked', this.checked);
+  });
+});
+
+function add(){
+layer.open({
+        type: 1,
+        closeBtn: false,
+        shift: 7,
+        shadeClose: true,
+        title:"添加支付通道",
+        content: '<div style="width:350px;" class="card-body"><div class="tab-content"><div class="mb-3"><label for="web_site_title" class="form-label">名称</label><input class="form-control" type="text" name="name" value="" placeholder=""></div><div class="mb-3"><label for="type" class="form-label">支付插件</label><div class="form-controls"><select name="plugins" class="form-select" id="type"><option value="">不选择</option>{volist name="payss" id="p"}<option value="{$p}">{$p}</option>{/volist} </select></div><br/><button type="button" onclick="add1()" class="btn-admin btn-admin-primary me-1">添加</button></div> </div> </div>',
+  });
+
+}
+
+function add1(){
+             var load = layer.msg('添加中，请稍后...',{icon:16,time:false});
+        var name = $("input[name='name']").val();
+        var plugins = $("select[name='plugins']").val();
+        $.ajax({
+            type:'POST',
+            url:'',
+            data:{
+                act:'add',
+name:name,
+plugins:plugins,
+            },
+            dataType:'json',
+            success:function (data){
+                layer.close(load)
+                if(data.code == 1){
+                    setTimeout(function (){
+                        location.href = ''
+                    },1000);
+                    layer.alert(data.msg,{icon:1});
+                }else{
+                    layer.msg(data.msg,{icon:2});
+                }
+            }
+        });
+    }
+
+function del(id){
+var id = [];
+$("input[name='ids']:checked").each(function(i){
+        id[i] =$(this).val();
+      });
+var id = id.join(",");
+if(id==""){
+layer.alert("未选择支付通道!",{icon:2,shade:0.8});
+}else{
+        layer.confirm('确定要删除ID为<span style="color:#0b5ed7">'+ id +'</span>的支付通道吗？', function (){
+            del1(id)
+        });
+    }
+}
+    function del1(id){
+        var load = layer.load('1',{time:false});
+
+        $.ajax({
+            type:'POST',
+            url:'',
+            data:{
+                act:'delete',
+                cid:id
+            },
+            dataType:'json',
+            success:function (data){
+                layer.close(load);
+                if(data.code == 1){
+layer.alert(data.msg,{icon:1},function(){
+                        window.location.href = "";
+                    });
+                }else{
+                    layer.alert(data.msg,{icon:2});
+                }
+            }
+        });
+    }
+
+function qbdel(){
+        layer.confirm('确定要删除<span style="color:#0b5ed7">全部</span>的支付通道吗？', function (){
+            qbdel1()
+        });
+    }
+
+
+    function qbdel1(){
+        var load = layer.load('1',{time:false});
+
+        $.ajax({
+            type:'POST',
+            url:'',
+            data:{
+                act:'qbdelete',
+            },
+            dataType:'json',
+            success:function (data){
+                layer.close(load);
+                if(data.code == 1){
+layer.alert(data.msg,{icon:1},function(){
+                        window.location.href = "";
+                    });
+                }else{
+                    layer.alert(data.msg,{icon:2});
+                }
+            }
+        });
+    }
+</script>
+{include file="default/footer" /}

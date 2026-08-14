@@ -1,0 +1,82 @@
+{include file="default/header" title="编辑管理员"/}
+<style>
+.pw { --p:#667eea;--p2:#764ba2; }
+.pw-bar { background:linear-gradient(135deg,#667eea,#764ba2); border-radius:16px; padding:18px 22px; margin-bottom:18px; color:#fff; box-shadow:0 4px 20px rgba(102,126,234,.25); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; }
+.pw-bar h2 { margin:0; font-size:19px; font-weight:700; }
+.ccard { background:#fff; border-radius:16px; box-shadow:0 2px 14px rgba(0,0,0,.04); border:1px solid #e8ecf1; overflow:hidden; margin-bottom:18px; }
+.ccard-hd { padding:13px 18px; border-bottom:1px solid #f1f5f9; font-weight:700; color:#1a1a2e; font-size:14px; display:flex; align-items:center; gap:8px; }
+.ccard-hd::before { content:''; width:4px; height:17px; border-radius:2px; background:linear-gradient(180deg,#667eea,#764ba2); }
+.ccard-bd { padding:18px; }
+.finp { width:100%; padding:9px 13px; border:2px solid #e2e8f0; border-radius:10px; font-size:13px; transition:.2s; color:#334155; background:#fff; box-sizing:border-box; }
+.finp:focus { border-color:#667eea; box-shadow:0 0 0 3px rgba(102,126,234,.1); outline:none; }
+.flbl { display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:5px; }
+.nbtn { display:inline-flex; align-items:center; gap:5px; padding:9px 20px; border-radius:10px; border:none; font-size:13px; font-weight:600; cursor:pointer; transition:all .2s; text-decoration:none; }
+.nbtn.pri { background:linear-gradient(135deg,#667eea,#764ba2); color:#fff; box-shadow:0 3px 10px rgba(102,126,234,.3); }
+.nbtn.pri:hover { transform:translateY(-1px); box-shadow:0 5px 16px rgba(102,126,234,.4); }
+.nbtn.out { background:#fff; color:#667eea; border:2px solid #e2e8f0; }
+.nbtn.out:hover { border-color:#667eea; background:#eef2ff; }
+@media(max-width:768px){
+  .pw-bar { padding:14px 16px; border-radius:12px; }
+  .pw-bar h2 { font-size:17px; }
+  .ccard-bd { padding:14px; }
+}
+</style>
+
+<main class="lyear-layout-content pw">
+  <div class="container-fluid">
+    <div class="pw-bar"><h2>编辑管理员 - {$admin.user}</h2></div>
+    <div class="row">
+      <div class="col-lg-8">
+        <div class="ccard">
+          <div class="ccard-hd">管理员信息</div>
+          <div class="ccard-bd">
+            <form id="edit-form">
+              <div class="mb-3"><label class="flbl">用户名（账号）</label><input class="finp" type="text" name="user" value="{$admin.user}" required></div>
+              <div class="mb-3"><label class="flbl">新密码（留空不修改）</label><input class="finp" type="password" name="password" placeholder="留空则不修改密码"></div>
+              <div class="mb-3"><label class="flbl">姓名</label><input class="finp" type="text" name="name" value="{$admin.name}" required></div>
+              <div class="mb-3"><label class="flbl">邮箱</label><input class="finp" type="email" name="mail" value="{$admin.mail}"></div>
+              <div class="mb-3"><label class="flbl">QQ</label><input class="finp" type="text" name="qq" value="{$admin.qq}"></div>
+              <div class="mb-3">
+                <label class="flbl">角色</label>
+                <select name="role_id" class="finp">
+                  <option value="0">未分配</option>
+                  {foreach $roles as $role}
+                  <option value="{$role.id}" {if $admin.role_id==$role.id}selected{/if}>{$role.name}</option>
+                  {/foreach}
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="flbl">状态</label>
+                <select name="status" class="finp">
+                  <option value="1" {if $admin.status==1}selected{/if}>启用</option>
+                  <option value="0" {if $admin.status==0}selected{/if}>禁用</option>
+                </select>
+              </div>
+              <div class="pt-3 mt-3" style="border-top:1px solid #f1f5f9;">
+                <button type="submit" class="nbtn pri">确定</button>
+                <a href="/admin/admin_manager" class="nbtn out">返回</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+{include file="default/footer" /}
+<script>
+$('#edit-form').on('submit', function(e){
+  e.preventDefault();
+  var load = layer.msg('修改中...',{icon:16,shade:0.8,time:false});
+  $.ajax({
+    type:'POST', url:'', data:$(this).serialize(), dataType:'json',
+    success:function(data){
+      layer.close(load);
+      if(data.code==1){ layer.alert(data.msg,{icon:1,shade:0.8},function(){ location.href='/admin/admin_manager'; }); }
+      else { layer.alert(data.msg,{icon:2,shade:0.8}); }
+    },
+    error:function(){ layer.close(load); layer.msg('修改失败',{icon:2}); }
+  });
+});
+</script>

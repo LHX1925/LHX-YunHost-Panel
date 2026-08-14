@@ -1,0 +1,188 @@
+{include file="default/header" title="服务器信息"/}
+<style>
+.server-edit-tip {
+  background: linear-gradient(135deg, #deebff 0%, #f0f7ff 100%);
+  border: 1px solid #b3d4ff;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: #0747a6;
+  line-height: 1.6;
+}
+.server-edit-tip strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #0052cc;
+}
+.server-edit-tip ul {
+  margin: 6px 0 0;
+  padding-left: 18px;
+}
+.server-edit-tip li { margin: 2px 0; }
+.field-hint {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #6b778c;
+  line-height: 1.45;
+}
+.field-hint .danger { color: #de350b; }
+.field-label-req::after {
+  content: " *";
+  color: #de350b;
+}
+</style>
+<main class="lyear-layout-content">
+  <div class="container-fluid glass-animate-in">
+    <div class="row">
+      <div class="col-lg-10 col-xl-8">
+        <div class="card admin-card">
+          <header class="card-header"><div class="card-title">服务器信息</div></header>
+          <div class="card-body">
+
+            <div class="server-edit-tip">
+              <strong>对接填写说明（梦奈宝塔）</strong>
+              <ul>
+                <li><b>主机</b>：只填域名或 IP，不要带 <code>http://</code> / <code>https://</code></li>
+                <li><b>安全码</b>：梦奈宝塔系统 API 安全码</li>
+                <li><b>账号</b>：梦奈里该服务器的「宝塔编号」</li>
+                <li><b>密码</b>：该服务器的「调用密钥」</li>
+                <li><span style="color:#de350b;font-weight:bold">端口务必填写梦奈服务端口，不是宝塔面板端口！</span></li>
+                <li>https 请开启 SSL；插件选 <b>mnbt</b></li>
+              </ul>
+            </div>
+
+            <form action="" method="post" name="edit-form" class="edit-form admin-form">
+              <div class="tab-content">
+
+                <div class="mb-3">
+                  <label class="form-label">名称</label>
+                  <input class="form-control" type="text" name="name" value="{$server.name}" placeholder="例如：梦奈主节点">
+                  <span class="field-hint">后台显示名称，随意填写</span>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label field-label-req">主机</label>
+                  <input class="form-control" type="text" name="host" value="{$server.host}" placeholder="bt.example.com 或 1.2.3.4">
+                  <span class="field-hint"><span class="danger">不要</span>带协议和路径。错误示例：http://bt.xxx.com:8888/</span>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">IP</label>
+                  <input class="form-control" type="text" name="ip" value="{$server.ip}" placeholder="可选，公网 IP">
+                  <span class="field-hint">可选备注字段，一般不参与接口请求</span>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">安全码（系统 API）</label>
+                  <textarea style="height:120px" class="form-control" name="security" placeholder="梦奈宝塔系统 API 安全码">{$server.security}</textarea>
+                  <span class="field-hint">对应梦奈宝塔系统 API / 安全码</span>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">MNBT端口 <span style="color:#de350b;font-weight:bold">*</span></label>
+                    <input class="form-control" type="text" name="port" value="{$server.port}" placeholder="MNBT 服务端口">
+                    <span class="field-hint" style="color:#de350b">⚠ 填梦奈服务的端口，不是宝塔面板端口！</span>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">是否开启 SSL</label>
+                    <select name="ssl" class="form-select">
+                      <option value="0" {if $server.ssl=="0"}selected{/if}>关闭（http）</option>
+                      <option value="1" {if $server.ssl=="1"}selected{/if}>开启（https）</option>
+                    </select>
+                    <span class="field-hint">地址为 https 时请开启</span>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">账号（宝塔编号）</label>
+                  <input class="form-control" type="text" name="user" value="{$server.user}" placeholder="梦奈服务器列表中的宝塔编号">
+                  <span class="field-hint">梦奈宝塔 → 服务器 → 宝塔编号</span>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">密码（调用密钥）</label>
+                  <input class="form-control" type="text" name="password" value="{$server.password}" placeholder="该服务器的调用密钥">
+                  <span class="field-hint">梦奈宝塔 → 对应服务器 → 调用密钥</span>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">服务器插件</label>
+                  <select name="serverplugins" class="form-select">
+                    <option value="">无</option>
+                    {volist name="plugins" id="p"}
+                    <option value="{$p}" {if $server.serverplugins==$p}selected{/if}>{$p}</option>
+                    {/volist}
+                  </select>
+                  <span class="field-hint">梦奈选 mnbt；EasyPanel 选 easypanel；手工单可选 default</span>
+                </div>
+
+{if $data7}
+                <hr>
+                <h5 class="mb-3">服务器扩展配置</h5>
+{foreach $data7 as $t}
+{if $t.type=="input"}
+                <div class="mb-3">
+                  <label class="form-label">{$t.title}</label>
+                  <input type="text" class="form-control" name="{$t.name}" value="{$t.value}">
+                  <span class="field-hint">{$t.prompt}</span>
+                </div>
+{/if}
+{if $t.type=="textarea"}
+                <div class="mb-3">
+                  <label class="form-label">{$t.title}</label>
+                  <textarea style="height:120px" class="form-control" name="{$t.name}">{$t.value}</textarea>
+                  <span class="field-hint">{$t.prompt}</span>
+                </div>
+{/if}
+{if $t.type=="select"}
+                <div class="mb-3">
+                  <label class="form-label">{$t.title}</label>
+                  <select name="{$t.name}" class="form-select">
+{volist name="t.option" id="op"}
+                    <option value="{$op}" {if $t.value==$op}selected{/if}>{$op}</option>
+{/volist}
+                  </select>
+                  <span class="field-hint">{$t.prompt}</span>
+                </div>
+{/if}
+{/foreach}
+{/if}
+
+                <button type="submit" class="btn-admin btn-admin-primary me-1">保存修改</button>
+                <a href="/admin/server" class="btn btn-secondary">返回列表</a>
+              </div>
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{include file="default/footer" /}
+<script>
+$("form").submit(function (){
+  var load = layer.msg('修改中，请稍后...',{icon:16,shade:0.8,time:false});
+  var form = $('form').serializeArray();
+  $.ajax({
+    type:'POST',
+    url:'',
+    data:form,
+    dataType:'json',
+    success:function (data){
+      layer.close(load);
+      if(data.code == 1){
+        setTimeout(function () { location.href = ''; }, 1000);
+        layer.alert(data.msg,{icon:1,shade:0.8});
+      }else{
+        layer.alert(data.msg,{icon:2,shade:0.8});
+      }
+    }
+  });
+  return false;
+});
+</script>

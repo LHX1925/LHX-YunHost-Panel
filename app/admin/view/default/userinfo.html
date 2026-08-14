@@ -1,0 +1,376 @@
+{include file="default/header" title="用户信息"/}
+<!--页面主要内容-->
+    <main class="lyear-layout-content">
+	
+      <div class="container-fluid glass-animate-in">
+
+        <div class="row">
+
+          <div class="col-lg-12">
+            <div class="card admin-card">
+              <header class="card-header"><div class="card-title">用户信息</div></header>
+              <div class="card-body">
+
+                <ul class="nav nav-tabs" id="userinfoTabs">
+                  <li class="nav-item">
+                    <button class="nav-link active" id="basic-config" data-bs-toggle="tab" data-bs-target="#config" type="button" >信息</button>
+                  </li>
+                  <li class="nav-item">
+                    <button class="nav-link" id="basic-sys" data-bs-toggle="tab" data-bs-target="#sys" type="button">产品</button>
+                  </li>
+                </ul>
+
+                <form action="" method="post" name="edit-form" class="edit-form admin-form">
+                  <div class="tab-content">
+
+
+
+
+                    <div class="tab-pane fade show active" id="config" aria-labelledby="basic-config">
+
+
+
+                      <div class="mb-3">
+                        <label for="web_site_title" class="form-label">名称</label>
+                        <input class="form-control" type="text" name="name" value="{$userinfo.name}" placeholder="">      
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="web_site_title" class="form-label">账号</label>
+                        <input class="form-control" type="text" name="user" value="{$userinfo.user}" placeholder="">      
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="web_site_title" class="form-label">余额</label>
+                        <input class="form-control" type="text" name="money" value="{$userinfo.money}" placeholder="">      
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="web_site_title" class="form-label">QQ</label>
+                        <input class="form-control" type="text" name="qq" value="{$userinfo.qq}" placeholder="">      
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="web_site_title" class="form-label">邮箱</label>
+                        <input class="form-control" type="text" name="mail" value="{$userinfo.mail}" placeholder="">      
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="web_site_title" class="form-label">地址</label>
+                        <input class="form-control" type="text" name="address" value="{$userinfo.address}" placeholder="">      
+                      </div>
+
+
+                      <div class="mb-3">
+                        <label for="web_site_title" class="form-label">aff</label>
+                        <input class="form-control" type="text" name="aff" value="{$userinfo.aff}" placeholder="">      
+                      </div>
+
+
+                      <div class="mb-3">
+                        <label for="web_site_title" class="form-label">aff余额</label>
+                        <input class="form-control" type="text" name="affmoney" value="{$userinfo.affmoney}" placeholder="">      
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="web_site_title" class="form-label">上级ID</label>
+                        <input class="form-control" type="text" name="upperid" value="{$userinfo.upperid}" placeholder="">      
+                      </div>
+
+
+
+                      <div class="mb-3">
+                        <label for="web_site_title" class="form-label">密码</label>
+                        <input class="form-control" type="text" name="password" placeholder="不修改请留空" value="" placeholder="">      
+                      </div>
+
+<div class="mb-3">
+                    <label for="type" class="form-label">账号状态</label>
+                    <div class="form-controls">
+                      <select name="state" class="form-select" id="type">
+                        <option value="1" {if $userinfo.state=="1"}selected{/if}>开启</option>
+                        <option value="0" {if $userinfo.state=="0"}selected{/if}>冻结</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label">实名认证状态</label>
+                    <div class="form-controls">
+                      <select name="realname_status" class="form-select">
+                        <option value="0" {if $userinfo.realname_status=="0"}selected{/if}>未认证</option>
+                        <option value="3" {if $userinfo.realname_status=="3"}selected{/if}>审核中</option>
+                        <option value="1" {if $userinfo.realname_status=="1"}selected{/if}>已认证</option>
+                        <option value="2" {if $userinfo.realname_status=="2"}selected{/if}>已驳回</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label">VIP等级</label>
+                    <div class="form-controls">
+                      <select name="membership_level" class="form-select">
+                        <option value="0" {if $userinfo.membership_level=="0" || !isset($userinfo.membership_level)}selected{/if}>普通用户</option>
+                        <option value="1" {if $userinfo.membership_level=="1"}selected{/if}>青铜VIP</option>
+                        <option value="2" {if $userinfo.membership_level=="2"}selected{/if}>白银VIP</option>
+                        <option value="3" {if $userinfo.membership_level=="3"}selected{/if}>黄金VIP</option>
+                        <option value="4" {if $userinfo.membership_level=="4"}selected{/if}>紫金VIP</option>
+                        <option value="5" {if $userinfo.membership_level=="5"}selected{/if}>钻石VIP</option>
+                        <option value="6" {if $userinfo.membership_level=="6"}selected{/if}>至尊VIP</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label">用户积分</label>
+                    <input class="form-control" type="number" name="points" value="{$userinfo.points|default='0'}" min="0" step="1" placeholder="用户当前积分">
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label">实名姓名</label>
+                    <input class="form-control" type="text" name="realname" value="{$userinfo.realname}" placeholder="实名认证的姓名">
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label">身份证号</label>
+                    <input class="form-control" type="text" name="idcard" value="{$userinfo.idcard}" placeholder="实名认证的身份证号">
+                  </div>
+
+<div class="mb-3">
+                    <label class="form-label">封禁状态</label>
+                    <div class="form-controls">
+                      {if $userinfo.ban_time > time()}
+                      <span class="admin-badge admin-badge-warning" style="font-size:14px;padding:6px 14px;">已封禁至 {$userinfo.ban_time|date="Y-m-d H:i:s",###}</span>
+                      {if $userinfo.ban_reason}
+                      <span class="admin-field-hint">封禁原因：{$userinfo.ban_reason}</span>
+                      {/if}
+                      <br><br>
+                      <button type="button" class="btn-admin btn-admin-success" onclick="unbanUser({$userinfo.id})"><i class="mdi mdi-lock-open"></i> 解封用户</button>
+                      {else}
+                      <span class="admin-badge admin-badge-success" style="font-size:14px;padding:6px 14px;">正常</span>
+                      <br><br>
+                      <button type="button" class="btn-admin btn-admin-danger" onclick="banUser({$userinfo.id})"><i class="mdi mdi-lock"></i> 封禁用户</button>
+                      {/if}
+                    </div>
+                  </div>
+  
+                     <button type="submit" class="btn-admin btn-admin-primary me-1">修改</button>
+                    </div>
+
+
+                    <div class="tab-pane fade" id="sys" aria-labelledby="basic-sys">
+
+
+<div class="table-responsive-sm">
+          <table class="table table-hover table-admin">
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">名称</th>
+                <th scope="col">账号</th>
+                <th scope="col">开通时间</th>
+                <th scope="col">到期时间</th>
+                <th scope="col">状态</th>
+                <th scope="col">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+{foreach $userorder as $u}
+
+              <tr>
+                <th scope="row">{$u.id}</th>
+                <td>{$u.cartid}</td>
+                <td>{$u.user}</td>
+                <td>{$u.atime|date="Y-m-d H:i:s",###}</td>
+                <td>{$u.ztime|date="Y-m-d H:i:s",###}</td>
+                <td>
+{if $u.state=="1"}
+<span class="admin-badge admin-badge-success">正常</span>
+{/if}
+{if $u.state=="2"}
+<span class="admin-badge admin-badge-warning">暂停</span>
+{/if}
+{if $u.state=="3"}
+<span class="admin-badge admin-badge-danger">终止</span>
+{/if}
+</td>
+<td>
+<a href="/admin/user/{$userid}/{$u.id}" class="btn-admin btn-admin-success btn-sm me-1"><i class="mdi mdi-pencil"></i>查看信息</a>
+</td>
+              </tr>
+{/foreach}
+            </tbody>
+          </table>
+</div>
+
+
+
+
+                    </div>
+
+
+
+
+                  </div>
+
+ 
+                </form>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>    
+	
+	</main>
+    <!--End 页面主要内容-->
+
+
+ {include file="default/footer" /}
+<script>
+    // 手动初始化 Bootstrap 5 标签页切换
+    $(function() {
+        var tabList = [].slice.call(document.querySelectorAll('#userinfoTabs button[data-bs-toggle="tab"]'));
+        tabList.forEach(function(triggerEl) {
+            var tabTrigger = new bootstrap.Tab(triggerEl);
+            triggerEl.addEventListener('click', function(e) {
+                e.preventDefault();
+                tabTrigger.show();
+            });
+        });
+    });
+
+    $("form").submit(function (){
+        var load = layer.msg('修改中，请稍后...',{icon:16,shade:0.8,time:false});
+
+        var name = $("input[name='name']").val();
+        var user = $("input[name='user']").val();
+        var money = $("input[name='money']").val();
+        var qq = $("input[name='qq']").val();
+        var mail = $("input[name='mail']").val();
+        var address = $("input[name='address']").val();
+        var password = $("input[name='password']").val();       
+        var aff = $("input[name='aff']").val();       
+        var affmoney = $("input[name='affmoney']").val();       
+        var upperid = $("input[name='upperid']").val();       
+        var state = $("select[name='state']").val();
+        var realname_status = $("select[name='realname_status']").val();
+        var membership_level = $("select[name='membership_level']").val();
+        var points = $("input[name='points']").val();
+        var realname = $("input[name='realname']").val();
+        var idcard = $("input[name='idcard']").val();
+
+           $.ajax({
+            type:'POST',
+            url:'',
+            data:{
+                name:name,
+                user:user,
+                money:money,
+                qq:qq,
+                mail:mail,
+                address:address,
+                password:password,
+                aff:aff,
+                affmoney:affmoney,
+                upperid:upperid,
+                state:state,
+                realname_status:realname_status,
+                membership_level:membership_level,
+                points:points,
+                realname:realname,
+                idcard:idcard,
+            },
+            dataType:'json',
+            success:function (data){
+                layer.close(load);
+                if(data.code == 1){
+                    layer.alert(data.msg,{icon:1,shade:0.8});
+                }else{
+                    layer.alert(data.msg,{icon:2,shade:0.8});
+                }
+            }
+        });
+        return false;
+    });
+
+function banUser(userid){
+layer.open({
+    type: 1,
+    area: ['460px', 'auto'],
+    closeBtn: 1,
+    shift: 7,
+    shadeClose: true,
+    skin: 'layer-admin-form',
+    title: "封禁用户 (ID: "+userid+")",
+    content: ''
+      + '<div class="card-body" style="width:420px;max-width:100%;padding:18px 20px 12px;box-sizing:border-box">'
+      + '<div class="admin-form-tip"><strong>设置封禁时长和原因</strong>'
+      + '封禁后用户可正常登录，但所有主机将被停用，无法发工单和充值。<br>'
+      + '到期后自动解封。</div>'
+      + '<div class="mb-3"><label class="form-label">封禁时长(小时) <span style="color:#de350b">*</span></label>'
+      + '<input class="form-control" type="number" name="ban_duration" value="24" min="1" max="87600" placeholder="例如：24=1天，168=7天，720=30天，8760=1年">'
+      + '<span class="admin-field-hint">1小时到87600小时(约10年)</span></div>'
+      + '<div class="mb-3"><label class="form-label">封禁原因</label>'
+      + '<textarea class="form-control" name="ban_reason" rows="2" placeholder="选填，如：违规使用、欠费等"></textarea></div>'
+      + '<div class="d-flex gap-2" style="padding-bottom:8px">'
+      + '<button type="button" onclick="banUserSubmit('+userid+')" class="btn-admin btn-admin-danger">确认封禁</button>'
+      + '<button type="button" onclick="layer.closeAll()" class="btn btn-secondary">取消</button>'
+      + '</div></div>'
+});
+}
+
+function banUserSubmit(userid){
+var load = layer.msg('封禁中，请稍后...',{icon:16,time:false});
+var ban_duration = $("input[name='ban_duration']").val();
+var ban_reason = $("textarea[name='ban_reason']").val();
+$.ajax({
+    type:'POST',
+    url:'/admin/user',
+    data:{
+        act:'banUser',
+        userid:userid,
+        ban_duration:ban_duration,
+        ban_reason:ban_reason,
+    },
+    dataType:'json',
+    success:function (data){
+        layer.close(load);
+        if(data.code == 1){
+            layer.alert(data.msg,{icon:1},function(){
+                window.location.href = "";
+            });
+        }else{
+            layer.alert(data.msg,{icon:2});
+        }
+    }
+});
+}
+
+function unbanUser(userid){
+layer.confirm('确定要解封用户ID为 <span style="color:#0b5ed7">'+ userid +'</span> 吗？<br>解封后主机需手动恢复。', function (){
+    var load = layer.msg('解封中，请稍后...',{icon:16,time:false});
+    $.ajax({
+        type:'POST',
+        url:'/admin/user',
+        data:{
+            act:'unbanUser',
+            userid:userid,
+        },
+        dataType:'json',
+        success:function (data){
+            layer.close(load);
+            if(data.code == 1){
+                layer.alert(data.msg,{icon:1},function(){
+                    window.location.href = "";
+                });
+            }else{
+                layer.alert(data.msg,{icon:2});
+            }
+        }
+    });
+});
+}
+</script>

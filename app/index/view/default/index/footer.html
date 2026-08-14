@@ -1,0 +1,202 @@
+</div><!-- .page-content -->
+
+    <footer class="glass-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="__ROOT__/" class="logo">
+                        <div class="logo-icon">
+                            {if isset($web.logo) && $web.logo}
+                            <img src="{if strpos($web.logo, 'http') === 0}{$web.logo}{else}__ROOT__/{:ltrim($web.logo, '/')}{/if}" alt="logo">
+                            {else}
+                            <i class="{$web.logo_icon|default='fas fa-server'}"></i>
+                            {/if}
+                        </div>
+                        <span>{$webname}</span>
+                    </a>
+                    <p>专注于提供稳定、安全、易用的虚拟主机服务。通过自主控制面板与多地域数据中心，帮助用户快速部署网站与应用，让托管更简单。</p>
+                    {php}
+                    $serviceEmail = !empty($web['service_email']) ? $web['service_email'] : (!empty($web['emailname']) ? $web['emailname'] : '');
+                    $qqGroup = isset($web['qq_group']) ? $web['qq_group'] : '';
+                    $qqNumber = $qqGroup;
+                    if ($qqGroup && !preg_match('/^\d+$/', $qqGroup)) {
+                        if (preg_match('/group_code=(\d+)/', $qqGroup, $m)) {
+                            $qqNumber = $m[1];
+                        } elseif (preg_match('/\/q\/([a-zA-Z0-9]+)/', $qqGroup, $m)) {
+                            $qqNumber = '官方QQ群';
+                        }
+                    }
+                    {/php}
+                    <div class="footer-contact">
+                        <div class="footer-contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>{$serviceEmail|default='未设置'}</span>
+                        </div>
+                        {if $qqGroup}
+                        <div class="footer-contact-item">
+                            <i class="fab fa-qq"></i>
+                            <span>官方 QQ 群：{$qqNumber|default='官方QQ群'}</span>
+                        </div>
+                        {/if}
+                        <div class="footer-contact-item">
+                            <i class="fas fa-clock"></i>
+                            <span>工作日 09:00 - 21:00 在线支持</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>产品服务</h4>
+                    <ul>
+                        <li><a href="__ROOT__/cart">虚拟主机</a></li>
+                        <li><a href="__ROOT__/cart">产品套餐</a></li>
+                        <li><a href="__ROOT__/cart">价格说明</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>帮助支持</h4>
+                    <ul>
+                        <li><a href="__ROOT__/help">帮助中心</a></li>
+                        <li><a href="__ROOT__/user/submitticket">提交工单</a></li>
+                        <li><a href="__ROOT__/announcements">网站公告</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>关于我们</h4>
+                    <ul>
+                        <li><a href="__ROOT__/login">用户登录</a></li>
+                        <li><a href="__ROOT__/register">注册账号</a></li>
+                        <li><a href="__ROOT__/help">联系我们</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; {:date('Y')} {$webname}
+                    {if isset($web.icp) && $web.icp}<a href="//beian.miit.gov.cn/">{$web.icp}</a>{/if}
+                    {if isset($templateset['网站备案号']) && $templateset['网站备案号']}<a href="//beian.miit.gov.cn/">{$templateset['网站备案号']}</a>{/if}
+                </p>
+                <div class="footer-licenses">
+                    {if isset($web.business_license) && $web.business_license}<span>营业执照：{$web.business_license}</span>{/if}
+                    {if isset($web.police_beian) && $web.police_beian}<a href="http://www.beian.gov.cn/" target="_blank">公安备案：{$web.police_beian}</a>{/if}
+                    {if isset($web.telecom_license) && $web.telecom_license}<span>增值电信业务经营许可证：{$web.telecom_license}</span>{/if}
+                </div>
+                <div class="footer-bottom-links">
+                    <a href="#">服务条款</a>
+                    <a href="#">隐私政策</a>
+                    <a href="__ROOT__/announcements">公告中心</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</div><!-- .page-wrapper -->
+
+<nav class="mobile-tabbar">
+    <div class="mobile-tabbar-list">
+        <a href="__ROOT__/index" class="mobile-tabbar-item {if isset($active) && $active=='index'}active{/if}">
+            <i class="fas fa-home"></i>
+            <span>首页</span>
+        </a>
+        <a href="__ROOT__/cart" class="mobile-tabbar-item {if isset($active) && $active=='cart'}active{/if}">
+            <i class="fas fa-cubes"></i>
+            <span>产品</span>
+        </a>
+        <a href="__ROOT__/user/supportticket" class="mobile-tabbar-item {if isset($active) && $active=='service'}active{/if}">
+            <i class="fas fa-headset"></i>
+            <span>服务</span>
+        </a>
+        <a href="__ROOT__/user/transaction" class="mobile-tabbar-item {if isset($active) && $active=='order'}active{/if}">
+            <i class="fas fa-file-invoice-dollar"></i>
+            <span>订单</span>
+        </a>
+        <a href="__ROOT__/user/information" class="mobile-tabbar-item {if isset($active) && $active=='user'}active{/if}">
+            <i class="fas fa-user"></i>
+            <span>我的</span>
+        </a>
+    </div>
+</nav>
+
+<script>
+(function() {
+    var menuToggle = document.getElementById('menuToggle');
+    var mobileMenu = document.getElementById('mobileMenu');
+    var header = document.getElementById('mainHeader');
+
+    if (menuToggle && mobileMenu) {
+        menuToggle.addEventListener('click', function() {
+            var isActive = mobileMenu.classList.toggle('active');
+            var icon = menuToggle.querySelector('i');
+            if (icon) {
+                icon.className = isActive ? 'fas fa-times' : 'fas fa-bars';
+            }
+            document.body.style.overflow = isActive ? 'hidden' : '';
+        });
+
+        mobileMenu.addEventListener('click', function(e) {
+            if (e.target === mobileMenu) {
+                mobileMenu.classList.remove('active');
+                var icon = menuToggle.querySelector('i');
+                if (icon) icon.className = 'fas fa-bars';
+                document.body.style.overflow = '';
+            }
+        });
+    }
+
+    if (header) {
+        window.addEventListener('scroll', function() {
+            header.classList.toggle('scrolled', window.scrollY > 10);
+        });
+    }
+})();
+
+{if isset($templateset['公告开关']) && $templateset['公告开关']=="开"}
+(function() {
+    if (typeof layer === 'undefined') return;
+    var announcement = '{if isset($templateset["网站公告"])}{$templateset["网站公告"]}{/if}';
+    if (!announcement) return;
+    var agreed = false;
+    function onAgree(layerIndex) {
+        if (agreed) return;
+        agreed = true;
+        layer.close(layerIndex);
+    }
+    layer.open({
+        type: 1,
+        title: '<i class="fas fa-bullhorn"></i> 网站公告',
+        area: ['420px', 'auto'],
+        closeBtn: 0,
+        shadeClose: false,
+        resize: false,
+        btn: ['同意', '拒绝'],
+        btn1: function(index) {
+            onAgree(index);
+        },
+        btn2: function() {
+            location.href = '__ROOT__/user/logout';
+        },
+        success: function(layero, index) {
+            var $content = layero.find('.layui-layer-content');
+            var content = $content[0];
+            if (!content) return;
+            if (content.scrollHeight <= content.clientHeight + 5) {
+                setTimeout(function() { onAgree(index); }, 1500);
+                return;
+            }
+            $content.on('scroll', function() {
+                if (content.scrollHeight - content.scrollTop <= content.clientHeight + 5) {
+                    setTimeout(function() { onAgree(index); }, 300);
+                }
+            });
+        },
+        content: '<div style="padding:24px 28px;font-size:14px;color:#334155;line-height:1.8;max-height:60vh;overflow-y:auto;">' + announcement + '</div>'
+    });
+})();
+{/if}
+</script>
+<script src="__ROOT__/static/js/glass-animations.js"></script>
+{include file="default/live2d_widget" /}
+</body>
+</html>

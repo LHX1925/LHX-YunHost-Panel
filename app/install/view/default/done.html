@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+<title>安装完成</title>
+<link rel="stylesheet" type="text/css" href="__ROOT__/static/css/materialdesignicons.min.css">
+<link rel="stylesheet" type="text/css" href="__ROOT__/static/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="__ROOT__/static/css/animate.min.css">
+<link rel="stylesheet" type="text/css" href="__ROOT__/static/css/style.min.css">
+<style>
+.install-container { max-width: 700px; margin: 40px auto; }
+.step-bar { display: flex; justify-content: center; margin-bottom: 30px; }
+.step-item { display: flex; align-items: center; }
+.step-num { width: 32px; height: 32px; border-radius: 50%; background: #e9ecef; color: #6c757d; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 8px; }
+.step-item.done .step-num { background: #2563EB; color: #fff; }
+.step-item.done .step-num::after { content: '\F012C'; font-family: 'Material Design Icons'; font-size: 16px; }
+.step-item.done .step-num span { display: none; }
+.step-label { font-size: 14px; color: #6c757d; }
+.step-item.done .step-label { color: #2563EB; }
+.step-line { width: 60px; height: 2px; background: #e9ecef; margin: 0 10px; }
+.step-line.done { background: #2563EB; }
+.success-icon { font-size: 64px; color: #2563EB; }
+</style>
+</head>
+<body class="center-vh">
+<div class="install-container">
+  <div class="card card-shadowed p-5 text-center">
+    <div class="mb-4">
+      <i class="mdi mdi-check-circle success-icon"></i>
+    </div>
+    <h4 class="mb-3">安装完成!</h4>
+    <p class="text-muted mb-4">系统已成功安装，你现在可以访问网站前台或后台管理。</p>
+    <div class="alert alert-warning text-start">
+      <strong>安全提示：</strong>安装完成后，为了安全起见，请删除 <code>app/install</code> 目录，或确保 <code>install.lock</code> 锁文件存在以防止重复安装。
+    </div>
+    <div class="d-flex justify-content-center gap-3 mt-4">
+      <a href="__ROOT__/" class="btn btn-primary">访问前台</a>
+      <a href="__ROOT__/admin" class="btn btn-success">进入后台</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

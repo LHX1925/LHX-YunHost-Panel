@@ -1,0 +1,299 @@
+{include file="default/header" title="公告列表 "/}
+<!--页面主要内容-->
+
+    <main class="lyear-layout-content">	
+      <div class="container-fluid glass-animate-in">
+        <div class="row">
+<div class="col-lg-12">
+      <div class="card admin-card">
+        <header class="card-header">
+<div class="card-title">公告列表</div>
+</header>
+        <div class="card-body">
+<div class="search-wrap">
+<form method="get" action="">
+
+<div class="input-group">
+					<input class="form-control col-sm-7" type="text" name="search" placeholder="搜索..." value=""/>
+
+					<div class="input-group-append">
+						<button class="btn btn-primary">
+							<span class="mdi mdi-magnify"></span>搜索
+						</button>
+					</div>
+
+				</div>
+</form>
+</div>
+<br/>
+<button onclick='add()' class="btn-admin btn-admin-primary me-1">
+<span class="mdi mdi-plus" aria-hidden="true"></span>添加公告
+</button>
+                  <button onclick='del()' class="btn-admin btn-admin-danger">
+                    <span class="mdi mdi-window-close" aria-hidden="true"></span>删除
+                  </button>
+
+                  <button onclick='qbdel()' class="btn-admin btn-admin-danger">
+                    <span class="mdi mdi-window-close" aria-hidden="true"></span>全部删除
+                  </button>
+<br/><br/>
+<div class="table-responsive-sm">
+          <table class="table table-hover table-admin">
+            <thead>
+              <tr>
+<th>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="check-all">
+                            <label class="form-check-label" for="check-all"></label>
+                          </div>
+                        </th>
+                <th scope="col">ID</th>
+                <th scope="col">标题</th>
+                <th scope="col">时间</th>
+                <th scope="col">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+{foreach $announcement as $a}
+
+              <tr>
+
+<td>
+                          <div class="form-check">
+                            <input type="checkbox" class="form-check-input ids" name="ids" value="{$a.id}">
+                            <label class="form-check-label" for="ids-1"></label>
+                          </div>
+                        </td>
+                <td scope="row">{$a.id}</td>
+                <td>{$a.name}</td>
+
+     <td>{$a.time|date="Y-m-d H:i:s",###}</td>
+     
+<td>
+<a href="/admin/announcement/{$a.id}" class="btn-admin btn-admin-success me-1"><i class="mdi mdi-pencil"></i>查看</a>
+
+</td>
+              </tr>
+{/foreach}
+            </tbody>
+          </table>
+</div>
+
+<div style="text-align:center">{$announcement->render()}</div>
+
+</div>
+</div>
+
+</div>
+</div>
+</main>
+
+
+  <style>
+/* Glass styling for announcement page */
+.admin-form-tip {
+  background: var(--glass-bg-light) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--glass-radius-sm) !important;
+  color: var(--glass-text-secondary) !important;
+}
+.admin-field-hint {
+  color: var(--glass-text-muted) !important;
+}
+/* Layer popup glass styling */
+.layer-admin-form .layui-layer-title {
+  background: var(--glass-bg-light) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border-bottom: 1px solid var(--glass-border) !important;
+  color: var(--glass-text) !important;
+}
+.layer-admin-form {
+  background: var(--glass-bg-strong) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid var(--glass-border-strong) !important;
+  border-radius: var(--glass-radius-lg) !important;
+  box-shadow: var(--glass-shadow-lg) !important;
+}
+.layer-admin-form .layui-layer-content {
+  background: transparent !important;
+}
+.layer-admin-form .card-body {
+  background: transparent !important;
+}
+.layer-admin-form .form-control {
+  background: var(--glass-bg-input) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border: 1.5px solid var(--glass-border) !important;
+  border-radius: var(--glass-radius-sm) !important;
+  color: var(--glass-text) !important;
+}
+.layer-admin-form .form-control:focus {
+  background: var(--glass-bg) !important;
+  border-color: var(--glass-primary) !important;
+  box-shadow: 0 0 0 4px var(--glass-primary-glow) !important;
+}
+.layer-admin-form .form-label {
+  color: var(--glass-text) !important;
+  font-weight: 500 !important;
+}
+.layer-admin-form .form-select {
+  background: var(--glass-bg-input) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border: 1.5px solid var(--glass-border) !important;
+  border-radius: var(--glass-radius-sm) !important;
+  color: var(--glass-text) !important;
+}
+.layer-admin-form .form-select:focus {
+  background: var(--glass-bg) !important;
+  border-color: var(--glass-primary) !important;
+  box-shadow: 0 0 0 4px var(--glass-primary-glow) !important;
+}
+.layer-admin-form textarea.form-control {
+  background: var(--glass-bg-input) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border: 1.5px solid var(--glass-border) !important;
+  color: var(--glass-text) !important;
+}
+.lyear-layout-content .form-label {
+  color: var(--glass-text) !important;
+  font-weight: 500 !important;
+}
+</style>
+  {include file="default/footer" /}
+<script>
+function del(id){
+var id = [];
+$("input[name='ids']:checked").each(function(i){
+        id[i] =$(this).val();
+      });
+var id = id.join(",");
+if(id==""){
+layer.alert("未选择公告!",{icon:2,shade:0.8});
+}else{
+        layer.confirm('确定要删除ID为<span style="color:#0b5ed7">'+ id +'</span>的公告吗？', function (){
+            del1(id)
+        });
+    }
+}
+    function del1(id){
+        var load = layer.load('1',{time:false});
+
+        $.ajax({
+            type:'POST',
+            url:'',
+            data:{
+                act:'delete',
+                cid:id
+            },
+            dataType:'json',
+            success:function (data){
+                layer.close(load);
+                if(data.code == 1){
+layer.alert(data.msg,{icon:1},function(){
+                        window.location.href = "";
+                    });
+                }else{
+                    layer.alert(data.msg,{icon:2});
+                }
+            }
+        });
+    }
+
+function qbdel(){
+        layer.confirm('确定要删除<span style="color:#0b5ed7">全部</span>的公告吗？', function (){
+            qbdel1()
+        });
+    }
+
+
+    function qbdel1(){
+        var load = layer.load('1',{time:false});
+
+        $.ajax({
+            type:'POST',
+            url:'',
+            data:{
+                act:'qbdelete',
+            },
+            dataType:'json',
+            success:function (data){
+                layer.close(load);
+                if(data.code == 1){
+layer.alert(data.msg,{icon:1},function(){
+                        window.location.href = "";
+                    });
+                }else{
+                    layer.alert(data.msg,{icon:2});
+                }
+            }
+        });
+    }
+
+function add(){
+layer.open({
+        type: 1,
+        area: ['520px', 'auto'],
+        maxHeight: Math.min(window.innerHeight * 0.88, 640),
+        closeBtn: 1,
+        shift: 7,
+        shadeClose: true,
+        skin: 'layer-admin-form',
+        title:"添加公告",
+        content: ''
+          + '<div class="card-body" style="width:480px;max-width:100%;padding:18px 20px 12px;box-sizing:border-box">'
+          + '<div class="admin-form-tip"><strong>公告说明</strong>'
+          + '公告用于前台展示。添加公告后将在前台公告栏显示。</div>'
+          + '<div class="mb-3"><label class="form-label">标题 <span style="color:#de350b">*</span></label>'
+          + '<input class="form-control" type="text" name="name" value="" placeholder="请输入公告标题">'
+          + '<span class="admin-field-hint">公告标题名称</span></div>'
+          + '<div class="mb-3"><label class="form-label">内容</label>'
+          + '<textarea style="height:200px" class="form-control" name="information" placeholder="请输入公告内容"></textarea>'
+          + '<span class="admin-field-hint">公告详细内容</span></div>'
+          + '<div class="d-flex gap-2" style="padding-bottom:8px">'
+          + '<button type="button" onclick="add1()" class="btn-admin btn-admin-primary">添加公告</button>'
+          + '<button type="button" onclick="layer.closeAll()" class="btn btn-secondary">取消</button>'
+          + '</div></div>',
+  });
+
+}
+
+function add1(){
+             var load = layer.msg('添加中，请稍后...',{icon:16,time:false});
+            var name = $("input[name='name']").val();
+            var time = $("input[name='time']").val();
+        var information = $("textarea[name='information']").val();
+    $.ajax({
+            type:'POST',
+            url:'',
+            data:{
+act:"add",
+name:name,
+time:time,
+information:information,
+            },
+            dataType:'json',
+            success:function (data){
+                layer.close(load)
+                if(data.code == 1){
+                    setTimeout(function (){
+                        location.href = ''
+                    },1000);
+                    layer.alert(data.msg,{icon:1});
+                }else{
+                    layer.msg(data.msg,{icon:2});
+                }
+            }
+        });
+    }
+
+
+
+
+</script>

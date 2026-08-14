@@ -1,0 +1,49 @@
+<IfModule mod_rewrite.c>
+  Options +FollowSymlinks -Multiviews
+  RewriteEngine On
+
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^(.*)$ index.php?s=$1 [QSA,PT,L]
+</IfModule>
+
+# 关闭目录列表
+<IfModule mod_autoindex.c>
+  Options -Indexes
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set X-XSS-Protection "1; mode=block"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  # 禁止 PHP 版本泄露
+  Header always unset X-Powered-By
+</IfModule>
+
+# 禁止访问敏感文件
+<FilesMatch "(^\.env|composer\.json|composer\.lock|\.git|\.svn|\.DS_Store|config\.php|database\.php)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+# 禁止访问备份文件
+<FilesMatch "\.(bak|sql|tar\.gz|zip|7z|rar|swp|orig|save)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+# 禁止访问 runtime 目录
+<IfModule mod_rewrite.c>
+  RewriteRule ^runtime/ - [R=404,L]
+</IfModule>

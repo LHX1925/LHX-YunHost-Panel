@@ -1,0 +1,63 @@
+{include file="default/header" title="登录日志" /}
+<main class="lyear-layout-content">
+  <div class="container-fluid glass-animate-in">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card admin-card">
+          <header class="card-header">
+            <div class="card-title">管理员登录日志</div>
+            <div class="card-toolbar">
+              <form class="d-flex admin-search-form" method="get">
+                <input type="text" name="search" class="form-control form-control-sm" placeholder="搜索用户名/IP" value="{$search|default=''}">
+                <button type="submit" class="btn-admin btn-admin-primary btn-sm ms-2">搜索</button>
+              </form>
+            </div>
+          </header>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table admin-table table-hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>管理员ID</th>
+                    <th>用户名</th>
+                    <th>IP地址</th>
+                    <th>状态</th>
+                    <th>备注</th>
+                    <th>登录时间</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {foreach $logs as $log}
+                  <tr>
+                    <td>{$log.id}</td>
+                    <td>{$log.admin_id}</td>
+                    <td>{$log.username}</td>
+                    <td>{$log.ip}</td>
+                    <td>
+                      {if $log.status == 1}
+                      <span class="admin-badge admin-badge-success">成功</span>
+                      {else}
+                      <span class="admin-badge admin-badge-danger">失败</span>
+                      {/if}
+                    </td>
+                    <td>{$log.msg}</td>
+                    <td>{$log.create_time|date='Y-m-d H:i:s',###}</td>
+                  </tr>
+                  {/foreach}
+                  {if empty($logs)}
+                  <tr><td colspan="7" class="text-center py-4 text-muted">暂无登录记录</td></tr>
+                  {/if}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card-footer">
+            {$logs->render()}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{include file="default/footer" /}

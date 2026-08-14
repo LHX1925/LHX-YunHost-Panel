@@ -1,0 +1,366 @@
+/* ==================== 粉蓝渐变风主题 (Pink-Blue Gradient) v1.0 ==================== */
+/* 全局粉蓝渐变风 — 覆盖液态玻璃 CSS 变量实现全站换肤 */
+:root {
+  /* 主色调 - 粉蓝渐变系 */
+  --glass-primary: #EC4899;
+  --glass-primary-light: #F472B6;
+  --glass-primary-dark: #DB2777;
+  --glass-primary-glow: rgba(236, 72, 153, 0.35);
+  --glass-primary-glow-strong: rgba(236, 72, 153, 0.5);
+
+  /* 兼容别名 */
+  --primary: var(--glass-primary);
+  --primary-dark: var(--glass-primary-dark);
+  --primary-light: var(--glass-primary-light);
+  --text: #1E1B4B;
+  --text-muted: #A1A1AA;
+  --text-secondary: #71717A;
+  --border: rgba(255, 255, 255, 0.55);
+  --border-light: rgba(255, 255, 255, 0.3);
+  --border-strong: rgba(255, 255, 255, 0.8);
+
+  /* 辅助色 */
+  --glass-success: #059669;
+  --glass-success-light: #34D399;
+  --glass-success-glow: rgba(5, 150, 105, 0.3);
+  --glass-warning: #D97706;
+  --glass-warning-light: #FBBF24;
+  --glass-warning-glow: rgba(217, 119, 6, 0.3);
+  --glass-danger: #E11D48;
+  --glass-danger-light: #FB7185;
+  --glass-danger-glow: rgba(225, 29, 72, 0.3);
+  --glass-info: #3B82F6;
+  --glass-info-light: #60A5FA;
+  --glass-purple: #A855F7;
+  --glass-purple-light: #C084FC;
+
+  /* 玻璃层 */
+  --glass-bg: rgba(255, 255, 255, 0.12);
+  --glass-bg-strong: rgba(255, 255, 255, 0.18);
+  --glass-bg-light: rgba(255, 255, 255, 0.07);
+  --glass-bg-hover: rgba(255, 255, 255, 0.24);
+  --glass-bg-subtle: rgba(255, 255, 255, 0.05);
+  --glass-bg-active: rgba(255, 255, 255, 0.32);
+  --glass-bg-card: rgba(255, 255, 255, 0.14);
+  --glass-bg-input: rgba(255, 255, 255, 0.12);
+  --glass-bg-overlay: rgba(255, 255, 255, 0.24);
+
+  --glass-border: rgba(255, 255, 255, 0.28);
+  --glass-border-strong: rgba(255, 255, 255, 0.42);
+  --glass-border-subtle: rgba(255, 255, 255, 0.14);
+  --glass-border-focus: rgba(236, 72, 153, 0.5);
+
+  --glass-shadow: 0 8px 32px rgba(157, 23, 77, 0.12);
+  --glass-shadow-sm: 0 4px 16px rgba(157, 23, 77, 0.08);
+  --glass-shadow-lg: 0 16px 48px rgba(157, 23, 77, 0.18);
+  --glass-shadow-xl: 0 24px 64px rgba(157, 23, 77, 0.22);
+  --glass-shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+
+  --glass-blur: 16px;
+  --glass-blur-strong: 24px;
+  --glass-blur-light: 8px;
+  --glass-blur-heavy: 32px;
+
+  --glass-opacity: 0.72;
+  --glass-opacity-strong: 0.78;
+  --glass-opacity-light: 0.65;
+  --glass-opacity-btn: 0.85;
+
+  --glass-dark-bg: rgba(76, 29, 149, 0.45);
+  --glass-dark-bg-strong: rgba(76, 29, 149, 0.65);
+  --glass-dark-border: rgba(255, 255, 255, 0.12);
+  --glass-dark-text: #F3E8FF;
+  --glass-dark-text-secondary: #D8B4FE;
+
+  /* 文字 */
+  --glass-text: #1E1B4B;
+  --glass-text-secondary: #71717A;
+  --glass-text-muted: #A1A1AA;
+  --glass-text-white: #FFFFFF;
+  --glass-text-primary: #9D174D;
+
+  /* 粉蓝渐变背景 */
+  --glass-page-bg: linear-gradient(135deg, rgba(253, 242, 248, 0.35) 0%, rgba(236, 72, 153, 0.08) 20%, rgba(219, 234, 254, 0.3) 50%, rgba(96, 165, 250, 0.08) 70%, rgba(243, 232, 255, 0.3) 100%);
+  --glass-page-bg-admin: linear-gradient(135deg, rgba(253, 242, 248, 0.35) 0%, rgba(236, 72, 153, 0.06) 30%, rgba(219, 234, 254, 0.3) 60%, rgba(243, 232, 255, 0.3) 100%);
+  --glass-page-bg-login: linear-gradient(160deg, rgba(253, 242, 248, 0.35) 0%, rgba(236, 72, 153, 0.1) 30%, rgba(219, 234, 254, 0.3) 60%, rgba(243, 232, 255, 0.3) 100%);
+
+  --glass-radius: 14px;
+  --glass-radius-lg: 20px;
+  --glass-radius-sm: 10px;
+  --glass-radius-xl: 28px;
+  --glass-radius-full: 999px;
+  --glass-radius-xs: 6px;
+
+  --glass-transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --glass-transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --glass-transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  --glass-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --glass-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --glass-ease-bounce: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+/* 粉蓝渐变风 - 关闭液态玻璃时 */
+body.no-glass-theme {
+  --glass-page-bg: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 25%, #dbeafe 50%, #bfdbfe 75%, #f3e8ff 100%);
+  --glass-page-bg-admin: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 30%, #dbeafe 60%, #f3e8ff 100%);
+  --glass-page-bg-login: linear-gradient(160deg, #fdf2f8 0%, #fce7f3 30%, #dbeafe 60%, #f3e8ff 100%);
+}
+
+/* 粉蓝渐变风 - 增强版 */
+body.glass-enabled {
+  background: linear-gradient(135deg, rgba(253, 242, 248, 0.55) 0%, rgba(236, 72, 153, 0.15) 20%, rgba(219, 234, 254, 0.5) 50%, rgba(96, 165, 250, 0.15) 70%, rgba(243, 232, 255, 0.5) 100%) !important;
+  background-attachment: fixed !important;
+}
+
+/* 关闭液态玻璃时更明显的渐变 */
+body.no-glass-theme {
+  background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 25%, #dbeafe 50%, #bfdbfe 75%, #f3e8ff 100%) !important;
+  background-attachment: fixed !important;
+}
+
+/* 按钮增强 - 粉蓝渐变 */
+.glass-btn-primary {
+  background: linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%) !important;
+  box-shadow: 0 4px 20px rgba(236, 72, 153, 0.35) !important;
+}
+.glass-btn-primary:hover {
+  background: linear-gradient(135deg, #DB2777 0%, #7C3AED 100%) !important;
+  box-shadow: 0 6px 28px rgba(236, 72, 153, 0.5) !important;
+}
+
+/* Hero 区域增强 */
+.hero .hero-badge {
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.12), rgba(139, 92, 246, 0.12)) !important;
+  color: #DB2777 !important;
+  border: 1px solid rgba(236, 72, 153, 0.25) !important;
+}
+.hero h1 {
+  background: linear-gradient(135deg, #DB2777, #7C3AED);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* 功能卡片增强 */
+.feature-icon {
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.12), rgba(139, 92, 246, 0.12)) !important;
+  color: #EC4899 !important;
+}
+.feature-card:hover .feature-icon {
+  background: linear-gradient(135deg, #EC4899, #8B5CF6) !important;
+  color: #fff !important;
+}
+
+/* 产品卡片增强 */
+.product-card.featured {
+  border: 2px solid rgba(236, 72, 153, 0.3) !important;
+  box-shadow: 0 8px 32px rgba(236, 72, 153, 0.12) !important;
+}
+.product-card.featured::before {
+  background: linear-gradient(135deg, #EC4899, #8B5CF6) !important;
+}
+
+/* 数据中心卡片 */
+.dc-item:hover {
+  border-color: rgba(236, 72, 153, 0.3) !important;
+  box-shadow: 0 8px 24px rgba(236, 72, 153, 0.1) !important;
+}
+.dc-flag {
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.12), rgba(139, 92, 246, 0.12)) !important;
+}
+
+/* Header 导航栏 */
+header.glass-topbar {
+  background: linear-gradient(135deg, rgba(255,255,255,0.85), rgba(253,242,248,0.85)) !important;
+  border: 1px solid rgba(236, 72, 153, 0.15) !important;
+}
+.glass-topbar-link.active {
+  color: #EC4899 !important;
+  background: rgba(236, 72, 153, 0.08) !important;
+}
+.glass-topbar-link:hover {
+  color: #EC4899 !important;
+}
+
+/* 选择指示器 */
+.section-header .badge {
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(139, 92, 246, 0.1)) !important;
+  color: #DB2777 !important;
+  border: 1px solid rgba(236, 72, 153, 0.2) !important;
+}
+.section-header h2 {
+  color: #4C1D95 !important;
+}
+
+/* 侧边栏 / Footer */
+footer .footer-contact-item i {
+  color: #EC4899 !important;
+}
+.footer-col a:hover {
+  color: #EC4899 !important;
+}
+
+/* 全局微调 - 链接颜色增强 */
+a:not(.btn):not(.nav-link):not(.glass-topbar-link):not(.product-card):not(.footer-col a) {
+  color: #DB2777;
+}
+a:not(.btn):not(.nav-link):not(.glass-topbar-link):not(.product-card):not(.footer-col a):hover {
+  color: #9D174D;
+}
+
+/* 移动端底部导航 */
+.mobile-tabbar-item.active,
+.mobile-tabbar-item:hover {
+  color: #EC4899 !important;
+}
+
+/* ========== 后台管理面板粉蓝渐变 ========== */
+/* 侧边栏 */
+.sidebar-header {
+  background: linear-gradient(180deg, rgba(236, 72, 153, 0.08), rgba(139, 92, 246, 0.05)) !important;
+}
+.sidebar-menu li.active > a,
+.sidebar-menu li a:hover {
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.12), rgba(139, 92, 246, 0.08)) !important;
+  color: #EC4899 !important;
+}
+.sidebar-menu li.active > a i,
+.sidebar-menu li a:hover i {
+  color: #EC4899 !important;
+}
+.sidebar-brand-icon {
+  background: linear-gradient(135deg, #EC4899, #8B5CF6) !important;
+  color: #fff !important;
+}
+
+/* 顶部导航 */
+.navbar-header {
+  background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(253,242,248,0.9)) !important;
+  border-bottom: 1px solid rgba(236, 72, 153, 0.12) !important;
+}
+.top-icon-btn:hover {
+  color: #EC4899 !important;
+  background: rgba(236, 72, 153, 0.08) !important;
+}
+
+/* 后台卡片 */
+.stat-card {
+  border-color: rgba(236, 72, 153, 0.1) !important;
+}
+.stat-card:hover {
+  border-color: rgba(236, 72, 153, 0.25) !important;
+  box-shadow: 0 8px 24px rgba(236, 72, 153, 0.08) !important;
+}
+.stat-card .stat-icon {
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.12), rgba(139, 92, 246, 0.12)) !important;
+  color: #EC4899 !important;
+}
+
+/* 后台按钮 */
+.btn-primary,
+.glass-btn-primary {
+  background: linear-gradient(135deg, #EC4899, #8B5CF6) !important;
+  border: none !important;
+  box-shadow: 0 4px 16px rgba(236, 72, 153, 0.3) !important;
+  color: #fff !important;
+}
+.btn-primary:hover,
+.glass-btn-primary:hover {
+  background: linear-gradient(135deg, #DB2777, #7C3AED) !important;
+  box-shadow: 0 6px 24px rgba(236, 72, 153, 0.45) !important;
+}
+.glass-btn.active, .glass-btn-sm.active {
+  background: linear-gradient(135deg, #EC4899, #8B5CF6) !important;
+  color: #fff !important;
+}
+.glass-btn:not(.active):hover {
+  background: rgba(236, 72, 153, 0.12) !important;
+  color: #EC4899 !important;
+}
+
+/* 后台表格选中 */
+.table-hover tbody tr:hover {
+  background: rgba(236, 72, 153, 0.04) !important;
+}
+
+/* 后台分页 */
+.pagination > .active > a,
+.pagination > .active > span {
+  background: linear-gradient(135deg, #EC4899, #8B5CF6) !important;
+  border-color: transparent !important;
+}
+
+/* 后台下拉菜单 */
+.glass-dropdown-item:hover {
+  background: rgba(236, 72, 153, 0.08) !important;
+  color: #EC4899 !important;
+}
+
+/* ========== 粉蓝渐变文字 ========== */
+/* 全局标题渐变 */
+h1, h2, h3, h4,
+.page-title, .section-title, .card-title,
+.panel-title, .modal-title, .widget-title,
+.content-header h1, .content-header h2 {
+  background: linear-gradient(135deg, #DB2777, #7C3AED);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+/* 确保按钮内文字不变透明 */
+.btn h1, .btn h2, .btn h3, .btn h4,
+.glass-btn h1, .glass-btn h2, .glass-btn h3 {
+  -webkit-text-fill-color: inherit;
+  background: none;
+}
+
+/* 导航激活文字 */
+.navbar-brand, .brand-text, .brand-name {
+  background: linear-gradient(135deg, #EC4899, #8B5CF6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* 标签页激活 */
+.nav-tabs > li.active > a,
+.nav-pills > li.active > a {
+  color: #EC4899 !important;
+}
+
+/* 面包屑 */
+.breadcrumb > .active {
+  color: #DB2777 !important;
+}
+
+/* 价格文字 */
+.price-value, .product-price, .pricing-amount,
+.text-price {
+  color: #DB2777 !important;
+}
+
+/* 强调文字 */
+.text-primary, .text-pink, .text-gradient {
+  background: linear-gradient(135deg, #DB2777, #7C3AED);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* 表格头部 */
+.table thead th, .table-header {
+  color: #4C1D95 !important;
+}
+
+/* 统计卡片标题 */
+.stat-title, .stat-label, .stat-name {
+  color: #71717A !important;
+}
+
+/* Footer标题 */
+.footer-col h4, .footer-title, .footer-heading {
+  background: linear-gradient(135deg, #DB2777, #7C3AED);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}

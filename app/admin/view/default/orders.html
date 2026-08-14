@@ -1,0 +1,207 @@
+{include file="default/header" title="产品信息"/}
+<!--页面主要内容-->
+    <main class="lyear-layout-content">
+	
+      <div class="container-fluid glass-animate-in">
+
+        <div class="row">
+
+          <div class="col-lg-12">
+            <div class="card admin-card">
+              <header class="card-header"><div class="card-title">产品信息</div></header>
+              <div class="card-body">
+状态:
+{if $order.state=="1"}
+<span class="admin-badge admin-badge-success">正常</span>
+{/if}
+{if $order.state=="2"}
+<span class="admin-badge admin-badge-warning">暂停</span>
+{/if}
+{if $order.state=="3"}
+<span class="admin-badge admin-badge-danger">终止</span>
+{/if}
+<br/><br/>
+操作:
+
+                       <button type="button" onclick="act('stop')" class="btn-admin btn-admin-warning me-1"><span class="mdi mdi-pause-octagon-outline"></span>暂停</button>
+
+                       <button type="button" onclick="act('stopoff')" class="btn-admin btn-admin-success me-1"><span class="mdi mdi mdi-check"></span>解除暂停</button>
+
+                       <button type="button" onclick="act('end')" class="btn-admin btn-admin-danger me-1"><span class="mdi mdi-alert-octagon-outline"></span>终止</button>
+
+                       <button type="button" onclick="act('delete')" class="btn-admin btn-admin-danger me-1"><span class="mdi mdi mdi-window-close"></span>删除</button>
+
+<hr/>
+
+
+
+                <form action="" method="post" name="form" class="edit-form admin-form">
+                
+    <input name="act" value="edit" type="hidden"> 
+                  <div class="tab-content">
+                    
+
+                      <div class="mb-3">
+                        <label for="web_site_title" class="form-label">账号</label>
+                        <input class="form-control" type="text" name="user" value="{$order.user}" placeholder="">      
+                      </div>
+
+
+
+                      <div class="mb-3">
+                        <label for="web_site_title" class="form-label">密码</label>
+                        <input class="form-control" type="text" name="password" value="{$order.password}" value="" placeholder="">      
+                      </div>
+
+
+
+                      <div class="mb-3">
+                        <label for="web_site_title" class="form-label">开通时间</label>
+                        <input class="form-control" type="text" name="atime" value="{$order.atime|date='Y-m-d H:i:s',###}" placeholder="">      
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="web_site_title" class="form-label">到期时间</label>
+                        <input class="form-control" type="text" name="ztime" value="{$order.ztime|date='Y-m-d H:i:s',###}" placeholder="">      
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="web_site_title" class="form-label">所属产品ID</label>
+                        <input class="form-control" type="text" name="cartid" value="{$order.cartid}" placeholder="">      
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="web_site_title" class="form-label">所属用户ID</label>
+                        <input class="form-control" type="text" name="userid" value="{$order.userid}" placeholder="">      
+                      </div>
+{if $data7}
+
+<center><b><h3>↓↓↓订单信息↓↓↓</h3></b></center>
+
+
+{foreach $data7 as $t}
+{if $t.type=="input"}
+                  <div class="mb-3">
+                    <label for="nickname">{$t.title}</label>
+                    <input type="text" class="form-control" name="{$t.name}" value="{$t.value}">
+<font color="red">{$t.prompt}</font>
+                  </div>
+{/if}
+{if $t.type=="textarea"}
+                      <div class="mb-3">
+                        <label for="web_site_title" class="form-label">{$t.title}</label>
+                        <textarea style="height:200px" class="form-control" type="text" name="{$t.name}">{$t.value}</textarea>
+<font color="red">{$t.prompt}</font>
+                      </div>
+
+{/if}
+{if $t.type=="select"}
+<div class="mb-3">
+                    <label for="type" class="form-label">{$t.title}</label>
+                    <div class="form-controls">
+                      <select name="{$t.name}" class="form-select" id="type">
+{volist name="t.option" id="op"}
+                        <option value="{$op}" {if $t.value==$op}selected{/if}>{$op}</option>
+{/volist}
+                      </select>
+<font color="red">{$t.prompt}</font>
+                    </div>
+                  </div>
+{/if}
+{/foreach}
+{/if}
+
+
+
+                       <button type="submit" class="btn-admin btn-admin-primary me-1">修改</button>
+                    </div>
+
+
+
+
+                   
+
+
+
+ 
+                </form>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>    
+	
+	</main>
+    <!--End 页面主要内容-->
+
+
+
+ {include file="default/footer" /}
+<script>
+    $("form").submit(function (){
+        var load = layer.msg('修改中，请稍后...',{icon:16,shade:0.8,time:false});
+
+var form = $('form').serializeArray();
+
+        $.ajax({
+            type:'POST',
+            url:'',
+            data:form,
+            dataType:'json',
+            success:function (data){
+                layer.close(load);
+                if(data.code == 1){
+                    layer.alert(data.msg,{icon:1,shade:0.8});
+                }else{
+                    layer.alert(data.msg,{icon:2,shade:0.8});
+                }
+            }
+        });
+        return false;
+    });
+
+
+function act(pa){
+if(pa=="stop"){
+var prompt="暂停";
+}
+if(pa=="stopoff"){
+var prompt="解除暂停";
+}
+if(pa=="end"){
+var prompt="终止";
+}
+if(pa=="delete"){
+var prompt="删除";
+}
+        layer.confirm('确定要<span style="color:#0b5ed7">'+prompt+'</span>吗?', function (){
+            act1(pa);
+        });
+    }
+function act1(pa){
+        var load = layer.load('1',{shade:0.8,time:false});
+
+        $.ajax({
+            type:'POST',
+            url:'',
+            data:{
+                act:pa,
+            },
+            dataType:'json',
+            success:function (data){
+                layer.close(load);
+                if(data.code == 1){
+                    setTimeout(function (){
+                   location.href = ''
+},1000);
+                    layer.alert(data.msg,{icon:1});
+                }else{
+                    layer.alert(data.msg,{icon:2});
+                }
+            }
+        });
+    }
+</script>

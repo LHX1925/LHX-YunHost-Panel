@@ -1,0 +1,99 @@
+{include file="default/header" title="配置参数"/}
+<!--页面主要内容-->
+    <main class="lyear-layout-content">
+	
+      <div class="container-fluid glass-animate-in">
+
+        <div class="row">
+
+          <div class="col-lg-12">
+            <div class="card admin-card">
+              <header class="card-header"><div class="card-title">参数设置</div></header>
+              <div class="card-body">
+
+                <form method="POST" action="" class="site-form signin-form needs-validation admin-form">
+        <div class="mb-3">
+                    <label for="type" class="form-label">开关</label>
+                    <div class="form-controls">
+                      <select name="nstate" class="form-select" id="type">
+                        <option value="0" {if $nstate=="0"}selected{/if}>关闭</option>
+  <option value="1" {if $nstate=="1"}selected{/if}>开启</option>                      
+                      </select>
+</div></div>                   
+
+             <div class="mb-3">
+                    <label for="nickname">显示名称</label>
+                    <input type="text" class="form-control" name="nname" value="{$nname}">
+                  </div>
+{if $payss}
+{foreach $payss as $t}
+{if $t.type=="input"}
+                  <div class="mb-3">
+                    <label for="nickname">{$t.title}</label>
+                    <input type="text" class="form-control" name="{$t.name}" value="{$t.value}">
+<font color="red">{$t.prompt}</font>
+                  </div>
+{/if}
+{if $t.type=="textarea"}
+                      <div class="mb-3">
+                        <label for="web_site_title" class="form-label">{$t.title}</label>
+                        <textarea style="height:200px" class="form-control" type="text" name="{$t.name}">{$t.value}</textarea>
+<font color="red">{$t.prompt}</font>
+                      </div>
+
+{/if}
+{if $t.type=="select"}
+<div class="mb-3">
+                    <label for="type" class="form-label">{$t.title}</label>
+                    <div class="form-controls">
+                      <select name="{$t.name}" class="form-select" id="type">
+{volist name="t.option" id="op"}
+                        <option value="{$op}" {if $t.value==$op}selected{/if}>{$op}</option>
+{/volist}
+                      </select>
+<font color="red">{$t.prompt}</font>
+                    </div>
+                  </div>
+{/if}
+{/foreach}
+
+{/if}
+                  <button type="submit" class="btn-admin btn-admin-primary">保存</button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>    
+	
+	</main>
+    <!--End 页面主要内容-->
+{include file="default/footer" /}
+<script>
+    $("form").submit(function (){
+        var load = layer.msg('修改中，请稍后...',{icon:16,shade:0.8,time:false});
+
+var form = $('form').serializeArray();
+
+        $.ajax({
+            type:'POST',
+            url:'',
+            data:form,
+            dataType:'json',
+            success:function (data){
+                layer.close(load);
+                if(data.code == 1){
+            setTimeout(function () {
+                location.href = '';
+            }, 1000);
+                    layer.alert(data.msg,{icon:1,shade:0.8});
+                }else{
+                    layer.alert(data.msg,{icon:2,shade:0.8});
+                }
+            }
+        });
+        return false;
+    });
+</script>

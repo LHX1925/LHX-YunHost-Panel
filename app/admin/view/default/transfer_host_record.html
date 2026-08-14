@@ -1,0 +1,166 @@
+{include file="default/header" title="转让主机管理"/}
+<main class="lyear-layout-content">
+    <div class="container-fluid glass-animate-in">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card admin-card">
+                    <header class="card-header">
+                        <div class="card-title">转让主机管理</div>
+                    </header>
+                    <div class="card-body">
+                        <div class="search-wrap">
+                            <form method="get" action="">
+                                <div class="input-group">
+                                    <input class="form-control col-sm-7" type="text" name="search" placeholder="搜索订单ID/转让方/购买方..." value="{$search|default=''}"/>
+                                    <div class="input-group-append">
+                                        <button class="btn-copy btn btn-primary">
+                                            <span class="mdi mdi-magnify"></span>搜索
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <br/>
+                        <div class="table-responsive-sm">
+                            <table class="table table-hover table-admin">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>订单ID</th>
+                                        <th>转让方</th>
+                                        <th>目标用户</th>
+                                        <th>转让价格</th>
+                                        <th>原价</th>
+                                        <th>购买方</th>
+                                        <th>状态</th>
+                                        <th>联系方式</th>
+                                        <th>创建时间</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {foreach $data as $d}
+                                    <tr>
+                                        <td>{$d.id}</td>
+                                        <td>{$d.order_id}</td>
+                                        <td>{$d.seller_name|default=$d.userid} (ID:{$d.userid})</td>
+                                        <td>
+                                            {if $d.target_userid > 0}
+                                            {$d.target_name|default=$d.target_userid} (ID:{$d.target_userid})
+                                            {else}
+                                            <span class="text-muted">公开</span>
+                                            {/if}
+                                        </td>
+                                        <td>
+                                            {if $d.price > 0}
+                                            <span class="text-danger">¥{$d.price}</span>
+                                            {else}
+                                            <span class="text-success">免费</span>
+                                            {/if}
+                                        </td>
+                                        <td>
+                                            {if $d.original_price > 0}
+                                            ¥{$d.original_price}
+                                            {else}
+                                            免费
+                                            {/if}
+                                        </td>
+                                        <td>
+                                            {if $d.buyer_userid > 0}
+                                            {$d.buyer_name|default=$d.buyer_userid} (ID:{$d.buyer_userid})
+                                            {else}
+                                            <span class="text-muted">-</span>
+                                            {/if}
+                                        </td>
+                                        <td>
+                                            {if $d.status == 0}
+                                            <span class="badge badge-warning">待转让</span>
+                                            {elseif $d.status == 1}
+                                            <span class="badge badge-success">已完成</span>
+                                            {elseif $d.status == 2}
+                                            <span class="badge badge-danger">已驳回</span>
+                                            {elseif $d.status == 3}
+                                            <span class="badge badge-secondary">已取消</span>
+                                            {/if}
+                                        </td>
+                                        <td>
+                                            {if $d.contact_info}
+                                            <span title="{$d.contact_info}">{$d.contact_info|mb_substr=0,10,'utf-8'}{if mb_strlen($d.contact_info,'utf-8') > 10}...{/if}</span>
+                                            {else}
+                                            <span class="text-muted">-</span>
+                                            {/if}
+                                        </td>
+                                        <td>{$d.created_at|date='Y-m-d H:i:s',###}</td>
+                                        <td>
+                                            {if $d.status == 0}
+                                            <button class="btn btn-sm btn-warning" onclick="rejectTransfer({$d.id})">驳回</button>
+                                            {/if}
+                                            {if $d.status == 2 && $d.reject_reason}
+                                            <span class="text-muted" title="{$d.reject_reason}" style="font-size:12px;">原因: {$d.reject_reason|mb_substr=0,8,'utf-8'}</span>
+                                            {/if}
+                                        </td>
+                                    </tr>
+                                    {/foreach}
+                                    {if empty($data) || count($data) == 0}
+                                    <tr>
+                                        <td colspan="11" style="text-align:center;padding:40px;color:var(--glass-text-muted);">
+                                            <i class="mdi mdi-swap-horizontal" style="font-size:48px;display:block;margin-bottom:12px;"></i>
+                                            暂无转让记录
+                                        </td>
+                                    </tr>
+                                    {/if}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div style="text-align:center">{$data->render()}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+function rejectTransfer(id) {
+    layer.prompt({
+        title: '请输入驳回原因',
+        formType: 2,
+        area: ['420px', 'auto'],
+        placeholder: '请输入驳回原因...'
+    }, function(reason, index) {
+        if (!reason || !reason.trim()) {
+            layer.alert('请填写驳回原因', {icon: 2});
+            return;
+        }
+        layer.close(index);
+        var load = layer.load(1, {time: false});
+        $.ajax({
+            type: 'POST',
+            url: '',
+            data: {
+                act: 'reject',
+                id: id,
+                reason: reason.trim()
+            },
+            dataType: 'json',
+            success: function(data) {
+                layer.close(load);
+                if (data.code == 1) {
+                    layer.alert(data.msg, {icon: 1}, function() {
+                        location.reload();
+                    });
+                } else {
+                    layer.alert(data.msg, {icon: 2});
+                }
+            },
+            error: function() {
+                layer.close(load);
+                layer.alert('操作失败，请稍后再试', {icon: 2});
+            }
+        });
+    });
+}
+</script>
+{include file="default/footer" /}

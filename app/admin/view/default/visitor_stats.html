@@ -1,0 +1,324 @@
+{include file="default/header" title="访客访问统计" /}
+<style>
+/* ========== 访客统计专属全新设计 ========== */
+.vis-stats {
+  --vis-primary: #667eea;
+  --vis-success: #11998e;
+  --vis-warning: #f093fb;
+  --vis-danger: #fa709a;
+  --vis-card-bg: #fff;
+  --vis-border: #e8ecf1;
+  --vis-text: #1a1a2e;
+  --vis-text-sub: #6b7280;
+  --vis-radius: 18px;
+  --vis-shadow: 0 4px 24px rgba(0,0,0,0.06);
+}
+.vis-page-header {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px; margin-bottom: 20px;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: var(--vis-radius); color: #fff;
+  box-shadow: 0 8px 32px rgba(102,126,234,0.25);
+}
+.vis-page-header h1 { margin: 0; font-size: 22px; font-weight: 700; }
+.vis-page-header p { margin: 4px 0 0; font-size: 13px; opacity: 0.85; }
+
+/* 统计卡片 */
+.vis-stat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 20px; }
+.vis-stat-card {
+  background: #fff; border-radius: var(--vis-radius); padding: 20px 22px;
+  display: flex; align-items: center; gap: 16px;
+  box-shadow: var(--vis-shadow); border: 1px solid var(--vis-border);
+  transition: all 0.25s; cursor: default;
+}
+.vis-stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
+.vis-stat-icon {
+  width: 52px; height: 52px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; flex-shrink: 0;
+}
+.vis-stat-icon.blue { background: linear-gradient(135deg,#667eea,#764ba2); color:#fff; }
+.vis-stat-icon.green { background: linear-gradient(135deg,#11998e,#38ef7d); color:#fff; }
+.vis-stat-icon.purple { background: linear-gradient(135deg,#8b5cf6,#d946ef); color:#fff; }
+.vis-stat-icon.orange { background: linear-gradient(135deg,#f97316,#facc15); color:#fff; }
+.vis-stat-val { font-size: 28px; font-weight: 800; color: var(--vis-text); line-height: 1.1; }
+.vis-stat-label { font-size: 13px; color: var(--vis-text-sub); margin-top: 3px; }
+
+/* 卡片 */
+.vis-card {
+  background: #fff; border-radius: var(--vis-radius);
+  box-shadow: var(--vis-shadow); border: 1px solid var(--vis-border);
+  overflow: hidden; margin-bottom: 20px;
+}
+.vis-card-header {
+  padding: 16px 22px; border-bottom: 1px solid var(--vis-border);
+  font-size: 15px; font-weight: 700; color: var(--vis-text);
+  display: flex; align-items: center; gap: 10px;
+}
+.vis-card-header::before {
+  content: ''; width: 4px; height: 20px; border-radius: 2px;
+  background: linear-gradient(180deg, #667eea, #764ba2);
+}
+.vis-card-body { padding: 20px 22px; }
+
+/* 表格 */
+.vis-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.vis-table thead th {
+  background: #f8fafc; color: #475569; font-weight: 600;
+  padding: 12px 14px; text-align: left; border-bottom: 2px solid #e2e8f0;
+  white-space: nowrap; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em;
+}
+.vis-table tbody td {
+  padding: 11px 14px; border-bottom: 1px solid #f1f5f9;
+  color: var(--vis-text); vertical-align: middle;
+}
+.vis-table tbody tr:hover { background: #f8fafc; }
+.vis-table code {
+  background: #eef2ff; color: #4f46e5; padding: 2px 8px;
+  border-radius: 4px; font-size: 12px;
+}
+
+/* 按钮 */
+.vis-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 18px; border-radius: 10px; border: none;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  transition: all 0.2s; color: #fff;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  box-shadow: 0 4px 14px rgba(102,126,234,0.3);
+}
+.vis-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(102,126,234,0.4); }
+.vis-btn.outline { background: #fff; color: #667eea; border: 2px solid #667eea; box-shadow: none; }
+.vis-btn.outline:hover { background: #eef2ff; }
+
+/* 图表容器 */
+.vis-chart-wrap { height: 300px; position: relative; }
+.vis-grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+
+/* 手机端适配 */
+@media (max-width: 992px) {
+  .vis-grid-2 { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .vis-stat-grid { grid-template-columns: repeat(2,1fr); gap: 10px; }
+  .vis-stat-card { padding: 14px 16px; }
+  .vis-stat-icon { width: 40px; height: 40px; border-radius: 10px; font-size: 20px; }
+  .vis-stat-val { font-size: 22px; }
+  .vis-stat-label { font-size: 11px; }
+  .vis-page-header { padding: 14px 16px; border-radius: 12px; }
+  .vis-page-header h1 { font-size: 18px; }
+  .vis-card-header { padding: 12px 16px; font-size: 14px; }
+  .vis-card-body { padding: 14px 16px; }
+  .vis-chart-wrap { height: 240px; }
+  .vis-table thead { display: none; }
+  .vis-table tbody td {
+    display: block; padding: 8px 10px; border-bottom: 1px solid #f1f5f9;
+    text-align: right;
+  }
+  .vis-table tbody td::before {
+    content: attr(data-label); float: left; font-weight: 600;
+    color: #475569; text-transform: uppercase; font-size: 11px;
+  }
+  .vis-table tbody tr {
+    display: block; padding: 8px 0; border-bottom: 2px solid #e2e8f0;
+    margin-bottom: 4px; background: #fafbfc; border-radius: 10px; padding: 10px 12px;
+  }
+}
+@media (max-width: 480px) {
+  .vis-stat-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .vis-stat-card { padding: 10px 12px; gap: 10px; }
+  .vis-stat-icon { width: 34px; height: 34px; border-radius: 8px; font-size: 17px; }
+  .vis-stat-val { font-size: 19px; }
+}
+</style>
+
+<main class="lyear-layout-content">
+  <div class="container-fluid glass-animate-in vis-stats">
+
+    <div class="vis-page-header">
+      <div>
+        <h1>访客访问统计</h1>
+        <p>实时监控网站流量与访问数据</p>
+      </div>
+      <button class="vis-btn outline" onclick="resetStats()" style="flex-shrink:0;">
+        <i class="mdi mdi-delete-sweep"></i> 清理30天前
+      </button>
+    </div>
+
+    <!-- 统计卡片 -->
+    <div class="vis-stat-grid">
+      <div class="vis-stat-card">
+        <div class="vis-stat-icon blue"><i class="mdi mdi-account-multiple"></i></div>
+        <div>
+          <div class="vis-stat-val">{$todayUniqueIp|default=0}</div>
+          <div class="vis-stat-label">今日访客数 (UV)</div>
+        </div>
+      </div>
+      <div class="vis-stat-card">
+        <div class="vis-stat-icon green"><i class="mdi mdi-eye"></i></div>
+        <div>
+          <div class="vis-stat-val">{$todayTotal|default=0}</div>
+          <div class="vis-stat-label">今日浏览量 (PV)</div>
+        </div>
+      </div>
+      <div class="vis-stat-card">
+        <div class="vis-stat-icon purple"><i class="mdi mdi-account-group"></i></div>
+        <div>
+          <div class="vis-stat-val">{$weekUniqueIp|default=0}</div>
+          <div class="vis-stat-label">本周访客 (UV)</div>
+        </div>
+      </div>
+      <div class="vis-stat-card">
+        <div class="vis-stat-icon orange"><i class="mdi mdi-eye-circle"></i></div>
+        <div>
+          <div class="vis-stat-val">{$weekTotal|default=0}</div>
+          <div class="vis-stat-label">本周浏览量 (PV)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 图表行 -->
+    <div class="vis-grid-2" style="margin-bottom:20px;">
+      <div class="vis-card">
+        <div class="vis-card-header">近7天访问量趋势</div>
+        <div class="vis-card-body">
+          <div class="vis-chart-wrap"><canvas id="chart7Days"></canvas></div>
+        </div>
+      </div>
+      <div class="vis-card">
+        <div class="vis-card-header">今日24小时分布</div>
+        <div class="vis-card-body">
+          <div class="vis-chart-wrap"><canvas id="chart24Hours"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top10页面 -->
+    <div class="vis-card">
+      <div class="vis-card-header">热门页面 Top 10</div>
+      <div class="vis-card-body p-0">
+        <div class="table-responsive">
+          <table class="vis-table">
+            <thead>
+              <tr><th>#</th><th>URL</th><th>访问次数</th></tr>
+            </thead>
+            <tbody>
+              {foreach $topPages as $k=>$tp}
+              <tr>
+                <td data-label="排名"><span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:{if $k<3}linear-gradient(135deg,#667eea,#764ba2);color:#fff{else}#f1f5f9;color:#64748b{/if};font-size:12px;font-weight:700;">{$k+1}</span></td>
+                <td data-label="URL" style="max-width:400px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="{$tp.url}">{$tp.url}</td>
+                <td data-label="访问次数"><strong>{$tp.cnt}</strong></td>
+              </tr>
+              {/foreach}
+              {if empty($topPages)}
+              <tr><td colspan="3" class="text-center py-4" style="color:#9ca3af;">暂无数据</td></tr>
+              {/if}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 最近访问记录 -->
+    <div class="vis-card">
+      <div class="vis-card-header">最近访问记录</div>
+      <div class="vis-card-body p-0">
+        <div class="table-responsive">
+          <table class="vis-table">
+            <thead>
+              <tr><th>IP</th><th>URL</th><th>访问时间</th><th>UA</th></tr>
+            </thead>
+            <tbody>
+              {foreach $recentVisits as $v}
+              <tr>
+                <td data-label="IP"><code>{$v.ip}</code></td>
+                <td data-label="URL" style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="{$v.url}">{$v.url}</td>
+                <td data-label="时间" style="white-space:nowrap;">{$v.visit_time|date='Y-m-d H:i:s',###}</td>
+                <td data-label="UA" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="{$v.user_agent}">{if strlen($v.user_agent) > 30}{:mb_substr($v.user_agent,0,30)}...{else}{$v.user_agent}{/if}</td>
+              </tr>
+              {/foreach}
+              {if empty($recentVisits)}
+              <tr><td colspan="4" class="text-center py-4" style="color:#9ca3af;">暂无访问记录</td></tr>
+              {/if}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+(function(){
+  var days7 = {$days7|json_encode};
+  var days7Pv = {$days7Pv|json_encode};
+  var days7Uv = {$days7Uv|json_encode};
+  var ctx7 = document.getElementById('chart7Days');
+  if (ctx7) {
+    new Chart(ctx7, {
+      type: 'bar',
+      data: {
+        labels: days7,
+        datasets: [
+          { label: 'PV', data: days7Pv, backgroundColor: 'rgba(102,126,234,0.75)', borderRadius: 8, order: 2 },
+          { label: 'UV', data: days7Uv, backgroundColor: 'rgba(139,92,246,0.75)', borderRadius: 8, order: 2 }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'top', labels: { usePointStyle: true, padding: 20 } } },
+        scales: {
+          y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0 }, grid: { color: '#f1f5f9' } },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+  }
+
+  var hours24 = {$hours24|json_encode};
+  var hours24Count = {$hours24Count|json_encode};
+  var ctx24 = document.getElementById('chart24Hours');
+  if (ctx24) {
+    new Chart(ctx24, {
+      type: 'bar',
+      data: {
+        labels: hours24,
+        datasets: [{
+          label: '访问量', data: hours24Count,
+          backgroundColor: function(ctx) {
+            var gradient = ctx.chart.ctx.createLinearGradient(0, 0, 0, 260);
+            gradient.addColorStop(0, 'rgba(17,153,142,0.7)');
+            gradient.addColorStop(1, 'rgba(56,239,125,0.3)');
+            return gradient;
+          },
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0 }, grid: { color: '#f1f5f9' } },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+  }
+})();
+
+function resetStats() {
+  if (!confirm('确定要清理30天前的访问记录吗？此操作无法撤销。')) return;
+  fetch(location.href, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: 'act=reset'
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if (d.code == '1') { alert(d.msg); location.reload(); }
+    else { alert(d.msg); }
+  }).catch(function(){ alert('操作失败'); });
+}
+</script>
+{include file="default/footer" /}

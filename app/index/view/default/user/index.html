@@ -1,0 +1,1158 @@
+{include file="default/user/header" title="用户中心" /}
+<main id="main-container">
+    <div class="content glass-animate-in">
+        {if $isBanned}
+        <div class="alert alert-warning" style="border-radius:10px;border-left:4px solid #F59E0B;background:#FFFBEB;color:#92400E;padding:14px 18px;margin-bottom:20px;font-size:14px;">
+            <strong><i class="fas fa-exclamation-triangle"></i> 您的账号已被封禁</strong><br>
+            封禁至：<strong>{$banEndTime|date="Y-m-d H:i:s",###}</strong><br>
+            封禁原因：{$banReason ?: '管理员未填写原因'}<br>
+            <small>封禁期间所有主机已被停用，无法充值或提交工单。到期后自动解封。</small>
+        </div>
+        {/if}
+
+        <style>
+            :root {
+                --card-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04);
+                --card-shadow-hover: 0 4px 12px rgba(0,0,0,0.06), 0 16px 40px rgba(0,0,0,0.06);
+            }
+
+            /* Hero */
+            .console-hero {
+                background: rgba(255, 255, 255, 0.92);
+                backdrop-filter: blur(var(--glass-blur));
+                -webkit-backdrop-filter: blur(var(--glass-blur));
+                border: 1px solid var(--glass-border);
+                border-radius: var(--glass-radius-lg);
+                padding: 32px 36px;
+                margin-bottom: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 24px;
+                box-shadow: var(--glass-shadow-sm), var(--glass-shadow-inset);
+                flex-wrap: nowrap;
+            }
+
+            .console-hero h1 {
+                font-size: 28px;
+                font-weight: 800;
+                color: var(--glass-text);
+                margin: 0 0 8px;
+                letter-spacing: -0.5px;
+            }
+
+            .console-hero p {
+                font-size: 15px;
+                color: var(--glass-text-secondary);
+                margin: 0;
+            }
+
+            .console-hero > div:first-child {
+                min-width: 0;
+                flex: 1;
+            }
+
+            .hero-profile-card {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                padding: 12px 16px;
+                background: rgba(255, 255, 255, 0.92);
+                backdrop-filter: blur(var(--glass-blur));
+                -webkit-backdrop-filter: blur(var(--glass-blur));
+                border: 1px solid var(--glass-border);
+                border-radius: 16px;
+                text-decoration: none;
+                color: inherit;
+                transition: all var(--transition);
+                box-shadow: 0 1px 2px rgba(0,0,0,0.03), var(--glass-shadow-inset);
+            }
+
+            .hero-profile-card:hover {
+                border-color: var(--primary-light);
+                box-shadow: 0 4px 16px rgba(37,99,235,0.08);
+                text-decoration: none;
+                color: inherit;
+            }
+
+            .hero-profile-card img {
+                width: 52px;
+                height: 52px;
+                border-radius: 50%;
+                object-fit: cover;
+            }
+
+            .hero-profile-card .info {
+                min-width: 0;
+                flex: 1;
+            }
+
+            .hero-profile-card .name {
+                font-weight: 700;
+                font-size: 15px;
+                color: var(--glass-text);
+                margin-bottom: 2px;
+            }
+
+            .hero-profile-card .meta {
+                font-size: 12px;
+                color: var(--glass-text-muted);
+            }
+
+            .hero-profile-card .arrow {
+                color: var(--glass-text-muted);
+                font-size: 13px;
+                margin-left: 4px;
+            }
+
+            /* Stat cards */
+            .stat-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 16px;
+                margin-bottom: 20px;
+                min-width: 0;
+            }
+
+            .stat-card {
+                background: rgba(255, 255, 255, 0.92);
+                backdrop-filter: blur(var(--glass-blur));
+                -webkit-backdrop-filter: blur(var(--glass-blur));
+                border: 1px solid var(--glass-border);
+                border-radius: var(--glass-radius-lg);
+                padding: 22px;
+                display: flex;
+                align-items: flex-start;
+                gap: 16px;
+                transition: all var(--transition);
+                box-shadow: var(--glass-shadow-sm), var(--glass-shadow-inset);
+            }
+
+            .stat-card:hover {
+                box-shadow: var(--card-shadow-hover);
+                transform: translateY(-2px);
+            }
+
+            .stat-icon {
+                width: 48px;
+                height: 48px;
+                border-radius: 14px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                flex-shrink: 0;
+            }
+
+            .stat-icon.blue { background: var(--primary-bg); color: var(--glass-primary); }
+            .stat-icon.green { background: #D1FAE5; color: #059669; }
+            .stat-icon.orange { background: #FEF3C7; color: #D97706; }
+            .stat-icon.red { background: #FEE2E2; color: #DC2626; }
+
+            .stat-info { min-width: 0; }
+
+            .stat-label {
+                font-size: 13px;
+                color: var(--glass-text-secondary);
+                margin-bottom: 6px;
+                font-weight: 500;
+            }
+
+            .stat-value {
+                font-size: 26px;
+                font-weight: 800;
+                color: var(--glass-text);
+                line-height: 1.2;
+            }
+
+            .stat-value small {
+                font-size: 14px;
+                font-weight: 500;
+                color: var(--glass-text-muted);
+                margin-left: 2px;
+            }
+
+            /* Dashboard main area */
+            .dashboard-main {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) 320px;
+                grid-template-rows: auto;
+                gap: 20px;
+                align-items: stretch;
+                margin-bottom: 20px;
+                min-width: 0;
+            }
+
+            .left-column {
+                grid-column: 1 / 2;
+                grid-row: 1 / 2;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                gap: 20px;
+                min-width: 0;
+            }
+
+            .left-column.left-column-stretch {
+                justify-content: space-between;
+            }
+
+            .left-column.left-column-stretch .table-card {
+                flex: 1 1 auto;
+                max-height: none;
+                min-height: 0;
+            }
+
+            .host-table-responsive {
+                max-height: 300px;
+                overflow-y: auto;
+                min-height: 60px;
+            }
+
+            .violation-table-responsive {
+                max-height: 145px;
+                overflow-y: auto;
+                min-height: 60px;
+            }
+
+            .actions-panel {
+                width: 100%;
+            }
+
+            .side-panel {
+                grid-column: 2 / 3;
+                grid-row: 1 / 2;
+            }
+
+            .table-card {
+                margin-bottom: 0;
+            }
+
+            .actions-panel {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: repeat(3, 72px);
+                gap: 10px;
+            }
+
+            .action-btn {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 4px;
+                padding: 8px 6px;
+                background: rgba(255, 255, 255, 0.92);
+                backdrop-filter: blur(var(--glass-blur));
+                -webkit-backdrop-filter: blur(var(--glass-blur));
+                border: 1px solid var(--glass-border);
+                border-radius: 12px;
+                color: var(--glass-text-secondary);
+                font-size: 12px;
+                font-weight: 600;
+                text-decoration: none;
+                transition: all 0.2s ease;
+                box-shadow: 0 1px 2px rgba(0,0,0,0.03), var(--glass-shadow-inset);
+                white-space: nowrap;
+                height: 72px;
+            }
+
+            .action-btn:hover {
+                border-color: #CBD5E1;
+                color: var(--glass-primary);
+                background: rgba(255, 255, 255, 0.92);
+                backdrop-filter: blur(var(--glass-blur));
+                -webkit-backdrop-filter: blur(var(--glass-blur));
+                text-decoration: none;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 14px rgba(37,99,235,0.08);
+            }
+
+            .action-btn i {
+                font-size: 16px;
+                color: var(--glass-primary);
+                transition: color 0.2s ease;
+            }
+
+            .action-btn:hover i {
+                color: var(--glass-primary);
+            }
+
+            .action-btn.primary {
+                background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+                border-color: transparent;
+                color: #fff;
+                box-shadow: 0 2px 10px rgba(37,99,235,0.2);
+            }
+
+            .action-btn.primary i {
+                color: #fff;
+            }
+
+            .action-btn.primary:hover {
+                background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+                border-color: transparent;
+                color: #fff;
+                box-shadow: 0 4px 16px rgba(37,99,235,0.28);
+                transform: translateY(-1px);
+            }
+
+            .action-btn.primary:hover i {
+                color: #fff;
+            }
+
+            /* Side panel */
+            .side-panel {
+                width: 320px;
+                flex-shrink: 0;
+                min-width: 0;
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .info-card {
+                background: rgba(255, 255, 255, 0.92);
+                backdrop-filter: blur(var(--glass-blur));
+                -webkit-backdrop-filter: blur(var(--glass-blur));
+                border: 1px solid var(--glass-border);
+                border-radius: var(--glass-radius-lg);
+                padding: 24px;
+                box-shadow: var(--glass-shadow-sm), var(--glass-shadow-inset);
+            }
+            .info-card.info-card-fill {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .info-card h3 {
+                font-size: 17px;
+                font-weight: 800;
+                color: var(--glass-text);
+                margin: 0 0 20px;
+            }
+
+            .info-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 12px 0;
+                border-bottom: 1px solid var(--border-light);
+                font-size: 14px;
+            }
+
+            .info-row:last-child {
+                border-bottom: none;
+            }
+
+            .info-row .label {
+                color: var(--glass-text-secondary);
+            }
+
+            .info-row .value {
+                color: var(--glass-text);
+                font-weight: 600;
+                text-align: right;
+                word-break: break-all;
+            }
+
+            .info-row .value.success { color: #059669; }
+            .info-row .value.warning { color: #D97706; }
+            .info-row .value.danger { color: #DC2626; }
+
+            .realname-entry {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-top: 16px;
+                padding: 14px 16px;
+                background: rgba(255, 255, 255, 0.92);
+                backdrop-filter: blur(var(--glass-blur));
+                -webkit-backdrop-filter: blur(var(--glass-blur));
+                border: 1px solid var(--glass-border);
+                border-radius: 12px;
+                text-decoration: none;
+                transition: all var(--transition);
+            }
+
+            .realname-entry:hover {
+                background: var(--primary-bg);
+                border-color: var(--primary-light);
+                text-decoration: none;
+            }
+
+            .realname-entry .text {
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+            }
+
+            .realname-entry .title {
+                font-size: 14px;
+                font-weight: 700;
+                color: var(--glass-text);
+            }
+
+            .realname-entry .desc {
+                font-size: 12px;
+                color: var(--glass-text-secondary);
+            }
+
+            .realname-entry .icon {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                background: var(--glass-primary);
+                color: #fff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 13px;
+                flex-shrink: 0;
+            }
+
+            /* Section */
+            .section-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 16px;
+            }
+
+            .section-header h3 {
+                font-size: 16px;
+                font-weight: 700;
+                color: var(--glass-text);
+                margin: 0;
+            }
+
+            .section-header .more {
+                font-size: 13px;
+                color: var(--glass-primary);
+                text-decoration: none;
+                font-weight: 500;
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+            }
+
+            .section-header .more:hover {
+                text-decoration: none;
+            }
+
+            .section-header .more i {
+                font-size: 11px;
+            }
+
+            /* Table card */
+            .table-card {
+                background: rgba(255, 255, 255, 0.92);
+                backdrop-filter: blur(var(--glass-blur));
+                -webkit-backdrop-filter: blur(var(--glass-blur));
+                border: 1px solid var(--glass-border);
+                border-radius: var(--glass-radius-lg);
+                padding: 22px;
+                box-shadow: var(--glass-shadow-sm), var(--glass-shadow-inset);
+                min-width: 0;
+                display: flex;
+                flex-direction: column;
+                max-height: 320px;
+            }
+
+            .table-card .section-header {
+                flex-shrink: 0;
+            }
+
+            .table-card .table-responsive {
+                flex: 1;
+                overflow: auto;
+                min-height: 0;
+                margin: 0 -6px;
+                padding: 0 6px;
+            }
+
+            .table-card .table-responsive::-webkit-scrollbar {
+                width: 6px;
+                height: 6px;
+            }
+
+            .table-card .table-responsive::-webkit-scrollbar-thumb {
+                background: #cbd5e1;
+                border-radius: 3px;
+            }
+
+            .table-card .table thead th {
+                position: sticky;
+                top: 0;
+                background: rgba(255, 255, 255, 0.92);
+                z-index: 1;
+            }
+
+            /* Responsive */
+            @media (max-width: 1199px) {
+                .stat-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+
+                .dashboard-main {
+                    grid-template-columns: 1fr;
+                    grid-template-rows: auto;
+                }
+
+                .left-column,
+                .side-panel {
+                    grid-column: 1;
+                    grid-row: auto;
+                    width: 100%;
+                    min-width: 0;
+                }
+
+                .left-column {
+                    gap: 16px;
+                }
+
+                .table-card {
+                    width: 100%;
+                    min-width: 0;
+                }
+
+                .actions-panel {
+                    grid-template-columns: repeat(3, 1fr);
+                    grid-template-rows: repeat(2, 68px);
+                    gap: 8px;
+                }
+
+                .action-btn {
+                    height: 68px;
+                    padding: 8px 6px;
+                }
+
+                .side-panel {
+                    width: 100%;
+                    gap: 12px;
+                }
+            }
+
+            @media (max-width: 768px) {
+                #main-container .content {
+                    padding: 12px 12px 24px;
+                }
+
+                .console-hero {
+                    padding: 22px 20px;
+                    border-radius: 20px;
+                    flex-wrap: wrap;
+                    gap: 16px;
+                }
+
+                .console-hero h1 {
+                    font-size: 22px;
+                }
+
+                .console-hero p {
+                    font-size: 13px;
+                }
+
+                .hero-profile-card {
+                    padding: 0;
+                    border: none;
+                    background: transparent;
+                    box-shadow: none;
+                }
+
+                .hero-profile-card .info,
+                .hero-profile-card .arrow {
+                    display: none;
+                }
+
+                .console-hero > div:first-child {
+                    flex: 0 0 100%;
+                }
+
+                .stat-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 12px;
+                    margin-bottom: 16px;
+                }
+
+                .stat-card {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    padding: 16px;
+                    border-radius: 16px;
+                    gap: 10px;
+                }
+
+                .stat-icon {
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 12px;
+                    font-size: 18px;
+                }
+
+                .stat-value {
+                    font-size: 20px;
+                }
+
+                .actions-panel {
+                    grid-template-columns: repeat(3, 1fr);
+                    grid-template-rows: repeat(3, 60px);
+                    gap: 6px;
+                }
+
+                .action-btn {
+                    padding: 4px 2px;
+                    font-size: 10px;
+                    height: 60px;
+                    border-radius: 10px;
+                }
+
+                .action-btn i {
+                    font-size: 15px;
+                }
+
+                .info-card {
+                    padding: 18px;
+                }
+
+                .info-row {
+                    font-size: 13px;
+                    padding: 10px 0;
+                }
+
+                .realname-entry .title {
+                    font-size: 13px;
+                }
+
+                .realname-entry .desc {
+                    font-size: 11px;
+                }
+
+                .table-card {
+                    border-radius: 16px;
+                    padding: 16px 12px;
+                }
+
+                .section-header h3 {
+                    font-size: 15px;
+                }
+
+                .section-header .more {
+                    font-size: 12px;
+                }
+
+                .table-responsive {
+                    display: block;
+                    width: 100%;
+                    overflow-x: auto;
+                    -webkit-overflow-scrolling: touch;
+                    overscroll-behavior-x: contain;
+                }
+
+                .table {
+                    min-width: 640px;
+                }
+
+                .table th,
+                .table td {
+                    white-space: nowrap;
+                    font-size: 12px;
+                    padding: 10px 8px;
+                }
+
+                .table td:last-child,
+                .table th:last-child {
+                    padding-right: 4px;
+                }
+
+                .table td:first-child,
+                .table th:first-child {
+                    padding-left: 4px;
+                }
+
+                .table .btn-sm {
+                    padding: 6px 12px;
+                    font-size: 12px;
+                    min-width: 60px;
+                    min-height: 30px;
+                }
+            }
+        </style>
+
+        <div class="console-hero glass-reveal">
+            <div>
+                <h1>用户控制台</h1>
+                <p>管理账号信息、安全设置与订单资产</p>
+            </div>
+            <a href="__ROOT__/user/information" class="hero-profile-card">
+                <img src="https://q1.qlogo.cn/g?b=qq&nk={$user.qq}&s=100" alt="avatar">
+                <div class="info">
+                    <div class="name">
+                        {$user.name}
+                        {if $membershipLevel > 0 && !empty($membershipInfo)}
+                        <span style="display:inline-flex;align-items:center;gap:2px;margin-left:4px;padding:2px 7px;background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;font-size:10px;font-weight:800;border-radius:20px;vertical-align:middle;" title="{$membershipInfo.name}">
+                            <i class="fas fa-crown" style="font-size:9px;"></i> VIP{$membershipLevel}
+                        </span>
+                        {/if}
+                    </div>
+                    <div class="meta">ID: {$user.id}</div>
+                </div>
+                <i class="fas fa-chevron-right arrow"></i>
+            </a>
+        </div>
+
+        <div class="stat-grid">
+            <div class="stat-card glass-reveal">
+                <div class="stat-icon blue"><i class="fas fa-wallet"></i></div>
+                <div class="stat-info">
+                    <div class="stat-label">账户余额</div>
+                    <div class="stat-value">¥{$user.money|default='0.00'}</div>
+                </div>
+            </div>
+            <div class="stat-card glass-reveal">
+                <div class="stat-icon green"><i class="fas fa-server"></i></div>
+                <div class="stat-info">
+                    <div class="stat-label">运行中主机</div>
+                    <div class="stat-value">{$counthost|default='0'}</div>
+                </div>
+            </div>
+            <div class="stat-card glass-reveal">
+                <div class="stat-icon orange"><i class="fas fa-headset"></i></div>
+                <div class="stat-info">
+                    <div class="stat-label">待处理工单</div>
+                    <div class="stat-value">{$countticket|default='0'}</div>
+                </div>
+            </div>
+            <div class="stat-card glass-reveal">
+                <div class="stat-icon red"><i class="fas fa-clock"></i></div>
+                <div class="stat-info">
+                    <div class="stat-label">待续费服务</div>
+                    <div class="stat-value">{$countrenew|default='0'}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-main">
+            <div class="left-column{if !empty($publicViolations)} left-column-stretch{/if}">
+                <div class="actions-panel">
+                    <a href="__ROOT__/cart" class="action-btn primary">
+                        <i class="fas fa-check-circle"></i> 开通新主机
+                    </a>
+                    <a href="__ROOT__/user/pay" class="action-btn">
+                        <i class="fas fa-wallet"></i> 充值余额
+                    </a>
+                    <a href="__ROOT__/user/submitticket" class="action-btn">
+                        <i class="fas fa-headset"></i> 提交工单
+                    </a>
+                    <a href="__ROOT__/user/transferMarket" class="action-btn">
+                        <i class="fas fa-exchange-alt"></i> 转让市场
+                    </a>
+                    <a href="__ROOT__/user/order" class="action-btn primary">
+                        <i class="fas fa-server"></i> 主机管理
+                    </a>
+                    <a href="__ROOT__/user/order" class="action-btn">
+                        <i class="fas fa-file-invoice"></i> 查看订单
+                    </a>
+                    <a href="__ROOT__/cart" class="action-btn">
+                        <i class="fas fa-list-alt"></i> 查看套餐
+                    </a>
+                    <a href="__ROOT__/user/cdkey" class="action-btn">
+                        <i class="fas fa-key"></i> 卡密兑换
+                    </a>
+                    <a href="__ROOT__/user/information" class="action-btn">
+                        <i class="fas fa-user-cog"></i> 账户设置
+                    </a>
+                </div>
+
+                <div class="table-card glass-reveal host-table-card">
+                    <div class="section-header">
+                        <h3>主机管理（最近5条）</h3>
+                        <a href="__ROOT__/user/order" class="more">查看全部 <i class="fas fa-chevron-right"></i></a>
+                    </div>
+                    <div class="table-responsive host-table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>产品名称</th>
+                                    <th>购买时间</th>
+                                    <th>到期时间</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                        {if $order}
+                        {foreach $order as $o}
+                        <tr>
+                            <td><strong>{$o.cartid|default='-'}</strong></td>
+                            <td>{$o.atime|date='Y-m-d H:i:s',###}</td>
+                            <td>{$o.ztime|date='Y-m-d H:i:s',###}</td>
+                            <td>
+                                {if $o.state == '0'}
+                                <span class="badge badge-warning">待开通</span>
+                                {elseif $o.state == '1'}
+                                <span class="badge badge-success">正常</span>
+                                {elseif $o.state == '2'}
+                                <span class="badge badge-warning">暂停</span>
+                                {elseif $o.state == '3'}
+                                <span class="badge badge-danger">终止</span>
+                                {else}
+                                <span class="badge badge-secondary">未知</span>
+                                {/if}
+                            </td>
+                            <td>
+                                <a href="__ROOT__/user/order/{$o.id}" class="btn btn-sm btn-primary">管理</a>
+                            </td>
+                        </tr>
+                        {/foreach}
+                        {else}
+                        <tr>
+                            <td colspan="5">
+                                <div style="text-align:center;padding:40px;color:var(--glass-text-muted);">
+                                    <i class="fas fa-box-open" style="font-size:36px;margin-bottom:12px;display:block;"></i>
+                                    暂无产品，快去订购一个吧
+                                </div>
+                            </td>
+                        </tr>
+                        {/if}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+                {if !empty($publicViolations)}
+                <!-- 违规公示栏 -->
+                <div class="table-card glass-reveal violation-table-card">
+                  <div class="section-header">
+                    <h3 style="display:flex;align-items:center;gap:8px;">
+                      <i class="fas fa-gavel" style="color:#DC2626;"></i> 违规公示栏
+                      <span style="font-size:12px;color:#94A3B8;font-weight:400;">（共{$publicViolationsTotal|default=count($publicViolations)}条，下滑查看更多）</span>
+                    </h3>
+                  </div>
+                  <div class="table-responsive violation-table-responsive">
+                    <table class="table table-hover">
+                      <thead>
+                        <tr><th>用户</th><th>违规标题</th><th>处罚措施</th><th>公示时间</th><th>证据</th></tr>
+                      </thead>
+                      <tbody>
+                        {foreach $publicViolations as $pv}
+                        <tr>
+                          <td><strong>{$pv.username|htmlspecialchars}</strong></td>
+                          <td>{$pv.title|htmlspecialchars}</td>
+                          <td><span style="color:#DC2626;font-weight:500;">{$pv.punishment|default='-'|htmlspecialchars}</span></td>
+                          <td style="white-space:nowrap;">{$pv.create_time|date='Y-m-d H:i',###}</td>
+                          <td>
+                            {if !empty($pv.images)}
+                            {php}$pimgs = array_filter(explode(',', $pv['images']));{/php}
+                            {foreach $pimgs as $pimg}
+                            <a href="{$pimg}" target="_blank"><img src="{$pimg}" style="width:36px;height:36px;object-fit:cover;border-radius:4px;border:1px solid #e2e8f0;margin-right:2px;"></a>
+                            {/foreach}
+                            {else}
+                            <span style="color:#94A3B8;">-</span>
+                            {/if}
+                          </td>
+                        </tr>
+                        {/foreach}
+                      </tbody>
+                    </table>
+                  </div>
+                  {if $publicViolationsTotal > 2}
+                  <div style="text-align:center;padding:4px 0 0;font-size:12px;color:var(--glass-text-muted);">
+                    <i class="fas fa-chevron-down"></i> 下滑查看更多违规记录
+                  </div>
+                  {/if}
+                </div>
+                {/if}
+    </div>
+
+    <div class="side-panel">
+        <!-- 积分签到 -->
+        <div class="info-card glass-reveal" style="padding:16px 20px;">
+            <h3 style="display:flex;align-items:center;gap:6px;font-size:15px;margin-bottom:12px;">
+                <i class="fas fa-gift" style="color:#F59E0B;font-size:14px;"></i> 积分签到
+            </h3>
+            <div style="text-align:center;padding:6px 0;">
+                <div style="font-size:24px;font-weight:800;color:var(--glass-text);">{$userPoints}</div>
+                <div style="font-size:11px;color:var(--glass-text-secondary);margin-bottom:10px;">当前积分</div>
+                {if $canCheckin}
+                <button class="btn btn-primary" id="checkinBtn" onclick="doCheckin()" style="padding:8px 24px;font-size:13px;font-weight:600;border-radius:25px;width:100%;">
+                    <i class="fas fa-gift"></i> 每日签到
+                </button>
+                {else}
+                <button class="btn btn-secondary" disabled style="padding:8px 24px;font-size:13px;font-weight:600;border-radius:25px;width:100%;opacity:0.6;">
+                    <i class="fas fa-check-circle"></i> 今日已签到
+                </button>
+                {/if}
+                <div style="margin-top:6px;font-size:11px;color:var(--glass-text-muted);">
+                    <i class="fas fa-info-circle"></i> 每日签到随机获得1~20积分
+                </div>
+            </div>
+            {if !empty($recentCheckins)}
+            <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border-light);">
+                <div style="font-size:11px;color:var(--glass-text-muted);margin-bottom:4px;">最近签到</div>
+                <div style="max-height:28px;overflow-y:auto;">
+                {php}$firstCheckin = reset($recentCheckins);{/php}
+                <div style="display:flex;justify-content:space-between;font-size:11px;padding:2px 0;color:var(--glass-text-secondary);">
+                    <span>{$firstCheckin.created_at|date='m-d H:i',###}</span>
+                    <span style="color:#F59E0B;font-weight:600;">+{$firstCheckin.points}积分</span>
+                </div>
+                </div>
+            </div>
+            {/if}
+            <a href="__ROOT__/user/pointsShop" style="display:block;margin-top:10px;text-align:center;font-size:12px;color:var(--glass-primary);text-decoration:none;font-weight:500;">
+                <i class="fas fa-store"></i> 前往积分商城
+            </a>
+        </div>
+
+        <div class="info-card info-card-fill glass-reveal">
+            <h3>用户信息概栏</h3>
+            {if $membershipLevel > 0 && !empty($membershipInfo)}
+            <div style="margin-bottom:16px;padding:14px;background:linear-gradient(135deg,rgba(245,158,11,0.14) 0%,rgba(217,119,6,0.08) 100%);border:1px solid rgba(245,158,11,0.25);border-radius:14px;">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                    <div style="position:relative;width:42px;height:42px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.5);border-radius:50%;overflow:hidden;">
+                        <img src="__ROOT__/static/img/vip/{$membershipInfo.icon}" alt="{$membershipInfo.name}" style="width:34px;height:34px;object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='<i class=\'fas fa-crown\' style=\'font-size:18px;color:#D97706;\'></i>';">
+                    </div>
+                    <div style="min-width:0;flex:1;">
+                        <div style="display:flex;align-items:center;gap:6px;">
+                            <span style="font-size:15px;font-weight:800;color:#92400E;">{$membershipInfo.name}</span>
+                            <span style="padding:2px 8px;background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;font-size:11px;font-weight:700;border-radius:20px;">VIP{$membershipLevel}</span>
+                        </div>
+                        <div style="font-size:11px;color:#B45309;margin-top:2px;">购买{php}echo ($membershipInfo['discount']*100);{/php}% | 续费{php}echo ($membershipInfo['renew_discount']*100);{/php}%</div>
+                    </div>
+                </div>
+                <div style="font-size:11px;color:#92400E;padding-top:8px;border-top:1px solid rgba(245,158,11,0.15);">
+                    <i class="fas fa-coins"></i> 累计充值：¥{$totalRecharge|number_format=2}
+                    {if !empty($nextLevel)}
+                    {php}$needRecharge = $nextLevel['min_recharge'] - $totalRecharge;{/php}
+                    <span style="margin-left:8px;color:#B45309;">再充 ¥{$needRecharge|number_format=2} 升{$nextLevel.name}</span>
+                    {/if}
+                </div>
+            </div>
+            {else}
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;padding:10px 12px;background:rgba(148,163,184,0.08);border:1px solid rgba(148,163,184,0.2);border-radius:12px;">
+                <i class="fas fa-user" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#64748B;background:rgba(148,163,184,0.12);border-radius:50%;"></i>
+                <div style="min-width:0;flex:1;">
+                    <div style="font-size:14px;font-weight:700;color:#475569;">普通用户</div>
+                    <div style="font-size:11px;color:#64748B;">暂未开通VIP会员</div>
+                </div>
+            </div>
+            {/if}
+            <div class="info-row">
+                <span class="label">用户名</span>
+                <span class="value">{$user.name}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">最近登录时间</span>
+                <span class="value">{$lastLoginTime}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">登录IP</span>
+                <span class="value">{$lastLoginIp}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">登录地域</span>
+                <span class="value">{$lastLoginRegion}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">拥有主机数</span>
+                <span class="value">{$counthost|default='0'}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">实名认证</span>
+                {if isset($user.realname_status) && $user.realname_status == 1}
+                <span class="value success">已认证</span>
+                {elseif isset($user.realname_status) && $user.realname_status == 3}
+                <span class="value warning">审核中</span>
+                {else}
+                <span class="value danger">未认证</span>
+                {/if}
+            </div>
+            <a href="__ROOT__/user/realname" class="realname-entry">
+                <div class="text">
+                    <span class="title">
+                        {if isset($user.realname_status) && $user.realname_status == 1}
+                        实名认证已开通
+                        {elseif isset($user.realname_status) && $user.realname_status == 3}
+                        实名认证审核中
+                        {else}
+                        前往实名认证
+                        {/if}
+                    </span>
+                    <span class="desc">
+                        {if isset($user.realname_status) && $user.realname_status == 1}
+                        您已完成实名认证，可正常使用全部功能
+                        {elseif isset($user.realname_status) && $user.realname_status == 3}
+                        请耐心等待管理员审核
+                        {else}
+                        完成实名认证以解锁购买、充值等功能
+                        {/if}
+                    </span>
+                </div>
+                <div class="icon"><i class="fas fa-user-shield"></i></div>
+            </a>
+        </div>
+
+    </div>
+
+    {if !empty($myViolations)}
+    <!-- 个人违规通报弹窗 -->
+    <div id="violationPopup" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);">
+      <div style="background:var(--glass-bg);backdrop-filter:blur(var(--glass-blur));-webkit-backdrop-filter:blur(var(--glass-blur));border-radius:16px;max-width:520px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+        <div style="padding:20px 24px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;gap:12px;">
+          <div style="width:40px;height:40px;border-radius:50%;background:#FEE2E2;display:flex;align-items:center;justify-content:center;color:#DC2626;font-size:18px;"><i class="fas fa-exclamation-triangle"></i></div>
+          <div>
+            <div style="font-weight:700;font-size:16px;color:#1E293B;">违规通报</div>
+            <div style="font-size:12px;color:#94A3B8;">您有 {:count($myViolations)} 条违规记录</div>
+          </div>
+        </div>
+        <div style="padding:16px 24px;">
+          {foreach $myViolations as $v}
+          <div style="margin-bottom:16px;padding:14px;background:#FFF7ED;border:1px solid #FED7AA;border-radius:10px;">
+            <div style="font-weight:600;color:#C2410C;margin-bottom:6px;">{$v.title}</div>
+            {if !empty($v.reason)}<div style="font-size:13px;color:#78350F;margin-bottom:4px;">原因：{$v.reason|htmlspecialchars}</div>{/if}
+            {if !empty($v.punishment)}<div style="font-size:13px;color:#B45309;margin-bottom:4px;">处罚：{$v.punishment|htmlspecialchars}</div>{/if}
+            <div style="font-size:12px;color:#A16207;">{$v.create_time|date='Y-m-d H:i',###}</div>
+            {if !empty($v.images)}
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">
+              {php}$imgs = explode(',', $v['images']);{/php}
+              {foreach $imgs as $img}
+              {if !empty($img)}<a href="{$img}" target="_blank"><img src="{$img}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;border:1px solid #e2e8f0;"></a>{/if}
+              {/foreach}
+            </div>
+            {/if}
+          </div>
+          {/foreach}
+        </div>
+        <div style="padding:12px 24px;border-top:1px solid #e2e8f0;text-align:right;">
+          <button onclick="document.getElementById('violationPopup').remove();" style="padding:8px 20px;background:#DC2626;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;">我已了解</button>
+        </div>
+      </div>
+    </div>
+    {/if}
+</div>
+</main>
+<script>
+function doCheckin() {
+    var btn = $('#checkinBtn');
+    btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> 签到中...');
+    $.post('__ROOT__/user/checkin', function(res) {
+        if (res.code == '1') {
+            alert(res.msg);
+            location.reload();
+        } else {
+            alert(res.msg);
+            btn.prop('disabled', false).html('<i class="fas fa-gift"></i> 每日签到');
+        }
+    }, 'json').fail(function() {
+        alert('签到失败，请稍后再试');
+        btn.prop('disabled', false).html('<i class="fas fa-gift"></i> 每日签到');
+    });
+}
+</script>
+{include file="default/user/footer" /}
+
+<!-- 强制QQ群弹窗（仅控制台首页） -->
+{if isset($forceQqGroup) && $forceQqGroup}
+<div id="forceQqGroupModal" class="glass-modal-overlay" style="display:flex;">
+    <div class="glass-modal-content force-qq-popup">
+        <div class="glass-modal-header" style="border-bottom:none; justify-content:center;">
+            <h4 style="display:flex;align-items:center;gap:10px;"><i class="fab fa-qq" style="color:#12B7F5;font-size:22px;"></i> 加入官方QQ群</h4>
+        </div>
+        <div class="glass-modal-body" style="text-align:center;">
+            {if !empty($forceQqGroupReason)}
+            <div class="force-qq-reason" style="background:rgba(18,183,245,0.06);border-radius:10px;padding:14px 18px;margin-bottom:18px;font-size:14px;color:#475569;line-height:1.7;">
+                <i class="fas fa-info-circle" style="color:#12B7F5;margin-right:6px;"></i>{$forceQqGroupReason}
+            </div>
+            {/if}
+            {if !empty($forceQqGroupNumber)}
+            <div class="force-qq-group-info" style="margin-bottom:16px;">
+                <p style="margin:0 0 8px;font-size:13px;color:#64748b;">QQ群号码</p>
+                <p style="font-size:22px;font-weight:700;color:#1e293b;margin:0;letter-spacing:2px;">{$forceQqGroupNumber}</p>
+            </div>
+            {/if}
+            {if !empty($forceQqGroupLink)}
+            <a href="{$forceQqGroupLink}" target="_blank" class="force-qq-join-btn" style="display:inline-block;padding:10px 28px;background:linear-gradient(135deg,#12B7F5,#0EA5D9);color:#fff;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin-bottom:20px;transition:all 0.25s ease;">
+                <i class="fab fa-qq" style="margin-right:6px;"></i>一键加群
+            </a>
+            {/if}
+            <div class="force-qq-key-section" style="border-top:1px solid #e5e7eb;padding-top:18px;margin-top:4px;">
+                <p style="font-size:13px;color:#64748b;margin:0 0 10px;">加入QQ群后，请输入卡密完成验证</p>
+                <div style="display:flex;gap:8px;max-width:320px;margin:0 auto;">
+                    <input type="text" id="forceQqKeyInput" class="form-control" placeholder="请输入卡密" style="flex:1;text-align:center;">
+                    <button type="button" id="forceQqKeyBtn" class="btn btn-primary" style="white-space:nowrap;min-width:80px;">验证</button>
+                </div>
+                <p id="forceQqKeyMsg" style="font-size:12px;margin-top:8px;min-height:18px;"></p>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+.force-qq-popup {
+    max-width: 460px;
+    width: 90%;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.5);
+    animation: modalSlideIn 0.3s ease;
+}
+.force-qq-join-btn:hover {
+    background: linear-gradient(135deg,#0EA5D9,#0284C7);
+    color: #fff;
+    text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(18,183,245,0.4);
+}
+</style>
+<script>
+(function(){
+    var btn = document.getElementById('forceQqKeyBtn');
+    var input = document.getElementById('forceQqKeyInput');
+    var msg = document.getElementById('forceQqKeyMsg');
+    if(!btn || !input) return;
+    function verify(){
+        var key = input.value.trim();
+        if(!key){
+            msg.style.color = '#EF4444';
+            msg.textContent = '请输入卡密';
+            return;
+        }
+        btn.disabled = true;
+        btn.textContent = '验证中...';
+        msg.textContent = '';
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/user/qqGroupVerify', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onload = function(){
+            btn.disabled = false;
+            btn.textContent = '验证';
+            if(xhr.status === 200){
+                try{
+                    var res = JSON.parse(xhr.responseText);
+                    if(res.code == '1'){
+                        msg.style.color = '#10B981';
+                        msg.textContent = res.msg;
+                        setTimeout(function(){ location.reload(); }, 800);
+                    } else {
+                        msg.style.color = '#EF4444';
+                        msg.textContent = res.msg || '验证失败';
+                    }
+                }catch(e){
+                    msg.style.color = '#EF4444';
+                    msg.textContent = '请求异常，请重试';
+                }
+            } else {
+                msg.style.color = '#EF4444';
+                msg.textContent = '请求失败，请重试';
+            }
+        };
+        xhr.send('key=' + encodeURIComponent(key));
+    }
+    btn.addEventListener('click', verify);
+    input.addEventListener('keydown', function(e){ if(e.key === 'Enter') verify(); });
+})();
+</script>
+{/if}

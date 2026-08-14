@@ -1,0 +1,386 @@
+{include file="default/header" title="服务器列表"/}
+<main class="lyear-layout-content page-wrap">
+  <div class="page-header-bar">
+    <h3 class="page-header-bar-title">服务器列表</h3>
+    <form method="get" action="" class="search-box">
+      <input class="form-input search-box-input" type="text" name="search" placeholder="搜索服务器名称..." value=""/>
+      <button class="new-btn primary search-box-btn">
+        <span class="mdi mdi-magnify"></span> 搜索
+      </button>
+    </form>
+  </div>
+  <div class="content-card">
+    <div class="content-card-header">
+      <span>服务器管理</span>
+    </div>
+    <div class="content-card-body">
+      <div class="mb-3">
+        <button onclick='add()' class="new-btn primary me-1"><span class="mdi mdi-plus" aria-hidden="true"></span> 添加服务器</button>
+        <button onclick='del()' class="new-btn danger">
+          <span class="mdi mdi-window-close" aria-hidden="true"></span> 删除选中
+        </button>
+        <button onclick='qbdel()' class="new-btn danger">
+          <span class="mdi mdi-window-close" aria-hidden="true"></span> 全部删除
+        </button>
+      </div>
+      <div class="table-responsive-sm">
+        <table class="new-table">
+          <thead>
+            <tr>
+              <th>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="check-all">
+                  <label class="form-check-label" for="check-all"></label>
+                </div>
+              </th>
+              <th>ID</th>
+              <th>名称</th>
+              <th>服务器插件</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            {foreach $server as $s}
+            <tr>
+              <td data-label="选择">
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input ids" name="ids" value="{$s.id}">
+                  <label class="form-check-label" for="ids-1"></label>
+                </div>
+              </td>
+              <td data-label="ID">{$s.id}</td>
+              <td data-label="名称">{$s.name}</td>
+              <td data-label="服务器插件">{$s.serverplugins}</td>
+              <td data-label="操作">
+                <a href="/admin/server/{$s.id}" class="new-btn success"><i class="mdi mdi-pencil"></i> 编辑</a>
+              </td>
+            </tr>
+            {/foreach}
+          </tbody>
+        </table>
+      </div>
+      <div style="text-align:center;margin-top:16px">{$server->render()}</div>
+    </div>
+  </div>
+</main>
+{include file="default/footer" /}
+<style>
+.lyear-layout-content.page-wrap{position:relative!important;height:auto!important;width:100%!important;max-width:1280px!important;margin:0 auto!important;left:auto!important;padding:calc(64px + 24px) 20px 40px 20px!important}
+.page-header-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;background:linear-gradient(135deg,#667eea,#764ba2);padding:22px 28px;border-radius:16px;margin-top:16px;box-shadow:0 6px 24px rgba(102,126,234,.25)}
+.page-header-bar-title{color:#fff;font-size:1.35rem;font-weight:700;margin:0;letter-spacing:.3px}
+.search-box{display:flex;align-items:center;gap:0}
+.search-box-input{border-radius:10px 0 0 10px !important;border-right:none !important;min-width:220px}
+.search-box-btn{border-radius:0 10px 10px 0 !important;white-space:nowrap}
+.form-input{display:block;width:100%;padding:9px 14px;font-size:14px;line-height:1.5;color:#333;background-color:#fff;background-clip:padding-box;border:1.5px solid #d5dae2;border-radius:10px;transition:border-color .2s,box-shadow .2s;outline:none;box-sizing:border-box}
+.form-input:focus{border-color:#667eea;box-shadow:0 0 0 3px rgba(102,126,234,.12)}
+.form-label{display:inline-block;margin-bottom:6px;font-size:13.5px;font-weight:600;color:#344563;letter-spacing:.2px}
+.content-card{background:#fff;border-radius:16px;box-shadow:0 2px 16px rgba(0,0,0,.06);margin-top:20px;overflow:hidden}
+.content-card-header{display:flex;align-items:center;padding:16px 24px;font-size:15px;font-weight:600;color:#2c3e50;border-bottom:1px solid #edf0f5;position:relative}
+.content-card-header::before{content:'';position:absolute;left:0;top:12px;bottom:12px;width:4px;background:linear-gradient(180deg,#667eea,#764ba2);border-radius:0 3px 3px 0}
+.content-card-body{padding:20px 24px}
+.new-table{width:100%;border-collapse:collapse;font-size:13.5px}
+.new-table thead{background:#f4f6fa}
+.new-table thead th{padding:12px 14px;text-align:left;font-weight:600;color:#5a6b87;font-size:12.5px;text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid #e4e8f0;white-space:nowrap}
+.new-table tbody tr{border-bottom:1px solid #f0f2f5;transition:background .15s}
+.new-table tbody tr:hover{background:#f8f9ff}
+.new-table tbody tr:nth-child(even){background:#fafbfc}
+.new-table tbody tr:nth-child(even):hover{background:#f8f9ff}
+.new-table tbody td{padding:12px 14px;color:#42526e;vertical-align:middle}
+.new-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;font-size:13px;font-weight:500;border:none;border-radius:50px;cursor:pointer;transition:all .2s;line-height:1.4;text-decoration:none;white-space:nowrap}
+.new-btn.primary{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;box-shadow:0 3px 10px rgba(102,126,234,.3)}
+.new-btn.primary:hover{box-shadow:0 5px 16px rgba(102,126,234,.4);transform:translateY(-1px)}
+.new-btn.danger{background:linear-gradient(135deg,#e74c3c,#c0392b);color:#fff;box-shadow:0 3px 10px rgba(231,76,60,.25)}
+.new-btn.danger:hover{box-shadow:0 5px 16px rgba(231,76,60,.35);transform:translateY(-1px)}
+.new-btn.outline{background:transparent;color:#667eea;border:1.5px solid #667eea}
+.new-btn.outline:hover{background:#667eea;color:#fff}
+.new-btn.success{background:linear-gradient(135deg,#27ae60,#1e8449);color:#fff;box-shadow:0 3px 10px rgba(39,174,96,.25)}
+.new-btn.success:hover{box-shadow:0 5px 16px rgba(39,174,96,.4);transform:translateY(-1px)}
+.new-badge{display:inline-block;padding:4px 12px;font-size:12px;font-weight:600;border-radius:50px;letter-spacing:.3px;line-height:1.5}
+.new-badge.success{background:#dcfce7;color:#166534}
+.new-badge.danger{background:#fee2e2;color:#991b1b}
+.new-badge.warning{background:#fef3c7;color:#92400e}
+.new-badge.info{background:#dbeafe;color:#1e40af}
+.server-add-tip {
+  background: #deebff;
+  border: 1px solid #b3d4ff;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  font-size: 12.5px;
+  color: #0747a6;
+  line-height: 1.55;
+}
+.server-add-tip strong { display: block; margin-bottom: 4px; }
+.server-field-hint {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #6b778c;
+  line-height: 1.45;
+}
+.server-field-hint em { color: #de350b; font-style: normal; }
+.layer-server-add .layui-layer-content {
+  max-height: 72vh !important;
+  overflow-y: auto !important;
+}
+.layer-admin-form .layui-layer-title,
+.layer-server-add .layui-layer-title {
+  background: var(--glass-bg-light) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border-bottom: 1px solid var(--glass-border) !important;
+  color: var(--glass-text) !important;
+}
+.layer-admin-form,
+.layer-server-add {
+  background: var(--glass-bg-strong) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid var(--glass-border-strong) !important;
+  border-radius: var(--glass-radius-lg) !important;
+  box-shadow: var(--glass-shadow-lg) !important;
+}
+.layer-admin-form .layui-layer-content,
+.layer-server-add .layui-layer-content {
+  background: transparent !important;
+}
+.layer-admin-form .card-body,
+.layer-server-add .card-body {
+  background: transparent !important;
+}
+.layer-admin-form .form-control,
+.layer-server-add .form-control {
+  background: var(--glass-bg-input) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border: 1.5px solid var(--glass-border) !important;
+  border-radius: var(--glass-radius-sm) !important;
+  color: var(--glass-text) !important;
+}
+.layer-admin-form .form-control:focus,
+.layer-server-add .form-control:focus {
+  background: var(--glass-bg) !important;
+  border-color: var(--glass-primary) !important;
+  box-shadow: 0 0 0 4px var(--glass-primary-glow) !important;
+}
+.layer-admin-form .form-label,
+.layer-server-add .form-label {
+  color: var(--glass-text) !important;
+  font-weight: 500 !important;
+}
+.layer-admin-form .form-select,
+.layer-server-add .form-select {
+  background: var(--glass-bg-input) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border: 1.5px solid var(--glass-border) !important;
+  border-radius: var(--glass-radius-sm) !important;
+  color: var(--glass-text) !important;
+}
+.layer-admin-form .form-select:focus,
+.layer-server-add .form-select:focus {
+  background: var(--glass-bg) !important;
+  border-color: var(--glass-primary) !important;
+  box-shadow: 0 0 0 4px var(--glass-primary-glow) !important;
+}
+.layer-admin-form textarea.form-control,
+.layer-server-add textarea.form-control {
+  background: var(--glass-bg-input) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border: 1.5px solid var(--glass-border) !important;
+  color: var(--glass-text) !important;
+}
+.lyear-layout-content .form-label {
+  color: var(--glass-text) !important;
+  font-weight: 500 !important;
+}
+@media(max-width:768px){
+  .page-wrap{padding:0 12px 32px}
+  .page-header-bar{flex-direction:column;align-items:stretch;padding:18px 20px;gap:12px}
+  .page-header-bar-title{font-size:1.15rem}
+  .search-box{flex-direction:column;gap:8px}
+  .search-box-input{border-radius:10px !important;border-right:1.5px solid #d5dae2 !important}
+  .search-box-btn{border-radius:10px !important;width:100%;justify-content:center}
+  .content-card-header{padding:12px 16px;font-size:14px;padding-left:22px}
+  .content-card-body{padding:14px 12px}
+  .new-table thead{display:none}
+  .new-table tbody tr{display:block;margin-bottom:12px;background:#fff;border:1px solid #eef1f6;border-radius:12px;padding:10px 14px;box-shadow:0 1px 6px rgba(0,0,0,.04)}
+  .new-table tbody td{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed #eef1f6;font-size:13px}
+  .new-table tbody td:last-child{border-bottom:none}
+  .new-table tbody td::before{content:attr(data-label);font-weight:600;color:#667eea;font-size:11.5px;text-transform:uppercase;margin-right:12px;white-space:nowrap;flex-shrink:0}
+  .new-btn{padding:7px 14px;font-size:12px}
+}
+</style>
+<script>
+function add(){
+layer.open({
+        type: 1,
+        area: ['560px', 'auto'],
+        maxHeight: Math.min(window.innerHeight * 0.88, 720),
+        closeBtn: 1,
+        shift: 7,
+        shadeClose: true,
+        skin: 'layer-server-add',
+        title: "添加服务器",
+        content: ''
+          + '<div class="card-body" style="width:520px;max-width:100%;padding:18px 20px 12px;box-sizing:border-box;">'
+          + '<form action="" method="post" id="myform" class="edit-form admin-form">'
+          + '<input type="hidden" name="act" value="add">'
+           + '<div class="server-add-tip">'
+           + '<strong>梦奈宝塔对接说明</strong>'
+           + '主机只填域名或IP，不要带 http:// 或 https://。<br>'
+           + '安全码 = 系统 API；账号 = 宝塔编号；密码 = 调用密钥。<br>'
+           + '<span style="color:#de350b;font-weight:bold">端口务必填写梦奈服务端口，不是宝塔面板端口！</span><br>'
+           + 'https 访问请开启 SSL。插件请选 <b>mnbt</b>。'
+           + '</div>'
+          + '<div class="mb-3">'
+          + '<label class="form-label">名称</label>'
+          + '<input class="form-control" type="text" name="name" value="" placeholder="例如：梦奈主节点">'
+          + '<span class="server-field-hint">后台显示用的名称，随意填写</span>'
+          + '</div>'
+          + '<div class="mb-3">'
+          + '<label class="form-label">主机 <em style="color:#de350b">*</em></label>'
+          + '<input class="form-control" type="text" name="host" value="" placeholder="bt.example.com 或 1.2.3.4">'
+          + '<span class="server-field-hint"><em>不要</em>填写 http:// 或路径，只填域名/IP。销售站需能访问该地址</span>'
+          + '</div>'
+          + '<div class="mb-3">'
+          + '<label class="form-label">IP</label>'
+          + '<input class="form-control" type="text" name="ip" value="" placeholder="可选，公网 IP">'
+          + '<span class="server-field-hint">可选备注，一般不影响开通接口</span>'
+          + '</div>'
+          + '<div class="mb-3">'
+          + '<label class="form-label">安全码（系统 API）</label>'
+          + '<textarea class="form-control" name="security" style="height:88px" placeholder="梦奈宝塔系统 API 安全码"></textarea>'
+          + '<span class="server-field-hint">对应梦奈宝塔「系统 API / 安全码」</span>'
+          + '</div>'
+          + '<div class="row">'
+           + '<div class="col-md-6 mb-3">'
+           + '<label class="form-label">MNBT端口 <em style="color:#de350b;font-weight:bold">*</em></label>'
+           + '<input class="form-control" type="text" name="port" value="80" placeholder="MNBT服务端口">'
+           + '<span class="server-field-hint" style="color:#de350b">⚠ 填梦奈服务的端口，不是宝塔面板端口！</span>'
+          + '</div>'
+          + '<div class="col-md-6 mb-3">'
+          + '<label class="form-label">是否开启 SSL</label>'
+          + '<select name="ssl" class="form-select"><option value="0" selected>关闭（http）</option><option value="1">开启（https）</option></select>'
+          + '<span class="server-field-hint">地址是 https 就选开启</span>'
+          + '</div>'
+          + '</div>'
+          + '<div class="mb-3">'
+          + '<label class="form-label">账号（宝塔编号）</label>'
+          + '<input class="form-control" type="text" name="user" value="" placeholder="梦奈里该服务器的宝塔编号">'
+          + '<span class="server-field-hint">梦奈宝塔 → 服务器列表里的<strong>宝塔编号</strong></span>'
+          + '</div>'
+          + '<div class="mb-3">'
+          + '<label class="form-label">密码（调用密钥）</label>'
+          + '<input class="form-control" type="text" name="password" value="" placeholder="该服务器的调用密钥">'
+          + '<span class="server-field-hint">梦奈宝塔 → 对应服务器的<strong>调用密钥</strong></span>'
+          + '</div>'
+          + '<div class="mb-3">'
+          + '<label class="form-label">服务器插件</label>'
+          + '<select name="serverplugins" class="form-select"><option value="">无</option>{volist name="plugins" id="p"}<option value="{$p}">{$p}</option>{/volist}</select>'
+          + '<span class="server-field-hint">对接梦奈请选择 <b>mnbt</b>；EasyPanel 选 easypanel</span>'
+          + '</div>'
+          + '<div class="d-flex gap-2" style="padding-bottom:8px">'
+          + '<button type="button" onclick="add1()" class="btn btn-primary">添加</button>'
+          + '<button type="button" onclick="layer.closeAll()" class="btn btn-secondary">取消</button>'
+          + '</div>'
+          + '</form></div>',
+  });
+
+}
+
+function add1(){
+             var load = layer.msg('添加中，请稍后...',{icon:16,time:false});
+ var form = $('#myform').serializeArray();
+       $.ajax({
+            type:'POST',
+            url:'',
+data:form,
+            dataType:'json',
+            success:function (data){
+                layer.close(load)
+                if(data.code == 1){
+                    setTimeout(function (){
+                        location.href = ''
+                    },1000);
+                    layer.alert(data.msg,{icon:1});
+                }else{
+                    layer.msg(data.msg,{icon:2});
+                }
+            }
+        });
+    }
+
+
+
+
+function del(){
+var id = [];
+$("input[name='ids']:checked").each(function(i){
+        id[i] =$(this).val();
+      });
+var id = id.join(",");
+if(id==""){
+layer.alert("未选择服务器!",{icon:2,shade:0.8});
+}else{
+        layer.confirm('确定要删除ID为<span style="color:#0b5ed7">'+ id +'</span>的服务器吗？', function (){
+            del1(id)
+        });
+    }
+}
+
+    function del1(id){
+        var load = layer.load('1',{time:false});
+
+        $.ajax({
+            type:'POST',
+            url:'',
+            data:{
+                act:'delete',
+                cid:id
+            },
+            dataType:'json',
+            success:function (data){
+                layer.close(load);
+                if(data.code == 1){
+layer.alert(data.msg,{icon:1},function(){
+                        window.location.href = "";
+                    });
+                }else{
+                    layer.alert(data.msg,{icon:2});
+                }
+            }
+        });
+    }
+
+function qbdel(){
+        layer.confirm('确定要删除<span style="color:#0b5ed7">全部</span>的服务器吗？', function (){
+            qbdel1()
+        });
+    }
+
+
+    function qbdel1(){
+        var load = layer.load('1',{time:false});
+
+        $.ajax({
+            type:'POST',
+            url:'',
+            data:{
+                act:'qbdelete',
+            },
+            dataType:'json',
+            success:function (data){
+                layer.close(load);
+                if(data.code == 1){
+layer.alert(data.msg,{icon:1},function(){
+                        window.location.href = "";
+                    });
+                }else{
+                    layer.alert(data.msg,{icon:2});
+                }
+            }
+        });
+    }
+</script>

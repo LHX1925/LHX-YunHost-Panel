@@ -1,0 +1,352 @@
+{include file="default/header" title="违规通报管理" /}
+<main class="lyear-layout-content">
+  <div class="container-fluid glass-animate-in">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card admin-card">
+          <header class="card-header">
+            <div class="card-title">违规用户通报</div>
+            <div class="card-toolbar">
+              <button class="btn-admin btn-admin-primary btn-sm" onclick="openAdd()">
+                <i class="mdi mdi-plus"></i> 添加通报
+              </button>
+              <button class="btn-admin btn-admin-danger btn-sm ms-2" onclick="batchDelete()">
+                <i class="mdi mdi-delete"></i> 批量删除
+              </button>
+              <form class="d-flex admin-search-form ms-2" method="get">
+                <input type="text" name="search" class="form-control form-control-sm" placeholder="搜索标题/用户名" value="{$search|default=''}">
+                <button type="submit" class="btn-admin btn-admin-primary btn-sm ms-2">搜索</button>
+              </form>
+            </div>
+          </header>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table admin-table table-hover">
+                <thead>
+                  <tr>
+                    <th><input type="checkbox" id="selectAll" onchange="toggleAll(this)"></th>
+                    <th>ID</th>
+                    <th>用户</th>
+                    <th>标题</th>
+                    <th>处罚措施</th>
+                    <th>状态</th>
+                    <th>创建时间</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {foreach $list as $v}
+                  <tr>
+                    <td><input type="checkbox" class="row-check" value="{$v.id}"></td>
+                    <td>{$v.id}</td>
+                    <td>{$v.username|default='-'}</td>
+                    <td>{$v.title}</td>
+                    <td>{$v.punishment|default='-'}</td>
+                    <td>
+                      {if $v.status == 1}
+                      <span class="admin-badge admin-badge-success" style="cursor:pointer" onclick="toggleStatus({$v.id}, this)">公示中</span>
+                      {else}
+                      <span class="admin-badge admin-badge-secondary" style="cursor:pointer" onclick="toggleStatus({$v.id}, this)">已隐藏</span>
+                      {/if}
+                    </td>
+                    <td>{$v.create_time|date='Y-m-d H:i',###}</td>
+                    <td>
+                      <a href="__ROOT__/admin/violation/{$v.id}" class="btn-admin btn-admin-primary btn-sm">编辑</a>
+                    </td>
+                  </tr>
+                  {/foreach}
+                  {if empty($list)}
+                  <tr><td colspan="8" class="text-center py-4 text-muted">暂无违规通报</td></tr>
+                  {/if}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card-footer">
+            {$list->render()}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- 添加弹窗 -->
+<div class="modal fade" id="addModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">添加违规通报</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="addForm" class="admin-form">
+          <input type="hidden" name="act" value="add">
+          <input type="hidden" name="csrf_token" value="{$csrf_token}">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">用户ID</label>
+              <input type="text" name="user_id" class="form-control" placeholder="违规用户ID">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">用户名</label>
+              <input type="text" name="username" class="form-control" placeholder="违规用户名">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">违规标题 <span class="text-danger">*</span></label>
+            <input type="text" name="title" class="form-control" placeholder="违规行为标题" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">违规内容描述</label>
+            <textarea name="content" class="form-control" rows="3" placeholder="详细描述违规内容"></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">处罚原因</label>
+            <textarea name="reason" class="form-control" rows="2" placeholder="违反了什么规定"></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">处罚措施</label>
+            <input type="text" name="punishment" class="form-control" placeholder="例如：封禁账号7天">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">证据图片（支持多选上传）</label>
+            <div class="upload-area" id="uploadArea" style="border:2px dashed #d1d5db;border-radius:8px;padding:24px;text-align:center;cursor:pointer;background:#fafbfc;transition:all 0.2s;">
+              <i class="mdi mdi-cloud-upload" style="font-size:32px;color:#9ca3af;"></i>
+              <p style="margin:8px 0 0;color:#6b7280;font-size:13px;">点击或拖拽图片到此处上传</p>
+              <p style="margin:4px 0 0;color:#9ca3af;font-size:12px;">支持 JPG/PNG/WebP，单张不超过 5MB</p>
+              <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" multiple style="display:none;">
+            </div>
+            <div id="previewContainer" class="mt-2" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+            <input type="hidden" name="images" id="imagesInput" value="">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+        <button type="button" class="btn-admin btn-admin-primary" onclick="submitAdd()">确认添加</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Glass styling for violation page */
+.admin-table {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+.admin-table thead th {
+  background: var(--glass-bg-light) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  padding: 12px 16px !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  color: var(--glass-text-secondary) !important;
+  border-bottom: 1px solid var(--glass-border) !important;
+}
+.admin-table tbody td {
+  padding: 12px 16px !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
+  color: var(--glass-text) !important;
+  font-size: 14px !important;
+  background: transparent !important;
+}
+.admin-table tbody tr {
+  transition: all var(--glass-transition-fast);
+}
+.admin-table tbody tr:hover {
+  background: var(--glass-bg-light) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+/* Glass card toolbar */
+.card-toolbar {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+/* Glass card footer */
+.card-footer {
+  background: var(--glass-bg-light) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border-top: 1px solid var(--glass-border) !important;
+  border-radius: 0 0 var(--glass-radius-lg) var(--glass-radius-lg) !important;
+  padding: 12px 24px !important;
+}
+/* Glass search form */
+.admin-search-form .form-control {
+  background: var(--glass-bg-input) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border: 1.5px solid var(--glass-border) !important;
+  border-radius: var(--glass-radius-sm) !important;
+  color: var(--glass-text) !important;
+}
+.admin-search-form .form-control:focus {
+  background: var(--glass-bg) !important;
+  border-color: var(--glass-primary) !important;
+  box-shadow: 0 0 0 4px var(--glass-primary-glow) !important;
+}
+/* Glass upload area */
+.upload-area {
+  background: var(--glass-bg-light) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border: 2px dashed var(--glass-border) !important;
+  border-radius: var(--glass-radius) !important;
+  transition: all var(--glass-transition) !important;
+}
+.upload-area:hover {
+  border-color: var(--glass-primary) !important;
+  background: var(--glass-bg) !important;
+  box-shadow: 0 0 0 4px var(--glass-primary-glow) !important;
+}
+/* Glass modal form controls */
+.modal-body .form-control {
+  background: var(--glass-bg-input) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border: 1.5px solid var(--glass-border) !important;
+  border-radius: var(--glass-radius-sm) !important;
+  color: var(--glass-text) !important;
+}
+.modal-body .form-control:focus {
+  background: var(--glass-bg) !important;
+  border-color: var(--glass-primary) !important;
+  box-shadow: 0 0 0 4px var(--glass-primary-glow) !important;
+}
+.modal-body .form-label {
+  color: var(--glass-text) !important;
+  font-weight: 500 !important;
+}
+.modal-body textarea.form-control {
+  background: var(--glass-bg-input) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border: 1.5px solid var(--glass-border) !important;
+  color: var(--glass-text) !important;
+}
+.lyear-layout-content .form-label {
+  color: var(--glass-text) !important;
+  font-weight: 500 !important;
+}
+</style>
+{include file="default/footer" /}
+<script>
+var uploadedImages = []; // 已上传的图片URL列表
+
+function openAdd() {
+  $('#addForm')[0].reset();
+  uploadedImages = [];
+  $('#imagesInput').val('');
+  $('#previewContainer').empty();
+  $('#addModal').modal('show');
+}
+
+// 图片上传
+$(function() {
+  $('#uploadArea').on('click', function() { $('#fileInput').click(); });
+  $('#uploadArea').on('dragover', function(e) { e.preventDefault(); $(this).css({'border-color':'#2563EB','background':'#EFF6FF'}); });
+  $('#uploadArea').on('dragleave', function() { $(this).css({'border-color':'#d1d5db','background':'#fafbfc'}); });
+  $('#uploadArea').on('drop', function(e) {
+    e.preventDefault();
+    $(this).css({'border-color':'#d1d5db','background':'#fafbfc'});
+    handleFiles(e.originalEvent.dataTransfer.files);
+  });
+  // 阻止 fileInput 点击事件冒泡到 uploadArea，避免无限递归
+  $('#fileInput').on('click', function(e) { e.stopPropagation(); });
+  $('#fileInput').on('change', function() { handleFiles(this.files); });
+});
+
+function handleFiles(files) {
+  if (!files || files.length === 0) return;
+  for (var i = 0; i < files.length; i++) {
+    (function(file) {
+      if (file.size > 5 * 1024 * 1024) { alert('文件 ' + file.name + ' 超过 5MB 限制'); return; }
+      if (!/^image\/(jpeg|png|webp)$/.test(file.type)) { alert('文件 ' + file.name + ' 格式不支持'); return; }
+      var formData = new FormData();
+      formData.append('file', file);
+      formData.append('act', 'upload_image');
+      $.ajax({
+        url: '',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        dataType: 'json',
+        success: function(res) {
+          if (res.code == 1) {
+            uploadedImages.push(res.url);
+            $('#imagesInput').val(uploadedImages.join(','));
+            $('#previewContainer').append(
+              '<div style="position:relative;width:100px;height:100px;border-radius:8px;overflow:hidden;border:1px solid #e2e8f0;">' +
+              '<img src="' + res.url + '" style="width:100%;height:100%;object-fit:cover;">' +
+              '<button type="button" onclick="removeImage(\'' + res.url + '\',this)" style="position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;border:none;background:rgba(0,0,0,0.5);color:#fff;font-size:12px;line-height:1;cursor:pointer;">&times;</button>' +
+              '</div>'
+            );
+          } else {
+            alert(res.msg || '上传失败');
+          }
+        },
+        error: function(xhr, status, err) {
+          var msg = '上传失败';
+          if (xhr.responseText) {
+            try { var r = JSON.parse(xhr.responseText); msg = r.msg || msg; } catch(e) {}
+          }
+          console.error('Upload error:', status, err, xhr.responseText);
+          alert(msg);
+        }
+      });
+    })(files[i]);
+  }
+}
+
+function removeImage(url, btn) {
+  uploadedImages = uploadedImages.filter(function(u) { return u !== url; });
+  $('#imagesInput').val(uploadedImages.join(','));
+  $(btn).parent().remove();
+}
+
+function submitAdd() {
+  var form = $('#addForm');
+  if (!form.find('[name=title]').val()) { alert('请输入违规标题'); return; }
+  $.post('', form.serialize(), function(res) {
+    if (res.code == 1) {
+      alert(res.msg);
+      location.reload();
+    } else {
+      alert(res.msg || '操作失败');
+    }
+  }, 'json');
+}
+function toggleStatus(id, el) {
+  $.post('', { act: 'toggle', id: id }, function(res) {
+    if (res.code == 1) {
+      $(el).text(res.msg == '已公示' ? '公示中' : '已隐藏');
+      $(el).toggleClass('bg-success bg-secondary');
+    } else {
+      alert(res.msg);
+    }
+  }, 'json');
+}
+function toggleAll(cb) {
+  $('.row-check').prop('checked', cb.checked);
+}
+function batchDelete() {
+  var ids = $('.row-check:checked').map(function(){ return $(this).val(); }).get().join(',');
+  if (!ids) { alert('请选择要删除的记录'); return; }
+  if (!confirm('确定删除所选违规通报？')) return;
+  $.post('', { act: 'delete', ids: ids }, function(res) {
+    if (res.code == 1) {
+      alert(res.msg);
+      location.reload();
+    } else {
+      alert(res.msg || '删除失败');
+    }
+  }, 'json');
+}
+</script>

@@ -1,0 +1,619 @@
+{include file="default/header" title="管理员总览"/}
+<style>
+.dash-page {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: transparent;
+  min-height: calc(100vh - 64px);
+  padding: 12px 0 16px;
+}
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.page-title h1 {
+  margin: 0 0 3px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--glass-text);
+  letter-spacing: -0.02em;
+}
+.page-title p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--glass-text-secondary);
+}
+.date-filters {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-radius-full);
+  padding: 3px;
+  box-shadow: var(--glass-shadow-sm);
+}
+.date-filters button {
+  border: 0;
+  background: transparent;
+  color: var(--glass-text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: var(--glass-radius-full);
+  cursor: pointer;
+  transition: all var(--glass-transition-fast);
+}
+.date-filters button:hover {
+  color: var(--glass-text);
+}
+.date-filters button.active {
+  background: var(--glass-primary);
+  color: var(--glass-text-white);
+  box-shadow: 0 2px 6px var(--glass-primary-glow);
+}
+.stat-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 100%;
+}
+.stat-card .stat-label {
+  font-size: 12px;
+  color: var(--glass-text-secondary);
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+.stat-card .stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--glass-text);
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+.stat-card .stat-meta {
+  font-size: 11px;
+  color: var(--glass-text-muted);
+  margin-top: 2px;
+}
+.stat-card .stat-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--glass-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.stat-icon-users { background: rgba(79, 124, 255, 0.12); color: var(--glass-primary); }
+.stat-icon-orders { background: rgba(16, 185, 129, 0.12); color: var(--glass-success); }
+.stat-icon-hosts { background: rgba(139, 92, 246, 0.12); color: var(--glass-purple); }
+.stat-icon-income { background: rgba(239, 68, 68, 0.12); color: var(--glass-danger); }
+.panel-card {
+  overflow: hidden;
+}
+.panel-card .card-header {
+  background: transparent;
+  border-bottom: 1px solid var(--glass-border);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.panel-card .card-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--glass-text);
+}
+.panel-card .card-body {
+  padding: 16px;
+}
+.chart-container {
+  position: relative;
+  height: 260px;
+  width: 100%;
+}
+.donut-chart-container {
+  position: relative;
+  height: 240px;
+  width: 100%;
+}
+.table-card .table {
+  margin: 0;
+  font-size: 13px;
+  color: var(--glass-text);
+}
+.table-card .table thead th {
+  background: var(--glass-bg-light);
+  color: var(--glass-text-secondary);
+  font-weight: 600;
+  border-bottom: 1px solid var(--glass-border);
+  padding: 12px 14px;
+  white-space: nowrap;
+}
+.table-card .table tbody td {
+  padding: 12px 14px;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--glass-border-subtle);
+  white-space: nowrap;
+}
+.table-card .table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: var(--glass-radius-full);
+  font-size: 11px;
+  font-weight: 500;
+}
+.status-active { background: rgba(16, 185, 129, 0.12); color: #065F46; }
+.status-pending { background: rgba(245, 158, 11, 0.12); color: #92400E; }
+.status-expired { background: rgba(100, 116, 139, 0.12); color: var(--glass-text-secondary); }
+.status-paid { background: rgba(79, 124, 255, 0.15); color: var(--glass-primary); }
+.empty-row td {
+  text-align: center;
+  color: var(--glass-text-muted);
+  padding: 32px 14px !important;
+}
+@media (max-width: 767px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .date-filters {
+    width: 100%;
+  }
+  .date-filters button {
+    flex: 1;
+    text-align: center;
+  }
+  .stat-card {
+    margin-bottom: 12px;
+    padding: 14px;
+  }
+  .stat-card .stat-value {
+    font-size: 22px;
+  }
+  .chart-container,
+  .donut-chart-container {
+    height: 220px;
+  }
+}
+</style>
+
+<main class="lyear-layout-content dash-page">
+  <div class="container-fluid glass-animate-in">
+
+    <!-- 页面标题 + 日期筛选 -->
+    <div class="page-header glass-page-header">
+      <div class="page-title">
+        <h1>系统总览</h1>
+        <p>平台运营数据与服务状态</p>
+      </div>
+      <div class="date-filters" role="group" aria-label="时间筛选">
+        <button type="button" class="glass-btn glass-btn-sm active" data-range="today">今天</button>
+        <button type="button" class="glass-btn glass-btn-sm" data-range="week">本周</button>
+        <button type="button" class="glass-btn glass-btn-sm" data-range="month">本月</button>
+      </div>
+    </div>
+
+    <!-- 统计卡片 -->
+    <div class="row">
+      <div class="col-12 col-sm-6 col-xl-3 mb-3 mb-xl-0">
+        <div class="stat-card glass-stat-card glass-reveal glass-stagger-1">
+          <div>
+            <div class="stat-label glass-stat-label">总用户数</div>
+            <div class="stat-value glass-stat-value">{$usercount}</div>
+            <div class="stat-meta">今日新增 {$usercountToday}</div>
+          </div>
+          <div class="stat-icon glass-stat-icon stat-icon-users"><i class="mdi mdi-account-multiple"></i></div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-xl-3 mb-3 mb-xl-0">
+        <div class="stat-card glass-stat-card glass-reveal glass-stagger-2">
+          <div>
+            <div class="stat-label glass-stat-label">今日订单</div>
+            <div class="stat-value glass-stat-value">{$orderToday}</div>
+            <div class="stat-meta">本月累计 {$orderMonth}</div>
+          </div>
+          <div class="stat-icon glass-stat-icon stat-icon-orders"><i class="mdi mdi-cart-outline"></i></div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-xl-3 mb-3 mb-sm-0">
+        <div class="stat-card glass-stat-card glass-reveal glass-stagger-3">
+          <div>
+            <div class="stat-label glass-stat-label">运行中主机</div>
+            <div class="stat-value glass-stat-value">{$hostActive}</div>
+            <div class="stat-meta">待开通 {$hostPending} / 已到期 {$hostExpired}</div>
+          </div>
+          <div class="stat-icon glass-stat-icon stat-icon-hosts"><i class="mdi mdi-server"></i></div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-xl-3">
+        <div class="stat-card glass-stat-card glass-reveal glass-stagger-4">
+          <div>
+            <div class="stat-label glass-stat-label">本月收入</div>
+            <div class="stat-value glass-stat-value">¥{$paymoneyMonth}</div>
+            <div class="stat-meta">今日收入 ¥{$paymoney1}</div>
+          </div>
+          <div class="stat-icon glass-stat-icon stat-icon-income"><i class="mdi mdi-currency-cny"></i></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 图表区 -->
+    <div class="row mt-3">
+      <div class="col-12 col-lg-8">
+        <div class="panel-card glass-content-wrapper">
+          <header class="card-header">
+            <div class="card-title">订单趋势（近7天）</div>
+          </header>
+          <div class="card-body">
+            <div class="chart-container">
+              <canvas id="orderTrendChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-4">
+        <div class="panel-card glass-content-wrapper">
+          <header class="card-header">
+            <div class="card-title">主机状态分布</div>
+          </header>
+          <div class="card-body">
+            <div class="donut-chart-container">
+              <canvas id="hostStatusChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 用户地域分布 + 最近订单 -->
+    <div class="row mt-3 align-items-stretch">
+      <div class="col-12 col-lg-8 mb-3 mb-lg-0">
+        <div class="panel-card glass-content-wrapper h-100">
+          <header class="card-header">
+            <div class="card-title">用户地域分布</div>
+            <div class="map-metric-tabs" style="display:inline-flex;gap:4px;background:var(--glass-bg-light);border-radius:var(--glass-radius-full);padding:3px;">
+              <button type="button" class="active" data-metric="users" style="border:0;background:transparent;color:var(--glass-text-secondary);font-size:12px;font-weight:500;padding:5px 14px;border-radius:var(--glass-radius-full);cursor:pointer;">用户数</button>
+              <button type="button" data-metric="orders" style="border:0;background:transparent;color:var(--glass-text-secondary);font-size:12px;font-weight:500;padding:5px 14px;border-radius:var(--glass-radius-full);cursor:pointer;">购买量</button>
+              <button type="button" data-metric="pay" style="border:0;background:transparent;color:var(--glass-text-secondary);font-size:12px;font-weight:500;padding:5px 14px;border-radius:var(--glass-radius-full);cursor:pointer;">充值金额</button>
+            </div>
+          </header>
+          <div class="card-body">
+            <div class="map-chart-container" id="chinaMapChart" style="height:420px;width:100%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-4">
+        <div class="panel-card glass-content-wrapper table-card h-100">
+          <header class="card-header">
+            <div class="card-title">最近订单</div>
+            <a href="__ROOT__/admin/order" class="text-primary" style="font-size:13px;font-weight:500;">查看全部</a>
+          </header>
+          <div class="card-body p-0" style="max-height:420px;overflow:auto;">
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>订单号</th>
+                    <th>用户</th>
+                    <th>商品</th>
+                    <th>状态</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {if !empty($recentOrders)}
+                  {foreach $recentOrders as $o}
+                  <tr>
+                    <td><a class="text-primary" href="__ROOT__/admin/order/{$o.id}"><span class="text-muted">#</span>{$o.id}</a></td>
+                    <td>{$o.username|default='未知用户'}</td>
+                    <td>{$o.cartname|default='产品#'.$o.cartid}</td>
+                    <td>
+                      {if $o.state == '1'}
+                      <span class="status-badge status-active">运行中</span>
+                      {elseif $o.state == '0'}
+                      <span class="status-badge status-pending">待支付</span>
+                      {elseif $o.state == '2'}
+                      <span class="status-badge status-expired">已到期</span>
+                      {else}
+                      <span class="status-badge status-paid">其他</span>
+                      {/if}
+                    </td>
+                  </tr>
+                  {/foreach}
+                  {else}
+                  <tr class="empty-row">
+                    <td colspan="4"><i class="mdi mdi-clipboard-text-outline" style="font-size:24px;display:block;margin-bottom:8px;"></i>暂无订单数据</td>
+                  </tr>
+                  {/if}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<script>
+(function () {
+  // 日期筛选按钮切换
+  var filterWrap = document.querySelector('.date-filters');
+  if (filterWrap) {
+    filterWrap.addEventListener('click', function (e) {
+      var btn = e.target.closest('button');
+      if (!btn) return;
+      Array.from(filterWrap.children).forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+    });
+  }
+
+  // 订单趋势折线图
+  var orderCtx = document.getElementById('orderTrendChart');
+  if (orderCtx) {
+    var orderGradient = orderCtx.getContext('2d').createLinearGradient(0, 0, 0, 300);
+    orderGradient.addColorStop(0, 'rgba(37, 99, 235, 0.25)');
+    orderGradient.addColorStop(1, 'rgba(37, 99, 235, 0.0)');
+
+    var orderLabels = {:json_encode($orderTrendLabels)};
+    var orderData = {:json_encode($orderTrendData)};
+
+    new Chart(orderCtx, {
+      type: 'line',
+      data: {
+        labels: orderLabels,
+        datasets: [{
+          label: '订单量',
+          data: orderData,
+          borderColor: '#2563EB',
+          backgroundColor: orderGradient,
+          borderWidth: 3,
+          pointRadius: 4,
+          pointBackgroundColor: '#fff',
+          pointBorderColor: '#2563EB',
+          pointBorderWidth: 2,
+          pointHoverRadius: 6,
+          pointHoverBackgroundColor: '#2563EB',
+          pointHoverBorderColor: '#fff',
+          pointHoverBorderWidth: 3,
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#0f172a',
+            padding: 10,
+            cornerRadius: 8,
+            displayColors: false,
+            callbacks: {
+              label: function (ctx) { return '订单 ' + ctx.parsed.y; }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: { color: '#94a3b8', font: { size: 11 } }
+          },
+          y: {
+            beginAtZero: true,
+            border: { display: false },
+            grid: { color: '#f1f5f9' },
+            ticks: { color: '#94a3b8', font: { size: 11 }, stepSize: 1, precision: 0 }
+          }
+        },
+        interaction: { intersect: false, mode: 'index' }
+      }
+    });
+  }
+
+  // 主机状态环形图
+  var hostCtx = document.getElementById('hostStatusChart');
+  if (hostCtx) {
+    new Chart(hostCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['运行中', '待支付', '已到期'],
+        datasets: [{
+          data: [{$hostActive}, {$hostPending}, {$hostExpired}],
+          backgroundColor: ['#2563EB', '#F59E0B', '#94A3B8'],
+          borderWidth: 0,
+          hoverOffset: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '68%',
+        plugins: {
+          legend: {
+            position: 'right',
+            labels: {
+              usePointStyle: true,
+              pointStyle: 'circle',
+              padding: 18,
+              color: '#475569',
+              font: { size: 12 }
+            }
+          },
+          tooltip: {
+            backgroundColor: '#0f172a',
+            padding: 10,
+            cornerRadius: 8,
+            callbacks: {
+              label: function (ctx) {
+                return ' ' + ctx.label + '：' + ctx.parsed.toLocaleString() + ' 台';
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // 中国地图 - 用户地域分布
+  var mapChartDom = document.getElementById('chinaMapChart');
+  if (mapChartDom && typeof echarts !== 'undefined') {
+    var chinaMapChart = echarts.init(mapChartDom);
+    var mapUserData = {:json_encode($userRegionData)};
+    var mapOrderData = {:json_encode($orderRegionData)};
+    var mapPayData = {:json_encode($payRegionData)};
+    var chinaMapGeoJson = {:json_encode($chinaMapGeoJson)};
+    var chinaMapUrl = '{:htmlspecialchars($chinaMapUrl)}';
+    var ajaxMapUrl = '{:htmlspecialchars($ajaxMapUrl)}';
+
+    function convertMapData(source) {
+      var data = [];
+      for (var key in source) {
+        if (source.hasOwnProperty(key)) {
+          data.push({ name: key, value: source[key] });
+        }
+      }
+      return data;
+    }
+
+    var mapMetrics = {
+      users: { title: '用户数', data: convertMapData(mapUserData), color: ['#FEF3C7', '#F97316', '#C2410C'] },
+      orders: { title: '购买量', data: convertMapData(mapOrderData), color: ['#DBEAFE', '#6366F1', '#3730A3'] },
+      pay: { title: '充值金额', data: convertMapData(mapPayData), color: ['#D1FAE5', '#059669', '#064E3B'] }
+    };
+
+    var currentMetric = 'users';
+
+    function updateMapMetrics(newData) {
+      if (newData) {
+        if (newData.userRegionData) mapMetrics.users.data = convertMapData(newData.userRegionData);
+        if (newData.orderRegionData) mapMetrics.orders.data = convertMapData(newData.orderRegionData);
+        if (newData.payRegionData) mapMetrics.pay.data = convertMapData(newData.payRegionData);
+      }
+    }
+
+    function renderChinaMap(metric) {
+      var cfg = mapMetrics[metric] || mapMetrics.users;
+      var values = cfg.data.map(function (item) { return item.value; });
+      var maxVal = values.length ? Math.max.apply(null, values) : 0;
+      chinaMapChart.setOption({
+        tooltip: {
+          trigger: 'item',
+          backgroundColor: '#0f172a',
+          borderColor: '#0f172a',
+          textStyle: { color: '#fff', fontSize: 13 },
+          formatter: function (params) {
+            return params.name + '<br/>' + cfg.title + '：' + (params.value || 0).toLocaleString();
+          }
+        },
+        visualMap: {
+          min: 0,
+          max: maxVal > 0 ? maxVal : 1,
+          left: 'left',
+          bottom: '20',
+          text: ['高', '低'],
+          calculable: true,
+          inRange: { color: cfg.color }
+        },
+        series: [{
+          name: cfg.title,
+          type: 'map',
+          map: 'china',
+          roam: true,
+          emphasis: {
+            label: { show: true, color: '#0f172a' },
+            itemStyle: { areaColor: '#FCD34D' }
+          },
+          select: {
+            itemStyle: { areaColor: '#FCD34D' }
+          },
+          data: cfg.data
+        }]
+      }, true);
+    }
+
+    function showMapError(msg) {
+      mapChartDom.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--glass-text-muted);font-size:14px;"><i class="mdi mdi-map-off" style="font-size:24px;margin-right:8px;"></i>' + (msg || '地图加载失败') + '</div>';
+    }
+
+    function initMapWithGeoJson(geoJson) {
+      if (geoJson && geoJson.features && geoJson.features.length > 0) {
+        echarts.registerMap('china', geoJson);
+        renderChinaMap(currentMetric);
+      } else {
+        showMapError('地图数据未找到，请检查 public/static/map/china.json');
+      }
+    }
+
+    // 优先通过 AJAX 加载地图数据，减少首页 HTML 体积；失败时回退到内联数据
+    if (chinaMapUrl) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', chinaMapUrl, true);
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            try {
+              var geoJson = JSON.parse(xhr.responseText);
+              initMapWithGeoJson(geoJson);
+            } catch (e) {
+              initMapWithGeoJson(chinaMapGeoJson);
+            }
+          } else {
+            initMapWithGeoJson(chinaMapGeoJson);
+          }
+        }
+      };
+      xhr.onerror = function () { initMapWithGeoJson(chinaMapGeoJson); };
+      xhr.send();
+    } else {
+      initMapWithGeoJson(chinaMapGeoJson);
+    }
+
+    // 指标切换
+    var metricTabs = document.querySelector('.map-metric-tabs');
+    if (metricTabs) {
+      metricTabs.addEventListener('click', function (e) {
+        var btn = e.target.closest('button[data-metric]');
+        if (!btn) return;
+        Array.from(metricTabs.children).forEach(function (b) {
+          b.classList.remove('active');
+          b.style.background = 'transparent';
+          b.style.color = 'var(--glass-text-secondary)';
+        });
+        btn.classList.add('active');
+        btn.style.background = 'var(--glass-primary)';
+        btn.style.color = 'var(--glass-text-white)';
+        currentMetric = btn.getAttribute('data-metric');
+        renderChinaMap(currentMetric);
+      });
+      // 初始化 active 样式
+      var activeTab = metricTabs.querySelector('button.active');
+      if (activeTab) {
+        activeTab.style.background = 'var(--glass-primary)';
+        activeTab.style.color = 'var(--glass-text-white)';
+      }
+    }
+
+    window.addEventListener('resize', function () {
+      chinaMapChart.resize();
+    });
+  }
+})();
+</script>
+{include file="default/footer" /}

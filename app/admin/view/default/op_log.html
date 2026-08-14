@@ -1,0 +1,197 @@
+{include file="default/header" title="操作日志" /}
+<style>
+.lyear-layout-content.page-wrap{position:relative!important;height:auto!important;width:100%!important;max-width:1400px!important;margin:0 auto!important;left:auto!important;padding:calc(64px + 24px) 20px 40px 20px!important}
+.page-wrap { --pri: #6366f1; --pri2: #4f46e5; --radius: 16px; }
+.page-header-bar {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  border-radius: 16px; padding: 20px 24px; margin-bottom: 20px;
+  color: #fff; box-shadow: 0 4px 20px rgba(99,102,241,0.25);
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+.page-header-bar h2 { margin: 0; font-size: 20px; font-weight: 700; }
+.page-header-bar .sub { font-size: 12px; opacity: 0.8; margin-top: 2px; }
+.content-card {
+  background: #fff; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,0,0,0.05);
+  border: 1px solid #e8ecf1; overflow: hidden; margin-bottom: 20px;
+}
+.content-card-header {
+  padding: 14px 20px; border-bottom: 1px solid #f1f5f9;
+  font-weight: 700; color: #1a1a2e; font-size: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.content-card-header::before{
+  content:''; width:4px; height:18px; border-radius:2px;
+  background: linear-gradient(180deg,#6366f1,#4f46e5);
+}
+.content-card-body { padding: 18px 20px; }
+.new-table { width:100%; border-collapse:collapse; font-size:13px; }
+.new-table thead th {
+  background:#f8fafc; color:#475569; font-weight:600;
+  padding:10px 12px; border-bottom:2px solid #e2e8f0;
+  font-size:11px; text-transform:uppercase; letter-spacing:0.04em; white-space:nowrap;
+}
+.new-table tbody td {
+  padding:10px 12px; border-bottom:1px solid #f1f5f9; color:#334155; vertical-align:middle;
+}
+.new-table tbody tr:hover { background:#fafbfc; }
+.new-btn {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:7px 16px; border-radius:10px; border:none;
+  font-size:12px; font-weight:600; cursor:pointer;
+  transition:all 0.2s; text-decoration:none;
+}
+.new-btn.primary { background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; box-shadow:0 3px 10px rgba(99,102,241,0.3); }
+.new-btn.primary:hover { transform:translateY(-1px); box-shadow:0 5px 16px rgba(99,102,241,0.4); }
+.new-btn.outline { background:#fff; color:#6366f1; border:2px solid #e2e8f0; }
+.new-btn.outline:hover { border-color:#6366f1; background:#eef2ff; }
+.new-btn.sm { padding:4px 10px; font-size:11px; }
+.new-badge { display:inline-flex; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600; }
+.new-badge.success { background:#ecfdf5; color:#059669; }
+.new-badge.warning { background:#fffbeb; color:#d97706; }
+.new-badge.danger { background:#fef2f2; color:#dc2626; }
+.new-badge.info { background:#eff6ff; color:#2563eb; }
+.new-badge.primary { background:#eef2ff; color:#4f46e5; }
+.form-input { padding:9px 14px; border:2px solid #e2e8f0; border-radius:10px; font-size:13px; transition:all 0.2s; background:#fff; color:#334155; }
+.form-input:focus { border-color:#6366f1; box-shadow:0 0 0 3px rgba(99,102,241,0.1); outline:none; }
+.form-select { padding:9px 14px; border:2px solid #e2e8f0; border-radius:10px; font-size:13px; background:#fff; color:#334155; min-width:140px; }
+.form-select:focus { border-color:#6366f1; box-shadow:0 0 0 3px rgba(99,102,241,0.1); outline:none; }
+.search-box { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.search-box .form-input { width:auto; min-width:220px; }
+.mono { font-family:'SF Mono','Fira Code','Consolas',monospace; font-size:12px; color:#64748b; }
+.detail-json { font-size:11px; color:#64748b; max-width:280px; line-height:1.5; }
+.detail-json span { display:block; }
+.detail-json .key { color:#4f46e5; font-weight:600; }
+@media (max-width:768px){
+  .page-header-bar { padding:14px 16px; border-radius:12px; }
+  .page-header-bar h2 { font-size:17px; }
+  .content-card-body { padding:12px 14px; }
+  .new-table thead { display:none; }
+  .new-table tbody td { display:block; text-align:right; padding:6px 8px; }
+  .new-table tbody td::before { content:attr(data-label); float:left; font-weight:600; color:#475569; font-size:10px; text-transform:uppercase; }
+  .new-table tbody tr { display:block; margin-bottom:6px; background:#fafbfc; border-radius:10px; padding:4px 8px; }
+  .search-box { flex-direction:column; align-items:stretch; }
+  .search-box .form-input { min-width:auto; width:100%; }
+}
+</style>
+<main class="lyear-layout-content page-wrap">
+  <div class="container-fluid">
+    <div class="page-header-bar">
+      <div>
+        <h2>操作日志</h2>
+        <div class="sub">记录所有管理员操作详情</div>
+      </div>
+      <div>
+        <span style="font-size:12px;opacity:0.85;">共 {$logs->total()} 条记录</span>
+      </div>
+    </div>
+    <div class="content-card">
+      <div class="content-card-body">
+        <form method="get" action="">
+          <div class="search-box" style="margin-bottom:16px;">
+            <select class="form-select" name="action">
+              <option value="">全部操作类型</option>
+              <option value="login" {if $action=='login'}selected{/if}>管理员登录</option>
+              <option value="admin_add" {if $action=='admin_add'}selected{/if}>添加管理员</option>
+              <option value="admin_edit" {if $action=='admin_edit'}selected{/if}>编辑管理员</option>
+              <option value="admin_delete" {if $action=='admin_delete'}selected{/if}>删除管理员</option>
+              <option value="role_add" {if $action=='role_add'}selected{/if}>添加角色</option>
+              <option value="role_edit" {if $action=='role_edit'}selected{/if}>编辑角色</option>
+              <option value="role_delete" {if $action=='role_delete'}selected{/if}>删除角色</option>
+              <option value="set_update" {if $action=='set_update'}selected{/if}>修改网站设置</option>
+              <option value="host_suspend" {if $action=='host_suspend'}selected{/if}>暂停主机</option>
+              <option value="host_unsuspend" {if $action=='host_unsuspend'}selected{/if}>开启主机</option>
+              <option value="host_delete" {if $action=='host_delete'}selected{/if}>删除主机</option>
+              <option value="host_suspend_all" {if $action=='host_suspend_all'}selected{/if}>一键暂停所有</option>
+              <option value="host_unsuspend_all" {if $action=='host_unsuspend_all'}selected{/if}>一键开启所有</option>
+              <option value="host_delete_all" {if $action=='host_delete_all'}selected{/if}>一键删除所有</option>
+            </select>
+            <input class="form-input" type="text" name="search" placeholder="搜索操作人/目标/IP..." value="{$search|default=''}"/>
+            <button class="new-btn primary" type="submit">搜索</button>
+            {if $action || $search}
+            <a href="{:url('admin/index/opLog')}" class="new-btn outline">清除筛选</a>
+            {/if}
+          </div>
+        </form>
+        <div class="table-responsive-sm">
+          <table class="new-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>操作人</th>
+                <th>角色</th>
+                <th>操作类型</th>
+                <th>操作目标</th>
+                <th>详情</th>
+                <th>IP地址</th>
+                <th>操作时间</th>
+              </tr>
+            </thead>
+            <tbody>
+{php}
+$actionLabels = [
+  'login'=>'登录','admin_add'=>'添加管理员','admin_edit'=>'编辑管理员',
+  'admin_delete'=>'删除管理员','role_add'=>'添加角色','role_edit'=>'编辑角色',
+  'role_delete'=>'删除角色','set_update'=>'网站设置',
+  'host_suspend'=>'暂停主机','host_unsuspend'=>'开启主机','host_delete'=>'删除主机',
+  'host_suspend_all'=>'一键暂停所有','host_unsuspend_all'=>'一键开启所有','host_delete_all'=>'一键删除所有',
+];
+$actionBadges = [
+  'login'=>'info','admin_add'=>'success','admin_edit'=>'warning','admin_delete'=>'danger',
+  'role_add'=>'success','role_edit'=>'warning','role_delete'=>'danger','set_update'=>'primary',
+  'host_suspend'=>'warning','host_unsuspend'=>'success','host_delete'=>'danger',
+  'host_suspend_all'=>'warning','host_unsuspend_all'=>'success','host_delete_all'=>'danger',
+];
+{/php}
+{foreach $logs as $log}
+{php}
+  $detailArr = json_decode($log['detail'], true) ?: [];
+  $roleTag = isset($detailArr['role']) ? $detailArr['role'] : '-';
+  $browser = isset($detailArr['user_agent']) ? $detailArr['user_agent'] : '';
+  if ($browser && strlen($browser) > 80) $browser = substr($browser,0,80).'...';
+  $reqUrl = isset($detailArr['url']) ? $detailArr['url'] : '';
+  $method = isset($detailArr['method']) ? $detailArr['method'] : '';
+  $badge = isset($actionBadges[$log['action']]) ? $actionBadges[$log['action']] : '';
+  $label = isset($actionLabels[$log['action']]) ? $actionLabels[$log['action']] : $log['action'];
+{/php}
+              <tr>
+                <td data-label="ID">{$log.id}</td>
+                <td data-label="操作人"><strong>{$log.admin_name}</strong></td>
+                <td data-label="角色">{if $roleTag}<span class="new-badge primary">{$roleTag}</span>{else}-{/if}</td>
+                <td data-label="操作类型"><span class="new-badge {$badge}">{$label}</span></td>
+                <td data-label="操作目标">{$log.target}</td>
+                <td data-label="详情">
+                  <div class="detail-json">
+                    {if $method}<span><span class="key">请求: </span>{$method}</span>{/if}
+                    {if $reqUrl}<span><span class="key">URL: </span>{:htmlspecialchars($reqUrl)}</span>{/if}
+                    {if $browser}<span><span class="key">UA: </span>{:htmlspecialchars($browser)}</span>{/if}
+                    {if isset($detailArr['order_id'])}<span><span class="key">订单: </span>#{$detailArr['order_id']}</span>{/if}
+                    {if isset($detailArr['success'])}<span><span class="key">成功: </span>{$detailArr['success']} 失败: {$detailArr['fail']}</span>{/if}
+                    {if isset($detailArr['count'])}<span><span class="key">数量: </span>{$detailArr['count']}</span>{/if}
+                    {if isset($detailArr['role_id'])}<span><span class="key">角色ID: </span>{$detailArr['role_id']}</span>{/if}
+                    {if isset($detailArr['permissions'])}<span><span class="key">权限: </span>{$detailArr['permissions']}</span>{/if}
+                    {if isset($detailArr['pwd_changed'])}<span><span class="key">改密: </span>{if $detailArr['pwd_changed']}是{else}否{/if}</span>{/if}
+                  </div>
+                </td>
+                <td data-label="IP地址"><span class="mono">{$log.ip}</span></td>
+                <td data-label="操作时间">{$log.create_time|date='Y-m-d H:i:s',###}</td>
+              </tr>
+{/foreach}
+{if empty($logs->items())}
+              <tr>
+                <td colspan="8" style="text-align:center;padding:40px;color:#94a3b8;">
+                  <i class="mdi mdi-text-box-search-outline" style="font-size:40px;display:block;margin-bottom:10px;"></i>
+                  暂无操作记录
+                </td>
+              </tr>
+{/if}
+            </tbody>
+          </table>
+        </div>
+        {if !empty($logs->items())}
+        <div style="text-align:center;margin-top:16px;">{$logs->render()}</div>
+        {/if}
+      </div>
+    </div>
+  </div>
+</main>
+{include file="default/footer" /}

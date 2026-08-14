@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>{$webname} - 重置密码</title>
+    {include file="default/index/header" /}
+    <style>
+        .pwreset-wrapper { display: flex; justify-content: center; align-items: center; min-height: calc(100vh - 64px); padding: 80px 20px 60px; }
+        .pwreset-card { background: var(--glass-bg-strong); backdrop-filter: blur(var(--glass-blur-strong)); -webkit-backdrop-filter: blur(var(--glass-blur-strong)); border: 1px solid var(--glass-border-strong); border-radius: var(--glass-radius-xl); padding: 40px; width: 100%; max-width: 440px; box-shadow: var(--glass-shadow-lg), var(--glass-shadow-inset); }
+        .pwreset-card h2 { text-align: center; margin-bottom: 8px; font-size: 22px; color: var(--glass-text); font-weight: 700; }
+        .pwreset-card > p { text-align: center; margin-bottom: 28px; color: var(--glass-text-secondary); font-size: 14px; }
+        .form-group { margin-bottom: 16px; }
+        .form-control { width: 100%; padding: 11px 14px; background: var(--glass-bg-input); backdrop-filter: blur(var(--glass-blur-light)); -webkit-backdrop-filter: blur(var(--glass-blur-light)); border: 1.5px solid var(--glass-border); border-radius: var(--glass-radius-sm); color: var(--glass-text); font-size: 14px; font-family: inherit; transition: all var(--glass-transition); outline: none; box-shadow: var(--glass-shadow-inset); }
+        .form-control:focus { border-color: var(--glass-primary); box-shadow: 0 0 0 4px var(--glass-primary-glow); }
+        .form-control::placeholder { color: var(--glass-text-muted); }
+        .btn-block { width: 100%; padding: 12px; background: linear-gradient(135deg, var(--glass-primary), var(--glass-primary-light)); color: #fff; border: none; border-radius: var(--glass-radius-full); font-size: 15px; font-weight: 600; cursor: pointer; transition: all var(--glass-transition); font-family: inherit; box-shadow: 0 4px 16px var(--glass-primary-glow); }
+        .btn-block:hover { box-shadow: 0 6px 24px var(--glass-primary-glow); transform: translateY(-1px); }
+        .form-footer { text-align: center; margin-top: 20px; color: var(--glass-text-secondary); font-size: 13px; }
+        .form-footer a { color: var(--glass-primary); text-decoration: none; font-weight: 500; }
+        .form-footer a:hover { text-decoration: underline; }
+        .captcha-row { display: flex; gap: 10px; }
+        .captcha-row .captcha-input { flex: 1; }
+        .code-row { display: flex; gap: 10px; }
+        .code-row .code-input { flex: 1; }
+        .btn-code { background: var(--glass-bg-light); color: var(--glass-primary); border: 1.5px solid var(--glass-primary); border-radius: var(--glass-radius-sm); padding: 0 16px; cursor: pointer; font-size: 13px; font-weight: 500; white-space: nowrap; transition: all var(--glass-transition); font-family: inherit; }
+        .btn-code:hover { background: var(--glass-primary); color: #fff; }
+        .btn-code:disabled { opacity: 0.5; cursor: not-allowed; }
+        @media (max-width: 576px) { .pwreset-card { padding: 28px 20px; } .captcha-row, .code-row { flex-direction: column; } .btn-code { padding: 10px; text-align: center; } }
+    </style>
+    <div class="pwreset-wrapper">
+        <div class="pwreset-card glass-animate-in">
+            <h2>重置密码</h2>
+            <p>请输入您的邮箱地址重置密码</p>
+            <form id="pwresetForm">
+                <input type="hidden" name="csrf_token" value="{:csrf_token()}">
+                <div class="form-group"><input type="email" name="email" class="form-control" placeholder="请输入注册邮箱" required></div>
+                <div class="form-group captcha-row">
+                    <div class="captcha-input">
+                        <button type="button" id="slide-captcha-btn" style="width:100%;height:44px;border:1px dashed var(--glass-primary);border-radius:var(--glass-radius-sm);background:var(--glass-bg-light);color:var(--glass-primary);font-size:14px;cursor:pointer;font-weight:500;transition:all var(--glass-transition);">点击进行滑块验证</button>
+                        <input type="hidden" name="captcha" id="captcha-verified" value="">
+                        <div id="captcha-status" style="margin-top:5px;font-size:12px;min-height:18px;"></div>
+                    </div>
+                </div>
+                <div class="form-group code-row">
+                    <div class="code-input"><input type="text" class="form-control" name="code" placeholder="邮箱验证码" required></div>
+                    <button type="button" class="btn-code" id="sendCode">获取验证码</button>
+                </div>
+                <div class="form-group"><input type="password" name="password" class="form-control" placeholder="新密码" required></div>
+                <div class="form-group"><input type="password" name="repassword" class="form-control" placeholder="确认新密码" required></div>
+                <button type="submit" class="btn-block">重置密码</button>
+                <div class="form-footer">想起密码了？<a href="__ROOT__/login">返回登录</a></div>
+            </form>
+        </div>
+    </div>
+    {include file="default/index/footer" /}
+    <script src="/static/assets/js/plugins/bootstrap-notify/bootstrap-notify.min.js"></script>
+    {include file="index@default/captcha_assets" /}
+    <script>
+        var captchaVerified = false;
+        if (typeof window.slideCaptcha !== 'function') { if (typeof console !== 'undefined' && console.error) console.error('SlideCaptcha: 滑动验证组件未加载'); $('#slide-captcha-btn').html('验证组件加载失败，请刷新').css({'border-color':'#f44336','background':'#FFEBEE','color':'#f44336'}); }
+        $('#slide-captcha-btn').on('click', function() {
+            if (typeof window.slideCaptcha !== 'function') return;
+            window.slideCaptcha({
+                onSuccess: function(token) { captchaVerified = true; $('#captcha-verified').val(token); $('#slide-captcha-btn').css({'border-color':'#4caf50','background':'#E8F5E9','color':'#4caf50'}).html('验证通过'); },
+                onError: function() { captchaVerified = false; $('#captcha-verified').val(''); $('#slide-captcha-btn').css({'border-color':'#f44336','background':'#FFEBEE','color':'#f44336'}).html('验证失败，点击重试'); },
+                onClose: function() { if (!captchaVerified) { $('#slide-captcha-btn').css({'border-color':'var(--glass-primary)','background':'var(--glass-bg-light)','color':'var(--glass-primary)'}).html('点击进行滑块验证'); } }
+            });
+        });
+        function resetCaptcha() { captchaVerified = false; $('#captcha-verified').val(''); $('#slide-captcha-btn').css({'border-color':'var(--glass-primary)','background':'var(--glass-bg-light)','color':'var(--glass-primary)'}).html('点击进行滑块验证'); }
+        document.getElementById('sendCode').addEventListener('click', function() {
+            var email = document.querySelector('input[name="email"]').value;
+            if(!email) { One.helpers('notify', {type: 'danger', message: '请填写邮箱', delay:2000}); return; }
+            if (!captchaVerified) { One.helpers('notify', {type: 'warning', message: '请先完成滑块验证', delay:2000}); return; }
+            var btn = this; btn.disabled = true; btn.textContent = '发送中...';
+            $.ajax({ type: 'POST', url: '', data: { act: 'sendcode', email: email, captcha: $('#captcha-verified').val() }, dataType: 'json',
+                success: function(data) {
+                    if(data.code == 1) { One.helpers('notify', {type: 'success', message: data.msg, delay:2000}); var count = 60; var timer = setInterval(function() { btn.textContent = count + '秒后重发'; count--; if(count < 0) { clearInterval(timer); btn.disabled = false; btn.textContent = '获取验证码'; } }, 1000); }
+                    else { One.helpers('notify', {type: 'danger', message: data.msg, delay:2000}); btn.disabled = false; btn.textContent = '获取验证码'; resetCaptcha(); }
+                }
+            });
+        });
+        document.getElementById('pwresetForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (!captchaVerified) { One.helpers('notify', {type: 'warning', message: '请先完成滑块验证', delay:2000}); return; }
+            var form = this; var btn = form.querySelector('button[type="submit"]'); var data = new FormData(form); data.append('act', 'reset');
+            btn.disabled = true; btn.textContent = '处理中...';
+            $.ajax({ type: 'POST', url: '', data: data, processData: false, contentType: false, dataType: 'json',
+                success: function(res) {
+                    if(res.code == 1) { One.helpers('notify', {type: 'success', message: res.msg, delay:2000}); setTimeout(function() { location.href = '__ROOT__/login'; }, 1500); }
+                    else { One.helpers('notify', {type: 'danger', message: res.msg, delay:2000}); btn.disabled = false; btn.textContent = '重置密码'; }
+                }
+            });
+        });
+    </script>

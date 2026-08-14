@@ -1,0 +1,313 @@
+{include file="default/header" title="主机管理"/}
+<style>
+.lyear-layout-content.page-wrap{position:relative!important;height:auto!important;width:100%!important;max-width:1280px!important;margin:0 auto!important;left:auto!important;padding:calc(64px + 24px) 20px 40px 20px!important}
+.page-wrap { --pri: #10b981; --pri2: #059669; --radius: 16px; }
+.page-header-bar {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-radius: 16px; padding: 20px 24px; margin-bottom: 20px;
+  color: #fff; box-shadow: 0 4px 20px rgba(16,185,129,0.25);
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+.page-header-bar h2 { margin: 0; font-size: 20px; font-weight: 700; }
+.page-header-bar .sub { font-size: 12px; opacity: 0.8; margin-top: 2px; }
+.content-card {
+  background: #fff; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,0,0,0.05);
+  border: 1px solid #e8ecf1; overflow: hidden; margin-bottom: 20px;
+}
+.content-card-header {
+  padding: 14px 20px; border-bottom: 1px solid #f1f5f9;
+  font-weight: 700; color: #1a1a2e; font-size: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.content-card-header::before {
+  content: ''; width: 4px; height: 18px; border-radius: 2px;
+  background: linear-gradient(180deg, #10b981, #059669);
+}
+.content-card-body { padding: 18px 20px; }
+.new-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.new-table thead th {
+  background: #f8fafc; color: #475569; font-weight: 600;
+  padding: 10px 12px; border-bottom: 2px solid #e2e8f0;
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap;
+}
+.new-table tbody td {
+  padding: 10px 12px; border-bottom: 1px solid #f1f5f9; color: #334155; vertical-align: middle;
+}
+.new-table tbody tr:hover { background: #fafbfc; }
+.new-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 7px 16px; border-radius: 10px; border: none;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  transition: all 0.2s; text-decoration: none;
+}
+.new-btn.primary { background: linear-gradient(135deg,#10b981,#059669); color: #fff; box-shadow: 0 3px 10px rgba(16,185,129,0.3); }
+.new-btn.primary:hover { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(16,185,129,0.4); }
+.new-btn.warn { background: linear-gradient(135deg,#f59e0b,#d97706); color: #fff; }
+.new-btn.warn:hover { transform: translateY(-1px); }
+.new-btn.danger { background: linear-gradient(135deg,#ef4444,#dc2626); color: #fff; }
+.new-btn.danger:hover { transform: translateY(-1px); }
+.new-btn.outline { background: #fff; color: #10b981; border: 2px solid #e2e8f0; }
+.new-btn.outline:hover { border-color: #10b981; background: #ecfdf5; }
+.new-btn.sm { padding: 4px 10px; font-size: 11px; }
+.new-badge { display: inline-flex; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.new-badge.success { background: #ecfdf5; color: #059669; }
+.new-badge.warning { background: #fffbeb; color: #d97706; }
+.new-badge.danger { background: #fef2f2; color: #dc2626; }
+.new-badge.info { background: #eff6ff; color: #2563eb; }
+.form-input { width: 100%; padding: 9px 14px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 13px; transition: all 0.2s; background: #fff; color: #334155; }
+.form-input:focus { border-color: #10b981; box-shadow: 0 0 0 3px rgba(16,185,129,0.1); outline: none; }
+.form-select { padding: 9px 14px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 13px; background: #fff; color: #334155; min-width: 140px; }
+.form-select:focus { border-color: #10b981; box-shadow: 0 0 0 3px rgba(16,185,129,0.1); outline: none; }
+.search-box { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.search-box .form-input { width: auto; min-width: 260px; }
+.toolbar { display: flex; gap: 8px; flex-wrap: wrap; }
+.mono { font-family: 'SF Mono','Fira Code','Consolas',monospace; font-size: 12px; color: #64748b; }
+.batch-bar {
+  background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px;
+  padding: 14px 20px; margin-bottom: 20px;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+}
+.batch-bar .batch-title { font-weight: 700; color: #059669; font-size: 14px; }
+.batch-bar .batch-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+@media (max-width: 768px) {
+  .page-header-bar { padding: 14px 16px; border-radius: 12px; }
+  .page-header-bar h2 { font-size: 17px; }
+  .content-card-body { padding: 12px 14px; }
+  .new-table thead { display: none; }
+  .new-table tbody td { display: block; text-align: right; padding: 7px 10px; }
+  .new-table tbody td::before { content: attr(data-label); float: left; font-weight: 600; color: #475569; font-size: 11px; text-transform: uppercase; }
+  .new-table tbody tr { display: block; margin-bottom: 8px; background: #fafbfc; border-radius: 10px; padding: 6px 10px; }
+  .search-box { flex-direction: column; align-items: stretch; }
+  .search-box .form-input { min-width: auto; width: 100%; }
+  .toolbar { flex-direction: column; }
+  .batch-bar { flex-direction: column; align-items: stretch; }
+}
+</style>
+<main class="lyear-layout-content page-wrap">
+  <div class="container-fluid">
+    <div class="page-header-bar">
+      <div>
+        <h2>主机管理</h2>
+        <div class="sub">管理所有用户主机</div>
+      </div>
+      <div class="toolbar">
+        <button onclick="suspendAll()" class="new-btn warn"><i class="mdi mdi-pause-circle-outline"></i> 一键暂停所有</button>
+        <button onclick="unsuspendAll()" class="new-btn primary"><i class="mdi mdi-play-circle-outline"></i> 一键开启所有</button>
+        <button onclick="deleteAll()" class="new-btn danger"><i class="mdi mdi-delete-outline"></i> 一键删除所有</button>
+      </div>
+    </div>
+
+    <div class="batch-bar">
+      <div class="batch-title"><i class="mdi mdi-information-outline"></i> 批量操作提示</div>
+      <div class="batch-actions">
+        <span style="font-size:12px;color:#64748b;">一键暂停：仅暂停状态为"正常"的主机</span>
+        <span style="font-size:12px;color:#64748b;">|</span>
+        <span style="font-size:12px;color:#64748b;">一键开启：仅开启状态为"暂停"的主机</span>
+        <span style="font-size:12px;color:#64748b;">|</span>
+        <span style="font-size:12px;color:#dc2626;">一键删除：删除所有主机数据（不可恢复）</span>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <div class="content-card-body">
+        <form method="get" action="">
+          <div class="search-box" style="margin-bottom:16px;">
+            <input class="form-input" type="text" name="search" placeholder="搜索订单号/账号/产品/用户..." value="{$search|default=''}"/>
+            <select class="form-select" name="state" onchange="this.form.submit()">
+              <option value="">全部状态</option>
+              <option value="1" {if $stateFilter==='1'}selected{/if}>正常</option>
+              <option value="2" {if $stateFilter==='2'}selected{/if}>暂停</option>
+              <option value="3" {if $stateFilter==='3'}selected{/if}>终止</option>
+            </select>
+            <button class="new-btn primary">搜索</button>
+            {if $search || $stateFilter!==''}
+            <a href="{:url('admin/admin_host/index')}" class="new-btn outline">清除筛选</a>
+            {/if}
+          </div>
+        </form>
+        <div class="table-responsive-sm">
+          <table class="new-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>订单号</th>
+                <th>产品名称</th>
+                <th>服务器</th>
+                <th>用户</th>
+                <th>账号</th>
+                <th>开通时间</th>
+                <th>到期时间</th>
+                <th>状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+{foreach $hosts as $host}
+              <tr>
+                <td data-label="ID">{$host.id}</td>
+                <td data-label="订单号"><span class="mono">{$host.ordernumber|default='YH'.date('Ymd',intval($host.atime?:time())).str_pad($host.id,6,'0',STR_PAD_LEFT)}</span></td>
+                <td data-label="产品名称">{$host.product_name|default='-'}</td>
+                <td data-label="服务器">{$host.server_name|default='-'}</td>
+                <td data-label="用户">{$host.user_name|default='-'}</td>
+                <td data-label="账号">{$host.user|default='-'}</td>
+                <td data-label="开通时间">{$host.atime|date="Y-m-d H:i:s",###}</td>
+                <td data-label="到期时间">{$host.ztime|date="Y-m-d H:i:s",###}</td>
+                <td data-label="状态">
+{if $host.state=="1"}
+                  <span class="new-badge success">正常</span>
+{/if}
+{if $host.state=="2"}
+                  <span class="new-badge warning">暂停</span>
+{/if}
+{if $host.state=="3"}
+                  <span class="new-badge danger">终止</span>
+{/if}
+                </td>
+                <td data-label="操作">
+                  <div style="display:flex;gap:4px;flex-wrap:wrap;">
+{if $host.state=="1"}
+                    <button onclick="hostOperate({$host.id},'stop')" class="new-btn warn sm" title="暂停">暂停</button>
+{/if}
+{if $host.state=="2"}
+                    <button onclick="hostOperate({$host.id},'stopoff')" class="new-btn primary sm" title="开启">开启</button>
+{/if}
+                    <button onclick="hostOperate({$host.id},'delete')" class="new-btn danger sm" title="删除">删除</button>
+                  </div>
+                </td>
+              </tr>
+{/foreach}
+{if empty($hosts)}
+              <tr>
+                <td colspan="10" style="text-align:center;padding:40px;color:#94a3b8;">
+                  <i class="mdi mdi-server-off" style="font-size:40px;display:block;margin-bottom:10px;"></i>
+                  暂无主机数据
+                </td>
+              </tr>
+{/if}
+            </tbody>
+          </table>
+        </div>
+        {if !empty($hosts)}
+        <div style="text-align:center;margin-top:16px;">{$hosts->render()}</div>
+        {/if}
+      </div>
+    </div>
+  </div>
+</main>
+{include file="default/footer" /}
+<script>
+// 单个主机操作
+function hostOperate(id, act) {
+    var titles = { stop: '暂停', stopoff: '开启', delete: '删除' };
+    var colors = { stop: '#d97706', stopoff: '#059669', delete: '#dc2626' };
+    var title = titles[act] || '操作';
+    var msg = '确定要<span style="color:' + (colors[act] || '#0b5ed7') + '">' + title + '</span>此主机吗？';
+    if (act === 'delete') {
+        msg = '确定要<span style="color:#dc2626">删除</span>此主机吗？此操作不可恢复！';
+    }
+    layer.confirm(msg, function() {
+        var load = layer.load(1, {time: false});
+        $.ajax({
+            type: 'POST',
+            url: '{:url("admin/admin_host/operate")}',
+            data: { id: id, act: act },
+            dataType: 'json',
+            success: function(data) {
+                layer.close(load);
+                if (data.code == 1) {
+                    layer.msg(data.msg, {icon: 1}, function() {
+                        window.location.reload();
+                    });
+                } else {
+                    layer.msg(data.msg, {icon: 2});
+                }
+            },
+            error: function() {
+                layer.close(load);
+                layer.msg('请求异常，请重试', {icon: 2});
+            }
+        });
+    });
+}
+
+// 一键暂停所有
+function suspendAll() {
+    layer.confirm('确定要<span style="color:#d97706">一键暂停所有</span>正常状态的主机吗？', function() {
+        var load = layer.load(1, {time: false});
+        $.ajax({
+            type: 'POST',
+            url: '{:url("admin/admin_host/suspendAll")}',
+            dataType: 'json',
+            success: function(data) {
+                layer.close(load);
+                if (data.code == 1) {
+                    layer.msg(data.msg, {icon: 1}, function() {
+                        window.location.reload();
+                    });
+                } else {
+                    layer.msg(data.msg, {icon: 2});
+                }
+            },
+            error: function() {
+                layer.close(load);
+                layer.msg('请求异常，请重试', {icon: 2});
+            }
+        });
+    });
+}
+
+// 一键开启所有
+function unsuspendAll() {
+    layer.confirm('确定要<span style="color:#059669">一键开启所有</span>暂停状态的主机吗？', function() {
+        var load = layer.load(1, {time: false});
+        $.ajax({
+            type: 'POST',
+            url: '{:url("admin/admin_host/unsuspendAll")}',
+            dataType: 'json',
+            success: function(data) {
+                layer.close(load);
+                if (data.code == 1) {
+                    layer.msg(data.msg, {icon: 1}, function() {
+                        window.location.reload();
+                    });
+                } else {
+                    layer.msg(data.msg, {icon: 2});
+                }
+            },
+            error: function() {
+                layer.close(load);
+                layer.msg('请求异常，请重试', {icon: 2});
+            }
+        });
+    });
+}
+
+// 一键删除所有
+function deleteAll() {
+    layer.confirm('确定要<span style="color:#dc2626">一键删除所有</span>主机吗？<br><br><span style="color:#dc2626;font-weight:700;">此操作不可恢复，请谨慎操作！</span>', {
+        btn: ['确认删除', '取消'],
+        icon: 3
+    }, function() {
+        var load = layer.load(1, {time: false});
+        $.ajax({
+            type: 'POST',
+            url: '{:url("admin/admin_host/deleteAll")}',
+            dataType: 'json',
+            success: function(data) {
+                layer.close(load);
+                if (data.code == 1) {
+                    layer.msg(data.msg, {icon: 1}, function() {
+                        window.location.reload();
+                    });
+                } else {
+                    layer.msg(data.msg, {icon: 2});
+                }
+            },
+            error: function() {
+                layer.close(load);
+                layer.msg('请求异常，请重试', {icon: 2});
+            }
+        });
+    });
+}
+</script>

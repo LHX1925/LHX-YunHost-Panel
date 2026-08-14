@@ -1,0 +1,146 @@
+{include file="default/header" title="个人信息"/}
+<style>
+.pw-info { --p:#667eea;--p2:#764ba2;--r:16px; }
+.pw-bar { background:linear-gradient(135deg,#667eea,#764ba2); border-radius:16px; padding:18px 22px; margin-bottom:18px; color:#fff; box-shadow:0 4px 20px rgba(102,126,234,.25); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; }
+.pw-bar h2 { margin:0; font-size:19px; font-weight:700; }
+.pw-bar p { margin:2px 0 0; font-size:12px; opacity:.8; }
+.ucard { background:#fff; border-radius:16px; box-shadow:0 2px 14px rgba(0,0,0,.04); border:1px solid #e8ecf1; overflow:hidden; margin-bottom:18px; }
+.ucard-hd { padding:13px 18px; border-bottom:1px solid #f1f5f9; font-weight:700; color:#1a1a2e; font-size:14px; display:flex; align-items:center; gap:8px; }
+.ucard-hd::before { content:''; width:4px; height:17px; border-radius:2px; background:linear-gradient(180deg,#667eea,#764ba2); }
+.ucard-bd { padding:18px; }
+.finp { width:100%; padding:9px 13px; border:2px solid #e2e8f0; border-radius:10px; font-size:13px; transition:.2s; color:#334155; background:#fff; box-sizing:border-box; }
+.finp:focus { border-color:#667eea; box-shadow:0 0 0 3px rgba(102,126,234,.1); outline:none; }
+.flbl { display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:5px; }
+.nbtn { display:inline-flex; align-items:center; gap:5px; padding:9px 24px; border-radius:10px; border:none; font-size:13px; font-weight:600; cursor:pointer; transition:all .2s; text-decoration:none; }
+.nbtn.pri { background:linear-gradient(135deg,#667eea,#764ba2); color:#fff; box-shadow:0 3px 10px rgba(102,126,234,.3); }
+.nbtn.pri:hover { transform:translateY(-1px); box-shadow:0 5px 16px rgba(102,126,234,.4); }
+.nbadge { display:inline-flex; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600; }
+.nbadge.b { background:#eff6ff; color:#2563eb; }
+.nbadge.g { background:#ecfdf5; color:#059669; }
+.ainfo { display:flex; align-items:center; gap:14px; padding:16px 18px; margin-bottom:18px; background:#f8fafc; border-radius:12px; border:1px solid #e8ecf1; }
+.ainfo img { width:56px; height:56px; border-radius:50%; border:3px solid #667eea; box-shadow:0 4px 14px rgba(102,126,234,.2); object-fit:cover; }
+.ainfo h4 { margin:0 0 2px; font-size:15px; color:#1a1a2e; }
+.ainfo .role { font-size:12px; color:#64748b; }
+.ainfo-item { display:flex; justify-content:space-between; align-items:center; padding:11px 0; border-bottom:1px solid #f1f5f9; }
+.ainfo-item:last-child { border-bottom:none; }
+.ainfo-item .lbl { font-size:12px; color:#64748b; }
+.ainfo-item .val { font-size:13px; font-weight:500; color:#1a1a2e; }
+@media(max-width:768px){
+  .pw-bar { padding:14px 16px; border-radius:12px; }
+  .pw-bar h2 { font-size:17px; }
+  .ucard-bd { padding:14px; }
+  .ainfo { flex-direction:column; text-align:center; }
+}
+</style>
+
+<main class="lyear-layout-content pw-info">
+  <div class="container-fluid">
+
+    <div class="pw-bar">
+      <div>
+        <h2>个人信息</h2>
+        <p>修改您的管理员资料</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-8">
+        <div class="ucard">
+          <div class="ucard-hd">编辑资料</div>
+          <div class="ucard-bd">
+            <div class="ainfo">
+              <img src="https://q1.qlogo.cn/g?b=qq&nk={$user.qq}&s=100" alt="头像" onerror="this.src='__ROOT__/public/static/images/default-avatar.png'">
+              <div>
+                <h4>{$user.name|default=$user.user}</h4>
+                <span class="role">{$user.user}</span>
+              </div>
+            </div>
+            <form id="info-form">
+              <div class="mb-3">
+                <label class="flbl">显示名称</label>
+                <input type="text" name="name" class="finp" value="{$user.name}" required>
+                <small style="color:#94a3b8;font-size:11px;margin-top:3px;display:block;">显示在后台管理系统的名称</small>
+              </div>
+              <div class="mb-3">
+                <label class="flbl">QQ号码</label>
+                <input type="text" name="qq" class="finp" value="{$user.qq}" required>
+                <small style="color:#94a3b8;font-size:11px;margin-top:3px;display:block;">用于头像显示和管理员联系</small>
+              </div>
+              <div class="mb-3">
+                <label class="flbl">邮箱地址</label>
+                <input type="email" name="mail" class="finp" value="{$user.mail}" required>
+                <small style="color:#94a3b8;font-size:11px;margin-top:3px;display:block;">用于系统通知，请确保地址有效</small>
+              </div>
+              <div class="pt-3 mt-2" style="border-top:1px solid #f1f5f9;">
+                <button type="submit" class="nbtn pri">保存修改</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="ucard">
+          <div class="ucard-hd">账户信息</div>
+          <div class="ucard-bd">
+            <div class="ainfo-item">
+              <span class="lbl">登录账号</span>
+              <span class="val" style="font-family:monospace;">{$user.user}</span>
+            </div>
+            <div class="ainfo-item">
+              <span class="lbl">角色权限</span>
+              <span class="val">
+                {if $user.is_super || $user.role_id == 1}
+                <span class="nbadge b">超级管理员</span>
+                {elseif in_array('all', $adminPermissions)}
+                <span class="nbadge g">全部权限</span>
+                {else}
+                <span class="nbadge g">普通管理员</span>
+                {/if}
+              </span>
+            </div>
+            <div class="ainfo-item">
+              <span class="lbl">创建时间</span>
+              <span class="val">{if $user.created_at}{$user.created_at|date='Y-m-d H:i',###}{else}—{/if}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+{include file="default/footer" /}
+<script>
+$('#info-form').on('submit', function(e){
+  e.preventDefault();
+  var load = layer.msg('修改中，请稍后...',{icon:16,shade:0.8,time:false});
+  var name = $('input[name="name"]').val().trim();
+  var mail = $('input[name="mail"]').val().trim();
+  var qq = $('input[name="qq"]').val().trim();
+
+  if(!name || !mail || !qq){
+    layer.close(load);
+    layer.alert('请填写所有必填项',{icon:2,shade:0.8});
+    return false;
+  }
+
+  $.ajax({
+    type:'POST', url:'', data:{name:name, mail:mail, qq:qq}, dataType:'json',
+    success:function(data){
+      layer.close(load);
+      if(data.code == 1){
+        layer.msg(data.msg,{icon:1,shade:0.8},function(){ location.reload(); });
+      }else{
+        layer.alert(data.msg,{icon:2,shade:0.8});
+      }
+    },
+    error:function(){
+      layer.close(load);
+      layer.msg('网络错误，请重试',{icon:2});
+    }
+  });
+  return false;
+});
+</script>

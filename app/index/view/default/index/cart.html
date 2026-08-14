@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>{$webname} - 购买产品</title>
+    {include file="default/index/header" /}
+    <style>
+        .main-content {
+            padding: 32px 0 60px;
+            min-height: calc(100vh - 64px);
+        }
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+        }
+        .page-header h1 {
+            font-size: 26px;
+            color: var(--glass-text);
+            font-weight: 800;
+            margin: 0 0 6px;
+        }
+        .page-header p {
+            font-size: 14px;
+            color: var(--glass-text-secondary);
+            margin: 0;
+        }
+        .search-bar {
+            position: relative;
+            max-width: 340px;
+            margin-bottom: 28px;
+        }
+        .search-bar input {
+            width: 100%;
+            padding: 12px 14px 12px 40px;
+            background: var(--glass-bg-input);
+            backdrop-filter: blur(var(--glass-blur-light));
+            -webkit-backdrop-filter: blur(var(--glass-blur-light));
+            border: 1.5px solid var(--glass-border);
+            border-radius: var(--glass-radius-sm);
+            font-size: 14px;
+            color: var(--glass-text);
+            outline: none;
+            transition: all var(--glass-transition);
+            box-shadow: var(--glass-shadow-inset);
+        }
+        .search-bar input:focus {
+            border-color: var(--glass-primary);
+            box-shadow: 0 0 0 4px var(--glass-primary-glow);
+        }
+        .search-bar i {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--glass-text-muted);
+            font-size: 14px;
+        }
+        .category-selector {
+            margin-bottom: 28px;
+        }
+        .category-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .category-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 18px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur-light));
+            -webkit-backdrop-filter: blur(var(--glass-blur-light));
+            color: var(--glass-text-secondary);
+            border: 1.5px solid var(--glass-border);
+            border-radius: var(--glass-radius-full);
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all var(--glass-transition);
+        }
+        .category-link:hover {
+            border-color: var(--glass-primary);
+            color: var(--glass-primary);
+            background: var(--glass-bg-hover);
+            text-decoration: none;
+            transform: translateY(-1px);
+        }
+        .category-link.active {
+            background: linear-gradient(135deg, var(--glass-primary), var(--glass-primary-light));
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 4px 16px var(--glass-primary-glow);
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
+        }
+        .product-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border);
+            border-radius: var(--glass-radius-lg);
+            padding: 24px;
+            transition: all var(--glass-transition);
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--glass-shadow-sm), var(--glass-shadow-inset);
+        }
+        .product-card:hover {
+            box-shadow: var(--glass-shadow-lg), var(--glass-shadow-inset);
+            transform: translateY(-3px);
+            border-color: var(--glass-border-strong);
+            background: var(--glass-bg-hover);
+        }
+        .product-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--glass-text);
+            margin-bottom: 14px;
+        }
+        .product-price {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--glass-text);
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+        .product-price small {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--glass-text-muted);
+        }
+        .product-price.free {
+            font-size: 22px;
+            color: var(--glass-success);
+        }
+        .product-content {
+            color: var(--glass-text-secondary);
+            margin: 16px 0 20px;
+            font-size: 13px;
+            line-height: 1.6;
+            flex: 1;
+            min-height: 60px;
+        }
+        .btn-buy {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            padding: 11px;
+            background: linear-gradient(135deg, var(--glass-primary), var(--glass-primary-light));
+            color: #fff;
+            font-weight: 600;
+            font-size: 14px;
+            border-radius: var(--glass-radius-full);
+            text-decoration: none;
+            transition: all var(--glass-transition);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 16px var(--glass-primary-glow);
+        }
+        .btn-buy:hover {
+            box-shadow: 0 6px 24px var(--glass-primary-glow);
+            text-decoration: none;
+            color: #fff;
+            transform: translateY(-1px);
+        }
+        .btn-buy.sold-out {
+            background: var(--glass-bg);
+            color: var(--glass-text-muted);
+            cursor: not-allowed;
+            box-shadow: none;
+            border: 1px solid var(--glass-border);
+        }
+        .no-products {
+            text-align: center;
+            padding: 60px 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border);
+            border-radius: var(--glass-radius-lg);
+            grid-column: 1 / -1;
+            box-shadow: var(--glass-shadow-sm), var(--glass-shadow-inset);
+        }
+        .no-products i {
+            font-size: 48px;
+            color: var(--glass-text-muted);
+            margin-bottom: 16px;
+        }
+        .no-products h2 {
+            color: var(--glass-text);
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        .no-products p {
+            color: var(--glass-text-secondary);
+        }
+        @media (max-width: 768px) {
+            .page-header { flex-direction: column; align-items: flex-start; }
+            .search-bar { max-width: none; }
+            .products-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+
+    <section class="main-content">
+        <div class="container">
+            <div class="page-header glass-animate-in">
+                <div>
+                    <h1>{if $class}{$class.name}{else}产品列表{/if}</h1>
+                    <p>{if $class}{$class.introduce}{else}浏览可购买的云服务与套餐{/if}</p>
+                </div>
+                <a href="__ROOT__/user/order" class="glass-btn glass-btn-primary">
+                    <i class="fas fa-list"></i> 我的产品
+                </a>
+            </div>
+
+            <div class="search-bar glass-animate-in glass-stagger-1">
+                <input type="text" id="productSearch" placeholder="搜索产品名称">
+                <i class="fas fa-search"></i>
+            </div>
+
+            <div class="category-selector glass-animate-in glass-stagger-2">
+                <ul class="category-list">
+                    {if $product}
+                    {foreach $product as $p}
+                    <li>
+                        <a class="category-link{if $productid==$p.id} active{/if}" href="__ROOT__/cart/{$p.id}">{$p.name}</a>
+                    </li>
+                    {/foreach}
+                    {/if}
+                </ul>
+            </div>
+
+            <div class="products-grid" id="productsGrid">
+                {if $cart}
+                {foreach $cart as $c}
+                <div class="product-card glass-reveal" data-name="{:strtolower($c.name)}">
+                    <div class="product-name">{$c.name}</div>
+                    <div class="product-price{if $c.money=='0'} free{/if}">
+                        {if $c.money=='0'}
+                        免费
+                        {else}
+                        ¥{$c.money}<small>/{if $c.cycle=='day'}日{elseif $c.cycle=='month'}月{elseif $c.cycle=='season'}季{elseif $c.cycle=='year'}年{elseif $c.cycle=='unrestricted'}次{/if}</small>
+                        {/if}
+                    </div>
+                    <div class="product-content">{$c.content}</div>
+                    {if $c.inventory<'1'}
+                    <button class="btn-buy sold-out" disabled>已售完</button>
+                    {else}
+                    <a href="__ROOT__/product/{$c.id}" class="btn-buy">立即购买</a>
+                    {/if}
+                </div>
+                {/foreach}
+                {else}
+                <div class="no-products">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <h2>该分类下没有产品</h2>
+                    <p>请尝试选择其他产品分类</p>
+                </div>
+                {/if}
+            </div>
+        </div>
+    </section>
+
+    {include file="default/index/footer" /}
+
+    <script>
+        document.getElementById('productSearch').addEventListener('input', function() {
+            var keyword = this.value.toLowerCase();
+            var cards = document.querySelectorAll('.product-card');
+            cards.forEach(function(card) {
+                var name = card.getAttribute('data-name') || '';
+                card.style.display = name.indexOf(keyword) > -1 ? '' : 'none';
+            });
+        });
+    </script>
+</body>
+</html>

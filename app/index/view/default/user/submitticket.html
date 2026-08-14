@@ -1,0 +1,604 @@
+{include file="default/user/header" title="提交工单" /}
+<main id="main-container">
+    <div class="content content-narrow">
+        {if $isBanned}
+        <div class="alert alert-warning" style="border-radius:10px;border-left:4px solid #F59E0B;background:#FFFBEB;color:#92400E;padding:14px 18px;margin-bottom:20px;font-size:14px;">
+            <strong><i class="fas fa-exclamation-triangle"></i> 您的账号已被封禁，无法提交工单</strong><br>
+            封禁至：<strong>{$banEndTime|date="Y-m-d H:i:s",###}</strong><br>
+            封禁原因：{$banReason ?: '管理员未填写原因'}<br>
+            <small>到期后自动解封。</small>
+        </div>
+        {else}
+        <style>
+            .ticket-page {
+                display: grid;
+                grid-template-columns: 1.5fr 1fr;
+                gap: 24px;
+                align-items: start;
+            }
+
+            .page-title {
+                margin-bottom: 24px;
+            }
+
+            .page-title h1 {
+                font-size: 26px;
+                font-weight: 800;
+                color: var(--text);
+                margin: 0 0 8px;
+            }
+
+            .page-title p {
+                font-size: 15px;
+                color: var(--text-secondary);
+                margin: 0;
+            }
+
+            .ticket-form-card {
+                background: #fff;
+                border: 1px solid var(--border);
+                border-radius: 20px;
+                padding: 28px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04);
+            }
+
+            .form-row {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                margin-bottom: 20px;
+            }
+
+            .form-row label {
+                width: 90px;
+                flex-shrink: 0;
+                font-size: 14px;
+                font-weight: 500;
+                color: var(--text-secondary);
+                margin: 0;
+            }
+
+            .form-row .form-control,
+            .form-row .form-select {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .form-control,
+            .form-select {
+                border: 1.5px solid var(--border);
+                border-radius: 12px;
+                padding: 12px 14px;
+                font-size: 14px;
+                color: var(--text);
+                outline: none;
+                transition: all 0.2s;
+                background: #fff;
+                width: 100%;
+            }
+
+            .form-control:focus,
+            .form-select:focus {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+            }
+
+            textarea.form-control {
+                min-height: 120px;
+                resize: vertical;
+            }
+
+            .problem-tags {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                flex: 1;
+            }
+
+            .problem-tag {
+                position: relative;
+            }
+
+            .problem-tag input {
+                position: absolute;
+                opacity: 0;
+                width: 100%;
+                height: 100%;
+                cursor: pointer;
+            }
+
+            .problem-tag label {
+                width: auto;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 10px 18px;
+                border: 1.5px solid var(--border);
+                border-radius: 999px;
+                font-size: 14px;
+                font-weight: 500;
+                color: var(--text);
+                cursor: pointer;
+                transition: all 0.2s;
+                background: #fff;
+            }
+
+            .problem-tag input:checked + label {
+                border-color: var(--primary);
+                background: var(--primary-bg);
+                color: var(--primary);
+            }
+
+            .problem-tag label:hover {
+                border-color: var(--primary-light);
+            }
+
+            .upload-row {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                flex: 1;
+            }
+
+            .upload-input {
+                flex: 1;
+                position: relative;
+            }
+
+            .upload-input .form-control {
+                padding-right: 40px;
+            }
+
+            .upload-input i {
+                position: absolute;
+                right: 14px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--text-muted);
+            }
+
+            .btn-upload {
+                padding: 12px 20px;
+                background: var(--primary);
+                border: none;
+                border-radius: 12px;
+                color: #fff;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s;
+                white-space: nowrap;
+            }
+
+            .btn-upload:hover {
+                background: var(--primary-dark);
+            }
+
+            .btn-submit-ticket {
+                width: 100%;
+                padding: 14px;
+                background: var(--primary);
+                border: none;
+                border-radius: 999px;
+                color: #fff;
+                font-size: 16px;
+                font-weight: 700;
+                cursor: pointer;
+                transition: all 0.2s;
+                margin-top: 8px;
+            }
+
+            .btn-submit-ticket:hover {
+                background: var(--primary-dark);
+                box-shadow: 0 6px 20px rgba(37,99,235,0.3);
+            }
+
+            /* Right side */
+            .info-cards {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .check-card {
+                background: #fff;
+                border: 1px solid var(--border);
+                border-radius: 20px;
+                padding: 24px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04);
+            }
+
+            .check-card h3 {
+                font-size: 17px;
+                font-weight: 800;
+                color: var(--text);
+                margin: 0 0 18px;
+            }
+
+            .check-list {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .check-item {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 14px;
+                border: 1px solid var(--border-light);
+                border-radius: 12px;
+                background: #fff;
+                transition: all 0.2s;
+            }
+
+            .check-item:hover {
+                background: #F8FAFC;
+            }
+
+            .check-item i {
+                width: 28px;
+                height: 28px;
+                border-radius: 50%;
+                background: var(--primary-bg);
+                color: var(--primary);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 12px;
+                flex-shrink: 0;
+            }
+
+            .check-item span {
+                font-size: 14px;
+                font-weight: 500;
+                color: var(--text);
+            }
+
+            .support-card {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 18px 22px;
+                background: #fff;
+                border: 1px solid var(--border);
+                border-radius: 16px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04);
+                text-decoration: none;
+                color: var(--text);
+                transition: all 0.2s;
+            }
+
+            .support-card:hover {
+                text-decoration: none;
+                color: var(--primary);
+                border-color: var(--primary-light);
+            }
+
+            .support-card-left {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .support-card-left i {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                border: 1.5px solid var(--border);
+                color: var(--text-muted);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 13px;
+            }
+
+            .support-card-left span {
+                font-size: 15px;
+                font-weight: 600;
+            }
+
+            .support-card-right {
+                color: var(--text-muted);
+                font-size: 13px;
+            }
+
+            .support-banner {
+                background: linear-gradient(135deg, #DBEAFE 0%, #EFF6FF 100%);
+                border: 1px solid var(--primary-light);
+                border-radius: 20px;
+                padding: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 16px;
+            }
+
+            .support-banner h4 {
+                font-size: 17px;
+                font-weight: 800;
+                color: var(--text);
+                margin: 0 0 6px;
+            }
+
+            .support-banner p {
+                font-size: 13px;
+                color: var(--text-secondary);
+                margin: 0;
+            }
+
+            .btn-online-service {
+                padding: 10px 20px;
+                background: #fff;
+                border: 1px solid var(--border);
+                border-radius: 999px;
+                color: var(--text);
+                font-size: 13px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s;
+                white-space: nowrap;
+            }
+
+            .btn-online-service:hover {
+                background: var(--primary);
+                border-color: var(--primary);
+                color: #fff;
+            }
+
+            /* 液态玻璃主题适配 */
+            body.glass-enabled .ticket-form-card,
+            body.glass-enabled .check-card,
+            body.glass-enabled .check-item,
+            body.glass-enabled .support-card,
+            body.glass-enabled .btn-online-service {
+                background: var(--glass-bg);
+                backdrop-filter: blur(var(--glass-blur));
+                -webkit-backdrop-filter: blur(var(--glass-blur));
+                border-color: var(--glass-border);
+                box-shadow: var(--glass-shadow-sm), var(--glass-shadow-inset);
+            }
+
+            body.glass-enabled.glass-bg-image .ticket-form-card,
+            body.glass-enabled.glass-bg-image .check-card,
+            body.glass-enabled.glass-bg-image .check-item,
+            body.glass-enabled.glass-bg-image .support-card,
+            body.glass-enabled.glass-bg-image .btn-online-service {
+                background: rgba(255, 255, 255, var(--glass-opacity)) !important;
+                border-color: rgba(255, 255, 255, 0.35) !important;
+            }
+
+            body.glass-enabled .form-control,
+            body.glass-enabled .form-select,
+            body.glass-enabled .problem-tag label {
+                background: rgba(255, 255, 255, var(--glass-opacity-light));
+                backdrop-filter: blur(var(--glass-blur-light));
+                -webkit-backdrop-filter: blur(var(--glass-blur-light));
+                border-color: rgba(255, 255, 255, 0.4);
+                color: #1E293B;
+            }
+
+            body.glass-enabled .form-control:focus,
+            body.glass-enabled .form-select:focus {
+                background: rgba(255, 255, 255, var(--glass-opacity-btn));
+                border-color: var(--glass-primary);
+                box-shadow: 0 0 0 4px var(--glass-primary-glow);
+            }
+
+            body.glass-enabled .problem-tag input:checked + label,
+            body.glass-enabled .check-item:hover {
+                background: var(--primary-bg);
+            }
+
+            body.glass-enabled .support-banner {
+                background: linear-gradient(135deg, rgba(219, 234, 254, 0.75) 0%, rgba(239, 246, 255, 0.75) 100%);
+                border-color: var(--glass-border);
+                backdrop-filter: blur(var(--glass-blur));
+                -webkit-backdrop-filter: blur(var(--glass-blur));
+            }
+
+            @media (max-width: 991px) {
+                .ticket-page {
+                    grid-template-columns: 1fr;
+                }
+
+                .form-row {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 8px;
+                }
+
+                .form-row label {
+                    width: 100%;
+                }
+            }
+        </style>
+
+        <div class="page-title glass-user-hero">
+            <h1>提交技术工单</h1>
+            <p>描述问题后，运维人员将尽快为你处理</p>
+        </div>
+
+        <div class="ticket-page">
+            <div class="ticket-form-card glass-card glass-reveal">
+                <form id="ticketForm">
+                    <div class="form-row">
+                        <label>选择服务：</label>
+                        <select class="form-select" name="service_type" id="serviceType">
+                            <option value="无法访问">无法访问</option>
+                            <option value="其他问题">其他问题</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <label>邮件问题：</label>
+                        <div class="problem-tags">
+                            <div class="problem-tag">
+                                <input type="radio" name="problem_tag" id="tag1" value="无法访问" checked>
+                                <label for="tag1">无法访问</label>
+                            </div>
+                            <div class="problem-tag">
+                                <input type="radio" name="problem_tag" id="tag2" value="数据库异常">
+                                <label for="tag2">数据库异常</label>
+                            </div>
+                            <div class="problem-tag">
+                                <input type="radio" name="problem_tag" id="tag3" value="配置故障">
+                                <label for="tag3">配置故障</label>
+                            </div>
+                            <div class="problem-tag">
+                                <input type="radio" name="problem_tag" id="tag4" value="其他问题">
+                                <label for="tag4">其他问题</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <label>问题类型：</label>
+                        <input type="text" class="form-control glass-input" name="problem_type" id="problemType" placeholder="问题标题">
+                    </div>
+
+                    <div class="form-row">
+                        <label>问题标题：</label>
+                        <input type="text" class="form-control glass-input" name="title" id="titleInput" placeholder="请输入工单标题">
+                    </div>
+
+                    <div class="form-row" style="align-items:flex-start;">
+                        <label>详细描述：</label>
+                        <textarea class="form-control glass-textarea" name="content" id="contentInput" placeholder="请详细描述您遇到的问题"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <label>点击上传：</label>
+                        <div class="upload-row">
+                            <div class="upload-input">
+                                <input type="text" class="form-control" id="fileName" placeholder="请选择截图文件" readonly>
+                                <i class="fas fa-paperclip"></i>
+                            </div>
+                            <label for="screenshot" class="btn-upload" style="margin:0;">上传截图</label>
+                            <input type="file" id="screenshot" style="display:none;" accept="image/*">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit-ticket glass-btn glass-btn-primary glass-btn-lg">
+                        <i class="fas fa-paper-plane"></i> 提交工单
+                    </button>
+                </form>
+            </div>
+
+            <div class="info-cards">
+                <div class="check-card glass-card glass-reveal glass-stagger-1">
+                    <h3>提交前检查</h3>
+                    <div class="check-list">
+                        <a href="__ROOT__/user/order" class="check-item">
+                            <i class="fas fa-check"></i>
+                            <span>确认主机是否已到期</span>
+                        </a>
+                        <a href="__ROOT__/user/order" class="check-item">
+                            <i class="fas fa-check"></i>
+                            <span>检查域名解析状态</span>
+                        </a>
+                        <a href="__ROOT__/announcement" class="check-item">
+                            <i class="fas fa-check"></i>
+                            <span>查看系统通知</span>
+                        </a>
+                    </div>
+                </div>
+
+                <a href="__ROOT__/user/supportticket" class="support-card">
+                    <div class="support-card-left">
+                        <i class="fas fa-plus"></i>
+                        <span>24小时运维支持</span>
+                    </div>
+                    <div class="support-card-right">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </a>
+
+                <div class="support-banner">
+                    <div>
+                        <h4>24小时运维支持</h4>
+                        <p>专业技术团队随时为您服务</p>
+                    </div>
+                    <button type="button" class="btn-online-service" onclick="location.href='__ROOT__/user/submitticket'">在线客服</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            {if isset($realnameCheck) && $realnameCheck.code != 1}
+            window.addEventListener('load', function() {
+                if (typeof showRealnamePopup === 'function') {
+                    showRealnamePopup('{$realnameCheck.msg|default="请先完成实名认证后再进行提交工单"}', '__ROOT__/user/realname', '__ROOT__/user/index');
+                } else {
+                    alert('{$realnameCheck.msg|default="请先完成实名认证后再进行提交工单"}');
+                    location.href = '__ROOT__/user/realname';
+                }
+            });
+            {/if}
+
+            document.getElementById('screenshot').addEventListener('change', function() {
+                var file = this.files[0];
+                document.getElementById('fileName').value = file ? file.name : '';
+            });
+
+            document.querySelectorAll('input[name="problem_tag"]').forEach(function(radio) {
+                radio.addEventListener('change', function() {
+                    document.getElementById('serviceType').value = this.value;
+                });
+            });
+
+            document.getElementById('ticketForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                var title = document.getElementById('titleInput').value.trim();
+                var content = document.getElementById('contentInput').value.trim();
+                var serviceType = document.getElementById('serviceType').value;
+                var problemType = document.getElementById('problemType').value.trim();
+                var problemTag = document.querySelector('input[name="problem_tag"]:checked').value;
+
+                if (title.length < 1 || content.length < 1) {
+                    showToast('标题和详细描述不能为空', 'danger', 2500);
+                    return false;
+                }
+
+                var fullContent = '【服务类型】' + serviceType + '\n';
+                fullContent += '【问题标签】' + problemTag + '\n';
+                if (problemType) {
+                    fullContent += '【问题类型】' + problemType + '\n';
+                }
+                fullContent += '【详细描述】\n' + content;
+
+                var load = layer.load(1, {time: false});
+
+                $.ajax({
+                    type: 'POST',
+                    url: '',
+                    data: { title: title, content: fullContent },
+                    dataType: 'json',
+                    success: function(data) {
+                        layer.close(load);
+                        if (handleRealnameResponse(data, '__ROOT__/user/realname', '__ROOT__/user/submitticket')) {
+                            return;
+                        }
+                        if (data.code == "1") {
+                            showToast(data.msg || '操作成功', 'success', 1800);
+                            setTimeout(function() {
+                                location.href = '__ROOT__/user/supportticket/' + data.id;
+                            }, 1800);
+                        } else {
+                            showToast(data.msg, 'danger', 2500);
+                        }
+                    },
+                    error: function() {
+                        layer.close(load);
+                        showToast('网络错误，请稍后重试', 'danger', 2500);
+                    }
+                });
+
+                return false;
+            });
+        </script>
+        {/if}
+    </div>
+</main>
+{include file="default/user/footer" /}

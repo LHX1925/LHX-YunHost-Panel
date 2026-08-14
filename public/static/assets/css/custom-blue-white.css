@@ -1,0 +1,651 @@
+/* ============================================
+   蓝白配色 - 直角设计 通用样式
+   ============================================ */
+
+:root {
+    --primary-blue: #0052cc;
+    --primary-blue-dark: #0747a6;
+    --primary-blue-light: #4c9aff;
+    --bg-white: #ffffff;
+    --bg-gray: #f4f5f7;
+    --bg-gray-dark: #ebecf0;
+    --text-primary: #172b4d;
+    --text-secondary: #5e6c84;
+    --border-color: #dfe1e6;
+    --border-color-light: #f4f5f7;
+    --success: #36b37e;
+    --danger: #de350b;
+    --warning: #ff991f;
+}
+
+/* ============================================
+   基础重置 - 直角设计
+   ============================================ */
+* {
+    border-radius: 0 !important;
+}
+
+body {
+    background-color: var(--bg-gray);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* ============================================
+   按钮样式
+   ============================================ */
+.btn {
+    border-radius: 0 !important;
+    font-weight: 500;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.btn-primary,
+.btn-block {
+    background-color: var(--primary-blue) !important;
+    border-color: var(--primary-blue) !important;
+    color: #fff !important;
+    background-image: none !important;
+    box-shadow: none !important;
+}
+
+.btn-primary:hover,
+.btn-block:hover {
+    background-color: var(--primary-blue-dark) !important;
+    border-color: var(--primary-blue-dark) !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.btn-outline-primary {
+    color: var(--primary-blue) !important;
+    border-color: var(--primary-blue) !important;
+    background-color: transparent !important;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-blue) !important;
+    color: #fff !important;
+}
+
+.btn-success {
+    background-color: var(--success) !important;
+    border-color: var(--success) !important;
+    background-image: none !important;
+}
+
+.btn-danger {
+    background-color: var(--danger) !important;
+    border-color: var(--danger) !important;
+    background-image: none !important;
+}
+
+.btn-warning {
+    background-color: var(--warning) !important;
+    border-color: var(--warning) !important;
+    background-image: none !important;
+}
+
+.btn-info {
+    background-color: #00b8d9 !important;
+    border-color: #00b8d9 !important;
+    background-image: none !important;
+}
+
+.btn-secondary {
+    background-color: var(--bg-gray-dark) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+    background-image: none !important;
+}
+
+.btn-dual {
+    background-color: var(--bg-white);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+/* ============================================
+   卡片/区块样式
+   ============================================ */
+.card,
+.block,
+.stat-card,
+.product-card,
+.feature-card,
+.login-form,
+.register-form,
+.announcement-item {
+    border-radius: 0 !important;
+    border: 1px solid var(--border-color) !important;
+    background-color: var(--bg-white) !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+}
+
+.block-header {
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--bg-white);
+}
+
+.block-title {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* ============================================
+   表单样式
+   ============================================ */
+.form-control {
+    border-radius: 0 !important;
+    border: 1px solid var(--border-color) !important;
+    background-color: var(--bg-white) !important;
+    color: var(--text-primary) !important;
+}
+
+.form-control:focus {
+    border-color: var(--primary-blue) !important;
+    box-shadow: 0 0 0 2px rgba(0, 82, 204, 0.2) !important;
+    outline: none;
+}
+
+.form-control-alt {
+    background-color: var(--bg-gray) !important;
+    border-color: var(--border-color) !important;
+}
+
+.input-group-append .btn {
+    border-radius: 0 !important;
+}
+
+/* ============================================
+   导航栏 - 前台
+   ============================================ */
+header {
+    background-color: var(--bg-white) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+}
+
+.logo {
+    color: var(--primary-blue) !important;
+}
+
+.logo i {
+    color: var(--primary-blue) !important;
+}
+
+.nav-links a {
+    color: var(--text-primary) !important;
+    font-weight: 500;
+}
+
+.nav-links a:hover {
+    color: var(--primary-blue) !important;
+}
+
+/* ============================================
+   用户中心侧边栏
+   ============================================ */
+#sidebar {
+    background-color: var(--bg-white) !important;
+    border-right: 1px solid var(--border-color) !important;
+}
+
+#sidebar .content-header {
+    background-color: var(--bg-white) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+.nav-main-link {
+    color: var(--text-secondary) !important;
+}
+
+.nav-main-link:hover,
+.nav-main-link.active {
+    background-color: var(--bg-gray) !important;
+    color: var(--primary-blue) !important;
+}
+
+.nav-main-link-icon {
+    color: var(--text-secondary) !important;
+}
+
+.nav-main-link:hover .nav-main-link-icon,
+.nav-main-link.active .nav-main-link-icon {
+    color: var(--primary-blue) !important;
+}
+
+.nav-main-heading {
+    color: var(--text-secondary) !important;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+}
+
+.nav-main-submenu {
+    background-color: var(--bg-gray) !important;
+}
+
+/* ============================================
+   顶部Header
+   ============================================ */
+#page-header {
+    background-color: var(--bg-white) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    box-shadow: none !important;
+}
+
+.content-header {
+    background-color: var(--bg-white) !important;
+}
+
+/* ============================================
+   下拉菜单
+   ============================================ */
+.dropdown-menu {
+    border-radius: 0 !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.dropdown-item:hover {
+    background-color: var(--bg-gray) !important;
+}
+
+/* ============================================
+   表格样式
+   ============================================ */
+.table {
+    border: 1px solid var(--border-color);
+}
+
+.table thead th {
+    background-color: var(--bg-gray);
+    border-bottom: 2px solid var(--border-color) !important;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.table td,
+.table th {
+    border-color: var(--border-color) !important;
+}
+
+/* ============================================
+   Badge样式
+   ============================================ */
+.badge {
+    border-radius: 0 !important;
+    font-weight: 500;
+    padding: 0.4em 0.6em;
+}
+
+.badge-primary {
+    background-color: var(--primary-blue) !important;
+}
+
+.badge-success {
+    background-color: var(--success) !important;
+}
+
+.badge-danger {
+    background-color: var(--danger) !important;
+}
+
+.badge-warning {
+    background-color: var(--warning) !important;
+    color: #fff !important;
+}
+
+/* ============================================
+   分页/导航
+   ============================================ */
+.pagination .page-link {
+    border-radius: 0 !important;
+    color: var(--primary-blue);
+    border-color: var(--border-color);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--primary-blue);
+    border-color: var(--primary-blue);
+}
+
+/* ============================================
+   标签页
+   ============================================ */
+.nav-tabs .nav-link {
+    border-radius: 0 !important;
+    color: var(--text-secondary);
+    border: 1px solid transparent;
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--primary-blue) !important;
+    border-color: var(--border-color) var(--border-color) var(--bg-white) !important;
+}
+
+.nav-tabs-custom .nav-link {
+    border-radius: 0 !important;
+    background-color: var(--bg-gray) !important;
+    color: var(--text-secondary) !important;
+}
+
+.nav-tabs-custom .nav-link.active {
+    background-color: var(--primary-blue) !important;
+    color: #fff !important;
+}
+
+/* ============================================
+   页脚
+   ============================================ */
+#page-footer,
+footer {
+    background-color: var(--bg-white) !important;
+    border-top: 1px solid var(--border-color) !important;
+    color: var(--text-secondary) !important;
+}
+
+footer a {
+    color: var(--primary-blue) !important;
+}
+
+footer a:hover {
+    color: var(--primary-blue-dark) !important;
+    text-decoration: none;
+}
+
+.copyright {
+    color: var(--text-secondary) !important;
+}
+
+/* ============================================
+   去除花哨动画和渐变
+   ============================================ */
+* {
+    animation: none !important;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s !important;
+}
+
+[style*="linear-gradient"],
+[style*="radial-gradient"] {
+    background-image: none !important;
+    background-color: var(--bg-white) !important;
+}
+
+.bg-image {
+    background-image: none !important;
+    background-color: var(--bg-gray) !important;
+}
+
+/* ============================================
+   用户中心仪表盘特定样式
+   ============================================ */
+.user-dashboard {
+    padding: 1.5rem 0;
+}
+
+.welcome-card {
+    background-color: var(--primary-blue) !important;
+    color: #fff !important;
+    border: none !important;
+    margin-bottom: 1.5rem;
+}
+
+.welcome-card .user-image {
+    border-radius: 0 !important;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+.stat-icon {
+    border-radius: 0 !important;
+    background-color: var(--bg-gray);
+    color: var(--primary-blue) !important;
+}
+
+.quick-actions {
+    gap: 1rem;
+}
+
+.action-btn {
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-white);
+    color: var(--text-primary);
+    box-shadow: none !important;
+}
+
+.action-btn:hover {
+    border-color: var(--primary-blue);
+    color: var(--primary-blue);
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.section-title::after {
+    background-color: var(--primary-blue) !important;
+    background-image: none !important;
+    border-radius: 0 !important;
+}
+
+.balance-display {
+    color: var(--primary-blue);
+}
+
+/* ============================================
+   前台首页特定样式覆盖
+   ============================================ */
+.hero {
+    background-color: var(--bg-white) !important;
+    color: var(--text-primary) !important;
+}
+
+.hero h1 {
+    color: var(--primary-blue) !important;
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
+}
+
+.hero p {
+    color: var(--text-secondary) !important;
+}
+
+.features {
+    background-color: var(--bg-gray) !important;
+}
+
+.section-title {
+    color: var(--text-primary) !important;
+}
+
+.feature-card:hover {
+    background-color: var(--bg-white) !important;
+    border-color: var(--primary-blue) !important;
+}
+
+.feature-icon {
+    color: var(--primary-blue) !important;
+}
+
+.feature-card p {
+    color: var(--text-secondary) !important;
+}
+
+.stats {
+    background-color: var(--bg-white) !important;
+}
+
+.stat-value {
+    color: var(--primary-blue) !important;
+}
+
+.stat-label {
+    color: var(--text-secondary) !important;
+}
+
+.announcements {
+    background-color: var(--bg-gray) !important;
+}
+
+.announcement-link {
+    color: var(--primary-blue) !important;
+    background-color: var(--bg-white) !important;
+    border: 1px solid var(--primary-blue);
+}
+
+.announcement-link:hover {
+    background-color: var(--primary-blue) !important;
+    color: #fff !important;
+}
+
+.footer-column h3 {
+    color: var(--primary-blue) !important;
+}
+
+.footer-column a {
+    color: var(--text-secondary) !important;
+}
+
+.footer-column a:hover {
+    color: var(--primary-blue) !important;
+}
+
+/* ============================================
+   登录/注册表单
+   ============================================ */
+.login-wrapper,
+.register-wrapper {
+    background-color: var(--bg-gray) !important;
+}
+
+.login-form,
+.register-form {
+    background-color: var(--bg-white) !important;
+    border: 1px solid var(--border-color) !important;
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+}
+
+.login-form h2,
+.register-form h2 {
+    color: var(--text-primary) !important;
+}
+
+.login-form p,
+.register-form p {
+    color: var(--text-secondary) !important;
+}
+
+.form-footer a {
+    color: var(--primary-blue) !important;
+}
+
+.captcha-image {
+    border-radius: 0 !important;
+    border: 1px solid var(--border-color);
+}
+
+.code-input button {
+    background-color: var(--primary-blue) !important;
+    border-radius: 0 !important;
+}
+
+.code-input button:hover {
+    background-color: var(--primary-blue-dark) !important;
+}
+
+/* ============================================
+   layer弹窗样式覆盖
+   ============================================ */
+.layui-layer {
+    border-radius: 0 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+.layui-layer-btn .layui-layer-btn0 {
+    border-color: var(--primary-blue) !important;
+    background-color: var(--primary-blue) !important;
+    color: #fff !important;
+    border-radius: 0 !important;
+}
+
+.layui-layer-btn a {
+    border-radius: 0 !important;
+}
+
+/* ============================================
+   响应式调整
+   ============================================ */
+@media (max-width: 768px) {
+    .nav-active {
+        background-color: var(--bg-white) !important;
+        border: 1px solid var(--border-color);
+    }
+}
+
+/* ============================================
+   杂项
+   ============================================ */
+.img-avatar,
+.rounded,
+.img-avatar-thumb {
+    border-radius: 0 !important;
+}
+
+.text-primary {
+    color: var(--primary-blue) !important;
+}
+
+.bg-primary {
+    background-color: var(--primary-blue) !important;
+    background-image: none !important;
+}
+
+.bg-success {
+    background-color: var(--success) !important;
+}
+
+.bg-info {
+    background-color: #00b8d9 !important;
+}
+
+.bg-warning {
+    background-color: var(--warning) !important;
+}
+
+.bg-danger {
+    background-color: var(--danger) !important;
+}
+
+.bg-white {
+    background-color: var(--bg-white) !important;
+}
+
+.bg-body-light {
+    background-color: var(--bg-gray) !important;
+}
+
+.text-dual {
+    color: var(--text-primary) !important;
+}
+
+.dropdown-divider {
+    border-top-color: var(--border-color) !important;
+}
+
+/* 移除oneui主题色覆盖 */
+#page-container {
+    background-color: var(--bg-gray) !important;
+}
+
+#main-container {
+    background-color: var(--bg-gray) !important;
+}
+
+.content {
+    background-color: transparent !important;
+}

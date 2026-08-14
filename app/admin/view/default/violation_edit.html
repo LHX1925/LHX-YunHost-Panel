@@ -1,0 +1,162 @@
+{include file="default/header" title="编辑违规通报" /}
+<main class="lyear-layout-content">
+  <div class="container-fluid glass-animate-in">
+    <div class="row">
+      <div class="col-lg-8">
+        <div class="card admin-card">
+          <header class="card-header">
+            <div class="card-title">编辑违规通报 #{$v.id}</div>
+            <div class="card-toolbar">
+              <a href="__ROOT__/admin/violation" class="btn-admin btn-admin-secondary btn-sm">返回列表</a>
+            </div>
+          </header>
+          <div class="card-body">
+            <form id="editForm">
+              <input type="hidden" name="act" value="edit">
+              <input type="hidden" name="csrf_token" value="{$csrf_token}">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">用户ID</label>
+                  <input type="text" class="form-control" value="{$v.user_id}" readonly>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">用户名</label>
+                  <input type="text" class="form-control" value="{$v.username}" readonly>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">违规标题 <span class="text-danger">*</span></label>
+                <input type="text" name="title" class="form-control" value="{$v.title}" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">违规内容描述</label>
+                <textarea name="content" class="form-control" rows="4">{$v.content}</textarea>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">处罚原因</label>
+                <textarea name="reason" class="form-control" rows="3">{$v.reason}</textarea>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">处罚措施</label>
+                <input type="text" name="punishment" class="form-control" value="{$v.punishment}">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">证据图片</label>
+                <div class="upload-area" id="uploadArea" style="border:2px dashed #d1d5db;border-radius:8px;padding:24px;text-align:center;cursor:pointer;background:#fafbfc;transition:all 0.2s;">
+                  <i class="mdi mdi-cloud-upload" style="font-size:32px;color:#9ca3af;"></i>
+                  <p style="margin:8px 0 0;color:#6b7280;font-size:13px;">点击或拖拽图片到此处上传</p>
+                  <p style="margin:4px 0 0;color:#9ca3af;font-size:12px;">支持 JPG/PNG/WebP，单张不超过 5MB</p>
+                  <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" multiple style="display:none;">
+                </div>
+                <div id="previewContainer" class="mt-2" style="display:flex;flex-wrap:wrap;gap:8px;">
+                  {if !empty($v.images)}
+                  {php}$imgs = explode(',', $v['images']);{/php}
+                  {foreach $imgs as $img}
+                  {if !empty($img)}
+                  <div class="preview-item" style="position:relative;width:100px;height:100px;border-radius:8px;overflow:hidden;border:1px solid #e2e8f0;">
+                    <img src="{$img}" style="width:100%;height:100%;object-fit:cover;">
+                    <button type="button" onclick="removeImage('{$img}',this)" style="position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;border:none;background:rgba(0,0,0,0.5);color:#fff;font-size:12px;line-height:1;cursor:pointer;">&times;</button>
+                  </div>
+                  {/if}
+                  {/foreach}
+                  {/if}
+                </div>
+                <input type="hidden" name="images" id="imagesInput" value="{$v.images}">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">公示状态</label>
+                <select name="status" class="form-select" style="max-width:200px;">
+                  <option value="1" {if $v.status == 1}selected{/if}>公示中</option>
+                  <option value="0" {if $v.status == 0}selected{/if}>隐藏</option>
+                </select>
+              </div>
+              <button type="submit" class="btn-admin btn-admin-primary">
+                <i class="mdi mdi-content-save"></i> 保存修改
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{include file="default/footer" /}
+<script>
+var uploadedImages = ($('#imagesInput').val() || '').split(',').filter(function(s){ return s.trim() !== ''; });
+
+// 图片上传
+$(function() {
+  $('#uploadArea').on('click', function() { $('#fileInput').click(); });
+  $('#uploadArea').on('dragover', function(e) { e.preventDefault(); $(this).css({'border-color':'#2563EB','background':'#EFF6FF'}); });
+  $('#uploadArea').on('dragleave', function() { $(this).css({'border-color':'#d1d5db','background':'#fafbfc'}); });
+  $('#uploadArea').on('drop', function(e) {
+    e.preventDefault();
+    $(this).css({'border-color':'#d1d5db','background':'#fafbfc'});
+    handleFiles(e.originalEvent.dataTransfer.files);
+  });
+  // 阻止 fileInput 点击事件冒泡到 uploadArea，避免无限递归
+  $('#fileInput').on('click', function(e) { e.stopPropagation(); });
+  $('#fileInput').on('change', function() { handleFiles(this.files); });
+});
+
+function handleFiles(files) {
+  if (!files || files.length === 0) return;
+  for (var i = 0; i < files.length; i++) {
+    (function(file) {
+      if (file.size > 5 * 1024 * 1024) { alert('文件 ' + file.name + ' 超过 5MB 限制'); return; }
+      if (!/^image\/(jpeg|png|webp)$/.test(file.type)) { alert('文件 ' + file.name + ' 格式不支持'); return; }
+      var formData = new FormData();
+      formData.append('file', file);
+      formData.append('act', 'upload_image');
+      $.ajax({
+        url: '',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        dataType: 'json',
+        success: function(res) {
+          if (res.code == 1) {
+            uploadedImages.push(res.url);
+            $('#imagesInput').val(uploadedImages.join(','));
+            $('#previewContainer').append(
+              '<div class="preview-item" style="position:relative;width:100px;height:100px;border-radius:8px;overflow:hidden;border:1px solid #e2e8f0;">' +
+              '<img src="' + res.url + '" style="width:100%;height:100%;object-fit:cover;">' +
+              '<button type="button" onclick="removeImage(\'' + res.url + '\',this)" style="position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;border:none;background:rgba(0,0,0,0.5);color:#fff;font-size:12px;line-height:1;cursor:pointer;">&times;</button>' +
+              '</div>'
+            );
+          } else {
+            alert(res.msg || '上传失败');
+          }
+        },
+        error: function(xhr, status, err) {
+          var msg = '上传失败';
+          if (xhr.responseText) {
+            try { var r = JSON.parse(xhr.responseText); msg = r.msg || msg; } catch(e) {}
+          }
+          console.error('Upload error:', status, err, xhr.responseText);
+          alert(msg);
+        }
+      });
+    })(files[i]);
+  }
+}
+
+function removeImage(url, btn) {
+  uploadedImages = uploadedImages.filter(function(u) { return u !== url; });
+  $('#imagesInput').val(uploadedImages.join(','));
+  $(btn).parent().remove();
+}
+
+$('#editForm').on('submit', function(e) {
+  e.preventDefault();
+  $.post('', $(this).serialize(), function(res) {
+    if (res.code == 1) {
+      alert(res.msg);
+      location.href = '__ROOT__/admin/violation';
+    } else {
+      alert(res.msg || '保存失败');
+    }
+  }, 'json');
+});
+</script>

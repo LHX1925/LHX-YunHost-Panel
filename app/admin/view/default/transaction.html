@@ -1,0 +1,146 @@
+{include file="default/header" title="用户消费记录"/}
+<main class="lyear-layout-content">	
+      <div class="container-fluid glass-animate-in">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="card admin-card">
+              <header class="card-header">
+                <div class="card-title">用户消费记录</div>
+              </header>
+              <div class="card-body">
+                <div class="search-wrap">
+                  <form method="get" action="">
+                    <div class="input-group">
+                      <input class="form-control col-sm-7" type="text" name="search" placeholder="搜索..." value=""/>
+                      <div class="input-group-append">
+                        <button class="btn-copy btn btn-primary">
+                          <span class="mdi mdi-magnify"></span>搜索
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+
+                <button onclick='del()' class="btn-admin btn-admin-danger">
+                  <span class="mdi mdi-window-close" aria-hidden="true"></span>删除
+                </button>
+                <button onclick='qbdel()' class="btn-admin btn-admin-danger">
+                  <span class="mdi mdi-window-close" aria-hidden="true"></span>全部删除
+                </button>
+                <br/><br/>
+
+                <div class="table-responsive-sm">
+                  <table class="table table-hover table-admin">
+                    <thead>
+                      <tr>
+                        <th>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="check-all">
+                            <label class="form-check-label" for="check-all"></label>
+                          </div>
+                        </th>
+                        <th scope="col">ID</th>
+                        <th scope="col">用户ID</th>
+                        <th scope="col">详情</th>
+                        <th scope="col">时间</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {foreach $data as $d}
+                      <tr>
+                        <td>
+                          <div class="form-check">
+                            <input type="checkbox" class="form-check-input ids" name="ids" value="{$d.id}">
+                            <label class="form-check-label" for="ids-1"></label>
+                          </div>
+                        </td>
+                        <td scope="row">{$d.id}</td>
+                        <td>{$d.userid}</td>
+                        <td><font class="text-success">{$d.content}</font></td>
+                        <td>{$d.time|date="Y-m-d H:i:s",###}</td>
+                      </tr>
+                      {/foreach}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div style="text-align:center">{$data->render()}</div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+<script>
+function del(id){
+var id = [];
+$("input[name='ids']:checked").each(function(i){
+        id[i] =$(this).val();
+      });
+var id = id.join(",");
+if(id==""){
+layer.alert("未选择记录!",{icon:2,shade:0.8});
+}else{
+        layer.confirm('确定要删除ID为<span style="color:#0b5ed7">'+ id +'</span>的记录吗？', function (){
+            del1(id)
+        });
+    }
+}
+    function del1(id){
+        var load = layer.load('1',{time:false});
+
+        $.ajax({
+            type:'POST',
+            url:'',
+            data:{
+                act:'delete',
+                cid:id
+            },
+            dataType:'json',
+            success:function (data){
+                layer.close(load);
+                if(data.code == 1){
+layer.alert(data.msg,{icon:1},function(){
+                        window.location.href = "";
+                    });
+                }else{
+                    layer.alert(data.msg,{icon:2});
+                }
+            }
+        });
+    }
+
+function qbdel(){
+        layer.confirm('确定要删除<span style="color:#0b5ed7">全部</span>的记录吗？', function (){
+            qbdel1()
+        });
+    }
+
+
+    function qbdel1(){
+        var load = layer.load('1',{time:false});
+
+        $.ajax({
+            type:'POST',
+            url:'',
+            data:{
+                act:'qbdelete',
+            },
+            dataType:'json',
+            success:function (data){
+                layer.close(load);
+                if(data.code == 1){
+layer.alert(data.msg,{icon:1},function(){
+                        window.location.href = "";
+                    });
+                }else{
+                    layer.alert(data.msg,{icon:2});
+                }
+            }
+        });
+    }
+</script>
+
+  {include file="default/footer" /}

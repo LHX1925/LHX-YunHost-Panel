@@ -1,0 +1,45 @@
+<footer id="page-footer" class="glass-footer">
+                <div class="content py-3">
+                    <div class="row font-size-sm">
+                        <div class="col-sm-6 py-1 text-center text-sm-left">
+                            <a href="/">{$webname}</a> &copy; {:date('Y')}
+                        </div>
+                        <div class="col-sm-6 py-1 text-center text-sm-right">
+                            {if isset($templateset['网站备案号']) && $templateset['网站备案号']}
+                            <a href="//beian.miit.gov.cn/">{$templateset['网站备案号']}</a>
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+            </footer>
+
+            <nav class="mobile-tab-bar" aria-label="底部导航">
+                <a class="mobile-tab-item" href="__ROOT__/user/index">
+                    <i class="fas fa-home"></i>
+                    <span>首页</span>
+                </a>
+                <a class="mobile-tab-item" href="__ROOT__/cart">
+                    <i class="fas fa-box"></i>
+                    <span>产品</span>
+                </a>
+                <a class="mobile-tab-item" href="__ROOT__/user/transaction">
+                    <i class="fas fa-file-invoice"></i>
+                    <span>订单</span>
+                </a>
+                <a class="mobile-tab-item" href="__ROOT__/user/pay">
+                    <i class="fas fa-wallet"></i>
+                    <span>资产</span>
+                </a>
+                <a class="mobile-tab-item" href="__ROOT__/user/information">
+                    <i class="fas fa-user"></i>
+                    <span>我的</span>
+                </a>
+            </nav>
+        </div>
+        <script src="/static/assets/js/oneui.core.min.js"></script>
+        <script src="/static/assets/js/oneui.app.min.js"></script>
+        <script src="/static/assets/vendor/layer/layer.js"></script>
+<script src="/static/js/glass-animations.js"></script>
+{include file="default/live2d_widget" /}
+    </body>
+</html>
